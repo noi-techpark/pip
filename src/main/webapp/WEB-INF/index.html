@@ -1,0 +1,117 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css" />
+<script src="js/jquery.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/angular.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/angular-route.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/app.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/bootstrap.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/d3.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/ng-file-upload.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+
+
+</head>
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+				aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Alpenstaedte Ideas</a>
+		</div>
+
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li><a href="#" data-toggle="modal" data-target="#idea-modal">New Project-Idea</a></li>
+				<li><a href="#">Add User</a></li>
+			</ul>
+			<form class="navbar-form navbar-left" role="search">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="Filter">
+				</div>
+			</form>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a href="#" class="dropdown-toggle"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false">My Profile<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Edit</a></li>
+						<li><a href="#">Change Password</a></li>
+						<li><a href="#">Logout</a></li>
+					</ul></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+<body ng-app="alps">
+	<div ng-controller="RootCtrl">
+		<div class="modal fade" id="idea-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">Project Idea</h4>
+					</div>
+					<form ng-submit="createProjectIdea()">
+						<div class="modal-body" ng-init="idea={projectName:'',projectDesc:'',topics:[],fundings:[]}">
+							<div class="form-group">
+								<label for="project-name">Project name</label> 
+								<input type="text" class="form-control" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required"/>
+							</div>
+							<div class="form-group">
+								<label for="project-desc">Project description</label> 
+								<textarea id ="project-desc" ng-model="idea.projectDesc" class="form-control" rows="3" placeholder="Description" required="required"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="project-topics">Associated Topics</label> 
+								<div class="checkbox">
+									<label> <input type="checkbox" value="" ng-model="idea.topics.energy">Energy</label>
+								</div>
+								<div class="checkbox">
+									<label> <input type="checkbox" value="" ng-model="idea.topics.mobility">Mobility</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="project-fundings">Possible funding programs</label>
+								<button type="button" class="btn" ng-click="idea.fundings.push({url:'http://',desc:''})"><span class="glyphicon glyphicon-plus" ></span></button>
+							</div>
+							<div class="form-group">
+								<div class="well" ng-repeat="funding in idea.fundings"> 
+									<button type="button" class="btn pull-right" style="margin:5px 0" ng-click="idea.fundings.splice($index,1)"><span class="glyphicon glyphicon-minus"></span></button>
+									<div class="form-group">
+										<label>Link to the call</label> 
+										<input type="url" class="form-control" ng-model="funding.url" required="required"/>
+									</div>
+									<div class="form-group">
+										<label for="project-desc">Call description</label> 
+										<textarea id ="project-desc" class="form-control" rows="3" placeholder="Description" ng-model="funding.desc"></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="exampleInputFile">Attachements</label> 
+								<button ngf-select="true" ng-model="files" type="button" ngf-multiple="true" >Upload files</button>
+								<p class="help-block">to select multiple files, hold down the CTRL or SHIFT key while selecting</p>
+							</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Save changes</button>
+							</div>
+						</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
