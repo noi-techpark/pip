@@ -7,6 +7,14 @@ import it.bz.tis.alpenstaedte.dto.FundingDto;
 
 privileged aspect FundingDto_Roo_JavaBean {
     
+    public String FundingDto.getUuid() {
+        return this.uuid;
+    }
+    
+    public void FundingDto.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
     public String FundingDto.getUrl() {
         return this.url;
     }

@@ -14,7 +14,7 @@ privileged aspect Funding_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager Funding.entityManager;
     
-    public static final List<String> Funding.fieldNames4OrderClauseFilter = java.util.Arrays.asList("url", "description", "idea");
+    public static final List<String> Funding.fieldNames4OrderClauseFilter = java.util.Arrays.asList("uuid", "url", "description", "idea");
     
     public static final EntityManager Funding.entityManager() {
         EntityManager em = new Funding().entityManager;

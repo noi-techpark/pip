@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-</body>
-</html>
+<div ng-controller="IdeaListCtrl">
+	<div ng-init="getIdeas()" class="container">
+		<div class="list-group">
+			<a ng-repeat="idea in ideas" class="list-group-item" href="#/ideas/{{idea.uuid}}">
+				<h4 class="list-group-item-heading">{{idea.projectName}}</h4>
+				<p class="list-group-item-text">{{idea.projectDesc}}</p>
+			</a>
+		</div>
+	</div>
+</div>

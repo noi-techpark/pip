@@ -14,7 +14,12 @@ public class FundingDto {
 		this.url = url;
 		this.description = description;
 	}
-
+	public FundingDto(String uuid, String url, String description) {
+		this.uuid = uuid;
+		this.url = url;
+		this.description = description;
+	}
+	private String uuid;
 	private String url;
 	private String description;
 }

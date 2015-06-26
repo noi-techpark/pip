@@ -1,28 +1,236 @@
 package it.bz.tis.alpenstaedte;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
+import it.bz.tis.alpenstaedte.dto.GraphDto;
+import it.bz.tis.alpenstaedte.dto.IdeaDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
+import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
+import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
+import it.bz.tis.alpenstaedte.dto.TopicDto;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/")
 @Controller
 public class RootController {
+	
+	private ObjectMapper jsonMapper = new ObjectMapper();
+	@Autowired
+	private FileSystemResource documentFolder;
+	
     @RequestMapping(method = RequestMethod.POST, value = "create")
-    public @ResponseBody ResponseEntity<ResponseObject> post(@RequestBody NewIdeaDto dto) {
-    	Idea idea = new Idea(dto.getProjectName(),dto.getProjectDesc(),dto.getTopics());
+    public @ResponseBody ResponseEntity<ResponseObject> create(@RequestBody NewIdeaDto dto) {
+    	List<Topic> topics = new ArrayList<Topic>();
+    	for(Map.Entry<String, Boolean> entry:dto.getTopics().entrySet()){
+    		if (entry.getValue()){
+    			Topic topic = Topic.findTopicsByNameEquals(entry.getKey()).getSingleResult();
+   				topics.add(topic);
+    		}
+    	}
+    	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals("idea").getSingleResult();
+    	Idea idea = new Idea(dto.getProjectName(),dto.getProjectDesc(),topics,status);
+    	Set<Funding> fundings = castToDAL(dto.getFundings(),idea);
+    	idea.setFundings(fundings);
     	idea.persist();
-   		for (FundingDto fundingDto:dto.getFundings()){
-   			Funding funding =new Funding(fundingDto.getUrl(),fundingDto.getDescription(),idea);
-   			funding.persist();
-   		}
-    		
+
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.DELETE, value = "delete/{uuid}")
+    public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid) throws IOException {
+    	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+    	idea.remove();
+    	if (documentFolder.exists()){
+    		File ideaDirectory = new File(documentFolder.getPath()+"/"+uuid);
+    		if (ideaDirectory.isDirectory()){
+    			FileUtils.deleteDirectory(ideaDirectory);
+    		}
+    	}
+    	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
+    }
+    private Set<Funding> castToDAL(List<FundingDto> fundings, Idea idea) {
+    	Set<Funding> fundingsDAL = new LinkedHashSet<Funding>();
+    	for (FundingDto fundingDto:fundings){
+    		Funding funding;
+    		if (fundingDto.getUuid() == null){
+    			funding = new Funding();
+    			funding.setIdea(idea);
+    		}
+    		else 
+        		funding = Funding.findFundingsByUuid(fundingDto.getUuid()).getSingleResult();
+    		funding.setUrl(fundingDto.getUrl());
+    		funding.setDescription(fundingDto.getDescription());
+    		fundingsDAL.add(funding);
+    	}
+    	return fundingsDAL;
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "update")
+    public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto) {
+    	List<Topic> topics = new ArrayList<Topic>();
+    	for(Map.Entry<String, Boolean> entry:dto.getTopics().entrySet()){
+    		if (entry.getValue()){
+    			Topic topic = Topic.findTopicsByNameEquals(entry.getKey()).getSingleResult();
+   				topics.add(topic);
+    		}
+    	}
+    	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals(dto.getStatus()).getSingleResult();
+    	Idea idea = Idea.findIdeasByUuidEquals(dto.getUuid()).getSingleResult();
+    	Set<Funding> fundings = castToDAL(dto.getFundings(),idea);
+    	idea.setName(dto.getProjectName());
+    	idea.setDescription(dto.getProjectDesc());
+    	idea.setStatus(status);
+    	idea.setTopics(topics);
+    	idea.setFundings(fundings);
+    	idea.setFileNames(dto.getFileNames());
+    	idea.merge();
+    	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "ideas")
+    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas() {
+    	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
+    	for (Idea idea: Idea.findAllIdeas("name","ASC")){
+    		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
+    		dto.setUuid(idea.getUuid());
+    		list.add(dto);
+    	}
+    	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "graph-data")
+    public @ResponseBody ResponseEntity <GraphDto> getGraphData() {
+    	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
+    	List<Topic> topics = Topic.findAllTopics();
+    	GraphDto graph = new GraphDto();
+    	for (ProjectStatus status:statuses){
+    		StatusIdeasDto statusDto = new StatusIdeasDto();
+    		for (Topic topic:topics){
+    			TopicDto topicDto = new TopicDto();
+        		List<Idea> ideas = Idea.findIdeaByStatusAndTopicsContainsTopic(status,topic);
+        		topicDto.setName(topic.getName());
+        		for(Idea idea:ideas){
+        			ReducedIdeaDto dto = new ReducedIdeaDto();
+        			dto.setName(idea.getName());
+        			dto.setUuid(idea.getUuid());
+        			topicDto.getChildren().add(dto);
+        		}
+        		if(!topicDto.getChildren().isEmpty())
+        			statusDto.getChildren().add(topicDto);
+    		}
+    		statusDto.setName(status.getName());
+    		graph.getChildren().add(statusDto);
+    	}
+    	return new ResponseEntity<GraphDto>(graph,HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "idea")
+    public @ResponseBody ResponseEntity<IdeaDto> getIdea(@RequestParam("uuid") String uuid) {
+   		Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+   		List<Funding> possibleFundings = Funding.findFundingsByIdea(idea).getResultList();
+   		List<FundingDto> fundingsDto = castToDto(possibleFundings);
+   		Map<String,Boolean> topics = castToStrings(idea.getTopics());
+   		IdeaDto dto = new IdeaDto();
+   		dto.setUuid(idea.getUuid());
+   		dto.setProjectName(idea.getName());
+   		dto.setProjectDesc(idea.getDescription());
+   		dto.setStatus(idea.getStatus().getName());
+   		dto.setTopics(topics);
+   		dto.setFundings(fundingsDto);
+   		dto.getFileNames().addAll(idea.getFileNames());
+    	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
+    }
+    private Map<String, Boolean> castToStrings(List<Topic> topics) {
+    	Map<String, Boolean> strings = new HashMap<String, Boolean>();
+		for (Topic topic: topics){
+			strings.put(topic.getName(),true);
+		}
+		return strings;
+	}
+	private List<FundingDto> castToDto(List<Funding> possibleFundings) {
+		List<FundingDto> fundings = new ArrayList<FundingDto>();
+		for (Funding funding : possibleFundings){
+			fundings.add(new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription()));
+		}
+		return fundings;
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "upload")
+    public @ResponseBody ResponseEntity<ResponseObject> uploadFiles(@RequestParam("file")List<MultipartFile> files,@RequestParam("uuid")String uuid,@RequestParam(value="alreadySavedFiles",required=false)String currentFiles) throws JsonParseException, JsonMappingException, IOException {
+		if (documentFolder.exists()){
+			Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+			File directory = new File(documentFolder.getPath()+"/"+uuid);
+			directory.mkdirs();
+			List<String> current = new ArrayList<String>();
+			if (currentFiles != null){
+				current = jsonMapper.readValue(currentFiles,ArrayList.class);
+				deleteRemovedFiles(uuid,current,directory);
+			}
+			Set<String> fileNames = new HashSet<String>();
+			for (MultipartFile multiPartfile : files){
+				fileNames.add(multiPartfile.getOriginalFilename());
+				File file = new File(directory,multiPartfile.getOriginalFilename());
+				try {
+					multiPartfile.transferTo(file);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+			    	return new ResponseEntity<ResponseObject>(HttpStatus.INTERNAL_SERVER_ERROR);
+				} catch (IOException e) {
+					e.printStackTrace();
+			    	return new ResponseEntity<ResponseObject>(HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			fileNames.addAll(current);
+			idea.setFileNames(fileNames);
+			idea.merge();
+		}
+    	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
+    }
+    private void deleteRemovedFiles(String uuid, List<String> currentFiles, File directory) {
+    	for (File file:directory.listFiles()){
+    		if (!currentFiles.contains(file.getName())){
+    			file.delete();
+    		};
+    	};
+	}
+	@RequestMapping(method = RequestMethod.GET, value = "statuses")
+    public @ResponseBody ResponseEntity<List<String>> getStatuses() {
+    	List<String> list = new ArrayList<String>();
+    	for (ProjectStatus status: ProjectStatus.findAllProjectStatuses())
+    		list.add(status.getName());
+    	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "topics")
+    public @ResponseBody ResponseEntity<List<String>> getTopics() {
+    	List<String> list = new ArrayList<String>();
+    	for (Topic topic: Topic.findAllTopics("name","asc"))
+    		list.add(topic.getName());
+    	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.POST, value = "topics")
+    public @ResponseBody ResponseEntity<List<String>> createTopic() {
+    	List<String> list = new ArrayList<String>();
+    	for (Topic topic: Topic.findAllTopics("name","asc"))
+    		list.add(topic.getName());
+    	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
     }
 }

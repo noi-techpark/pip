@@ -5,8 +5,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findTopicsByNameEquals" })
-public class Topic {
+@RooJpaActiveRecord(finders = { "findProjectStatusesByNameEquals" })
+public class ProjectStatus {
 
     private String name;
 }

@@ -8,6 +8,14 @@ import it.bz.tis.alpenstaedte.Idea;
 
 privileged aspect Funding_Roo_JavaBean {
     
+    public String Funding.getUuid() {
+        return this.uuid;
+    }
+    
+    public void Funding.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
     public String Funding.getUrl() {
         return this.url;
     }

@@ -6,8 +6,17 @@ package it.bz.tis.alpenstaedte.dto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import java.util.List;
+import java.util.Map;
 
 privileged aspect NewIdeaDto_Roo_JavaBean {
+    
+    public String NewIdeaDto.getUuid() {
+        return this.uuid;
+    }
+    
+    public void NewIdeaDto.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
     
     public String NewIdeaDto.getProjectName() {
         return this.projectName;
@@ -25,11 +34,11 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
         this.projectDesc = projectDesc;
     }
     
-    public List<String> NewIdeaDto.getTopics() {
+    public Map<String, Boolean> NewIdeaDto.getTopics() {
         return this.topics;
     }
     
-    public void NewIdeaDto.setTopics(List<String> topics) {
+    public void NewIdeaDto.setTopics(Map<String, Boolean> topics) {
         this.topics = topics;
     }
     

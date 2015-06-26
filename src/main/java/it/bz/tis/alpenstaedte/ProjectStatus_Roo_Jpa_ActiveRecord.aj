@@ -3,97 +3,97 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.Idea;
+import it.bz.tis.alpenstaedte.ProjectStatus;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 
-privileged aspect Idea_Roo_Jpa_ActiveRecord {
+privileged aspect ProjectStatus_Roo_Jpa_ActiveRecord {
     
     @PersistenceContext
-    transient EntityManager Idea.entityManager;
+    transient EntityManager ProjectStatus.entityManager;
     
-    public static final List<String> Idea.fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "description", "uuid", "topics", "status", "fileNames", "fundings");
+    public static final List<String> ProjectStatus.fieldNames4OrderClauseFilter = java.util.Arrays.asList("name");
     
-    public static final EntityManager Idea.entityManager() {
-        EntityManager em = new Idea().entityManager;
+    public static final EntityManager ProjectStatus.entityManager() {
+        EntityManager em = new ProjectStatus().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
     
-    public static long Idea.countIdeas() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Idea o", Long.class).getSingleResult();
+    public static long ProjectStatus.countProjectStatuses() {
+        return entityManager().createQuery("SELECT COUNT(o) FROM ProjectStatus o", Long.class).getSingleResult();
     }
     
-    public static List<Idea> Idea.findAllIdeas() {
-        return entityManager().createQuery("SELECT o FROM Idea o", Idea.class).getResultList();
+    public static List<ProjectStatus> ProjectStatus.findAllProjectStatuses() {
+        return entityManager().createQuery("SELECT o FROM ProjectStatus o", ProjectStatus.class).getResultList();
     }
     
-    public static List<Idea> Idea.findAllIdeas(String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM Idea o";
+    public static List<ProjectStatus> ProjectStatus.findAllProjectStatuses(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ProjectStatus o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, Idea.class).getResultList();
+        return entityManager().createQuery(jpaQuery, ProjectStatus.class).getResultList();
     }
     
-    public static Idea Idea.findIdea(Long id) {
+    public static ProjectStatus ProjectStatus.findProjectStatus(Long id) {
         if (id == null) return null;
-        return entityManager().find(Idea.class, id);
+        return entityManager().find(ProjectStatus.class, id);
     }
     
-    public static List<Idea> Idea.findIdeaEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Idea o", Idea.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<ProjectStatus> ProjectStatus.findProjectStatusEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM ProjectStatus o", ProjectStatus.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
-    public static List<Idea> Idea.findIdeaEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM Idea o";
+    public static List<ProjectStatus> ProjectStatus.findProjectStatusEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ProjectStatus o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, Idea.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery(jpaQuery, ProjectStatus.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
-    public void Idea.persist() {
+    public void ProjectStatus.persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
     }
     
     @Transactional
-    public void Idea.remove() {
+    public void ProjectStatus.remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            Idea attached = Idea.findIdea(this.id);
+            ProjectStatus attached = ProjectStatus.findProjectStatus(this.id);
             this.entityManager.remove(attached);
         }
     }
     
     @Transactional
-    public void Idea.flush() {
+    public void ProjectStatus.flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
     }
     
     @Transactional
-    public void Idea.clear() {
+    public void ProjectStatus.clear() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.clear();
     }
     
     @Transactional
-    public Idea Idea.merge() {
+    public ProjectStatus ProjectStatus.merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        Idea merged = this.entityManager.merge(this);
+        ProjectStatus merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }

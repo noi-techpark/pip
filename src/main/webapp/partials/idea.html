@@ -1,0 +1,65 @@
+<div ng-controller="IdeaListCtrl">
+	<div class="container" ng-init="getIdea()">
+		<form ng-submit="updateIdea()">
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Project status</label>
+					<div class="btn-group btn-group-justified" role="group" ng-init="getStatuses()">
+						  <div class="btn-group" role="group" ng-repeat="status in statuses">
+						    <button type="button" ng-class="idea.status==status?'btn btn-primary':'btn'" ng-click="idea.status=status">{{status}}</button>
+						  </div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="project-name">Project name</label> 
+					<input type="text" class="form-control" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required"/>
+				</div>
+				<div class="form-group">
+					<label for="project-desc">Project description</label> 
+					<textarea id ="project-desc" ng-model="idea.projectDesc" class="form-control" rows="3" placeholder="Description" required="required"></textarea>
+				</div>
+				<div class="form-group" ng-init="getTopics()">
+					<label for="project-topics">Associated Topics</label> 
+					<div class="checkbox" ng-repeat="topic in availableTopics">
+						<label> <input type="checkbox" ng-model="idea.topics[topic]" ng-checked="idea.topics[topic]!=undefined">{{topic}} </label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="project-fundings">Possible funding programs</label>
+					<button type="button" class="btn" ng-click="idea.fundings.push({url:'http://',desc:''})"><span class="glyphicon glyphicon-plus" ></span></button>
+				</div>
+				<div class="form-group">
+					<div class="well" ng-repeat="funding in idea.fundings"> 
+						<button type="button" class="btn pull-right" style="margin:5px 0" ng-click="idea.fundings.splice($index,1)"><span class="glyphicon glyphicon-minus"></span></button>
+						<div class="form-group">
+							<label>Link to the call</label> 
+							<input type="url" class="form-control" ng-model="funding.url" required="required"/>
+						</div>
+						<div class="form-group">
+							<label for="project-desc">Call description</label> 
+							<textarea id ="project-desc" class="form-control" rows="3" placeholder="Description" ng-model="funding.description"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputFile">Attachements</label>
+					<ul>
+						<li ng-repeat="file in idea.fileNames |orderBy:'file' ">{{file}} <a class="btn" ng-click="idea.fileNames.splice($index,1)"><span class="glyphicon glyphicon-remove"></span></a></li>
+					</ul> 
+					<button ngf-select="true" ng-model="files" type="button" ngf-multiple="true" >Upload files</button>
+					<p class="help-block">to select multiple files, hold down the CTRL or SHIFT key while selecting</p>
+					<div ng-if="files.length>0">
+						<label> Files:</label>
+						<span ng-repeat="file in files"><span ng-if="$index!=0">,</span> {{file.name}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a type="button" href="#/ideas" class="btn">Back</a>
+				<button type="button" class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
+				<button type="submit" class="btn btn-primary">Save changes</button>
+			</div>
+			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+		</form>
+	</div>
+</div>

@@ -68,4 +68,7 @@
         <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    <bean class="org.springframework.core.io.FileSystemResource" name="documentFolder">
+        <constructor-arg value="${filesystem.proofFiles}"/>
+    </bean>
 </beans>
