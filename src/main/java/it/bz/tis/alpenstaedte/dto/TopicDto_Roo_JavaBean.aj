@@ -3,9 +3,7 @@
 
 package it.bz.tis.alpenstaedte.dto;
 
-import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
-import java.util.List;
 
 privileged aspect TopicDto_Roo_JavaBean {
     
@@ -17,12 +15,20 @@ privileged aspect TopicDto_Roo_JavaBean {
         this.name = name;
     }
     
-    public List<ReducedIdeaDto> TopicDto.getChildren() {
-        return this.children;
+    public String TopicDto.getColor() {
+        return this.color;
     }
     
-    public void TopicDto.setChildren(List<ReducedIdeaDto> children) {
-        this.children = children;
+    public void TopicDto.setColor(String color) {
+        this.color = color;
+    }
+    
+    public String TopicDto.getUuid() {
+        return this.uuid;
+    }
+    
+    public void TopicDto.setUuid(String uuid) {
+        this.uuid = uuid;
     }
     
 }

@@ -4,8 +4,17 @@
 package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.Topic;
+import java.util.Date;
 
 privileged aspect Topic_Roo_JavaBean {
+    
+    public String Topic.getUuid() {
+        return this.uuid;
+    }
+    
+    public void Topic.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
     
     public String Topic.getName() {
         return this.name;
@@ -13,6 +22,22 @@ privileged aspect Topic_Roo_JavaBean {
     
     public void Topic.setName(String name) {
         this.name = name;
+    }
+    
+    public String Topic.getColor() {
+        return this.color;
+    }
+    
+    public void Topic.setColor(String color) {
+        this.color = color;
+    }
+    
+    public Date Topic.getCreateDate() {
+        return this.createDate;
+    }
+    
+    public void Topic.setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
     
 }

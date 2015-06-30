@@ -1,0 +1,34 @@
+<div>
+	<div ng-init="getTopics()" class="container">
+		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
+			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<form class="form-inline" ng-submit="createTopic()">
+			<div class="form-group">
+				<label class="sr-only">Name</label> 
+				<input ng-model="newTopic.name" type="text" class="form-control" placeholder="Name" required="required">
+			</div>
+			<div class="form-group">
+				<label class="sr-only">Color</label> 
+				<input ng-model="newTopic.color" type="text" class="form-control" placeholder="Color" required="required">
+			</div>
+			<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new topic</button>
+		</form>
+		<div class="table-responsive">
+			<table class="table table-bordered">
+				<thead>
+					<th>Name</th>
+					<th>Color</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="topic in availableTopics | orderBy: 'name'">
+						<td><input type="text" ng-model="topic.name"></td>
+						<td  style="background-color:{{topic.color}}"><input type="text" ng-model="topic.color"></td>
+						<td><a class="btn glyphicon glyphicon-floppy-save" ng-click="updateTopic(topic)"></a></td>
+						<td><a class="btn glyphicon glyphicon-remove"  confirmed-click="deleteTopic(topic.uuid)" ng-confirm-click="Are you sure you want to delete this topic?" ></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

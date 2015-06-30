@@ -5,8 +5,9 @@ package it.bz.tis.alpenstaedte.dto;
 
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
+import it.bz.tis.alpenstaedte.dto.TopicDto;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 privileged aspect NewIdeaDto_Roo_JavaBean {
     
@@ -34,11 +35,11 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
         this.projectDesc = projectDesc;
     }
     
-    public Map<String, Boolean> NewIdeaDto.getTopics() {
+    public Set<TopicDto> NewIdeaDto.getTopics() {
         return this.topics;
     }
     
-    public void NewIdeaDto.setTopics(Map<String, Boolean> topics) {
+    public void NewIdeaDto.setTopics(Set<TopicDto> topics) {
         this.topics = topics;
     }
     

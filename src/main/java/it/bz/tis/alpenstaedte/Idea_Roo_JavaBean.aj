@@ -7,7 +7,6 @@ import it.bz.tis.alpenstaedte.Funding;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.ProjectStatus;
 import it.bz.tis.alpenstaedte.Topic;
-import java.util.List;
 import java.util.Set;
 
 privileged aspect Idea_Roo_JavaBean {
@@ -36,11 +35,11 @@ privileged aspect Idea_Roo_JavaBean {
         this.uuid = uuid;
     }
     
-    public List<Topic> Idea.getTopics() {
+    public Set<Topic> Idea.getTopics() {
         return this.topics;
     }
     
-    public void Idea.setTopics(List<Topic> topics) {
+    public void Idea.setTopics(Set<Topic> topics) {
         this.topics = topics;
     }
     

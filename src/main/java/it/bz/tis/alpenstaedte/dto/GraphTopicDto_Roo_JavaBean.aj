@@ -4,24 +4,24 @@
 package it.bz.tis.alpenstaedte.dto;
 
 import it.bz.tis.alpenstaedte.dto.GraphTopicDto;
-import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
+import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import java.util.List;
 
-privileged aspect StatusIdeasDto_Roo_JavaBean {
+privileged aspect GraphTopicDto_Roo_JavaBean {
     
-    public String StatusIdeasDto.getName() {
+    public String GraphTopicDto.getName() {
         return this.name;
     }
     
-    public void StatusIdeasDto.setName(String name) {
+    public void GraphTopicDto.setName(String name) {
         this.name = name;
     }
     
-    public List<GraphTopicDto> StatusIdeasDto.getChildren() {
+    public List<ReducedIdeaDto> GraphTopicDto.getChildren() {
         return this.children;
     }
     
-    public void StatusIdeasDto.setChildren(List<GraphTopicDto> children) {
+    public void GraphTopicDto.setChildren(List<ReducedIdeaDto> children) {
         this.children = children;
     }
     

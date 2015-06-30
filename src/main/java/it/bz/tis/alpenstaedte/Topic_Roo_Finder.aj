@@ -17,6 +17,14 @@ privileged aspect Topic_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long Topic.countFindTopicsByUuidEquals(String uuid) {
+        if (uuid == null || uuid.length() == 0) throw new IllegalArgumentException("The uuid argument is required");
+        EntityManager em = Topic.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM Topic AS o WHERE o.uuid = :uuid", Long.class);
+        q.setParameter("uuid", uuid);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<Topic> Topic.findTopicsByNameEquals(String name) {
         if (name == null || name.length() == 0) throw new IllegalArgumentException("The name argument is required");
         EntityManager em = Topic.entityManager();
@@ -37,6 +45,29 @@ privileged aspect Topic_Roo_Finder {
         }
         TypedQuery<Topic> q = em.createQuery(queryBuilder.toString(), Topic.class);
         q.setParameter("name", name);
+        return q;
+    }
+    
+    public static TypedQuery<Topic> Topic.findTopicsByUuidEquals(String uuid) {
+        if (uuid == null || uuid.length() == 0) throw new IllegalArgumentException("The uuid argument is required");
+        EntityManager em = Topic.entityManager();
+        TypedQuery<Topic> q = em.createQuery("SELECT o FROM Topic AS o WHERE o.uuid = :uuid", Topic.class);
+        q.setParameter("uuid", uuid);
+        return q;
+    }
+    
+    public static TypedQuery<Topic> Topic.findTopicsByUuidEquals(String uuid, String sortFieldName, String sortOrder) {
+        if (uuid == null || uuid.length() == 0) throw new IllegalArgumentException("The uuid argument is required");
+        EntityManager em = Topic.entityManager();
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM Topic AS o WHERE o.uuid = :uuid");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                queryBuilder.append(" ").append(sortOrder);
+            }
+        }
+        TypedQuery<Topic> q = em.createQuery(queryBuilder.toString(), Topic.class);
+        q.setParameter("uuid", uuid);
         return q;
     }
     

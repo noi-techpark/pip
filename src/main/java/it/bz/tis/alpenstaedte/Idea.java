@@ -1,5 +1,5 @@
 package it.bz.tis.alpenstaedte;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public class Idea {
     private String uuid;
 
     @ManyToMany
-    private List<Topic> topics = new ArrayList<Topic>();
+    private Set<Topic> topics = new HashSet<Topic>();
     
     @ManyToOne
     private ProjectStatus status;
@@ -37,14 +37,14 @@ public class Idea {
     @ElementCollection
     private Set<String> fileNames;
     
-    @OneToMany(cascade= CascadeType.ALL,mappedBy="idea")
+    @OneToMany(mappedBy="idea",cascade=CascadeType.ALL)
     private Set<Funding> fundings;
 
     public Idea() {
         this.uuid = UUID.randomUUID().toString();
     }
 
-    public Idea(String projectName, String projectDesc, List<Topic> topics, ProjectStatus status) {
+    public Idea(String projectName, String projectDesc, Set<Topic> topics, ProjectStatus status) {
         this.uuid = UUID.randomUUID().toString();
         this.name = projectName;
         this.description = projectDesc;
@@ -59,5 +59,11 @@ public class Idea {
 		query.setParameter("topic", topic);
 		return query.getResultList();
 		
+	}
+
+	public static List<Idea> findIdeaByContainsTopic(Topic topic) {
+		TypedQuery<Idea> query = entityManager().createQuery("select idea from Idea idea where :topic in elements(idea.topics)",Idea.class);
+		query.setParameter("topic", topic);
+		return query.getResultList();
 	}
 }

@@ -21,7 +21,7 @@
 				<div class="form-group" ng-init="getTopics()">
 					<label for="project-topics">Associated Topics</label> 
 					<div class="checkbox" ng-repeat="topic in availableTopics">
-						<label> <input type="checkbox" ng-model="idea.topics[topic]" ng-checked="idea.topics[topic]!=undefined">{{topic}} </label>
+						<label> <input type="checkbox" ng-click="toggleTopic(topic)" ng-checked="isTopic(topic.name)">{{topic.name}} </label>
 					</div>
 				</div>
 				<div class="form-group">

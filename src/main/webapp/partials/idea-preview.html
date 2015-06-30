@@ -1,42 +1,35 @@
-<div ng-controller="IdeaListCtrl">
+<div>
 	<div class="container" ng-init="getIdea()">
-		<form ng-submit="updateIdea()">
-			<div class="modal-body">
-				<div class="jumbotron">
-					<div class="pull-right">
-						<button type="button"  ng-repeat="(topic,value) in idea.topics" class="btn" style="margin-right:5px">{{topic}}</button>
-					</div>
-					<h1>{{idea.projectName}}</h1>
-					<p>{{idea.projectDesc}}</p>
-				</div>
-				<div class="form-group">
-					<label for="project-fundings">Possible funding programs</label>
-					<button type="button" class="btn" ng-click="idea.fundings.push({url:'http://',desc:''})"><span class="glyphicon glyphicon-plus" ></span></button>
-				</div>
-				<div class="form-group">
-					<div class="well" ng-repeat="funding in idea.fundings"> 
-						<div class="form-group">
-							<label>Link to the call</label> 
-							<input type="url" class="form-control" ng-model="funding.url" required="required"/>
-						</div>
-						<div class="form-group">
-							<label for="project-desc">Call description</label> 
-							<textarea id ="project-desc" class="form-control" rows="3" placeholder="Description" ng-model="funding.description"></textarea>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="exampleInputFile">Attachements</label>
+		<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
+			<div class="btn-group" role="group" ng-repeat="status in statuses">
+				<a ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</a>
+			</div>
+		</div>
+		<div class="idea">
+				<h1>{{idea.projectName}}</h1>
+				<p class="collumnsx2">{{idea.projectDesc}}</p>
+				<div class="form-group" ng-show="idea.fileNames.length>0" >
+					<label>Details</label>
 					<ul>
-						<li ng-repeat="file in idea.fileNames |orderBy:'file' ">{{file}} <a class="btn" ng-click="idea.fileNames.splice($index,1)"><span class="glyphicon glyphicon-remove"></span></a></li>
+						<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me}}/files/{{idea.uuid}}/{{file.substring(0,file.indexOf('.'))}}/{{file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
 					</ul> 
 				</div>
 			</div>
-			<div class="modal-footer">
-				<a type="button" href="#/ideas" class="btn">Back</a>
-				<button type="submit" class="btn btn-primary">Comment</button>
+			<div class="topics form-group">
+				<button type="button"  ng-repeat="topic in idea.topics" class="btn" style="margin-right:5px;background-color:{{topic.color}}">{{topic.name}}</button>
 			</div>
-			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
-		</form>
+			<div class="form-group" ng-if="idea.fundings.length>0">
+				<label for="project-fundings">Possible funding programs</label>
+			</div>
+			<div class="list-group">
+			  <a href="{{funding.url}}" target="_blank" class="list-group-item" ng-repeat="funding in idea.fundings">
+			    {{funding.description}}
+			  </a>
+			</div>
+		<div class="modal-footer">
+			<a type="button" href="#/" class="btn">Back</a>
+			<button type="submit" class="btn btn-primary">Comment</button>
+		</div>
+		<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 	</div>
 </div>

@@ -1,7 +1,10 @@
 package it.bz.tis.alpenstaedte;
 import java.util.UUID;
+
+import javax.persistence.CascadeType;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
+
 import org.springframework.roo.addon.equals.RooEquals;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -9,14 +12,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooEquals(excludeFields = { "description", "idea", "url" })
+@RooEquals(excludeFields = { "description", "idea", "url","id" })
 @RooJpaActiveRecord(finders = { "findFundingsByIdea", "findFundingsByUuid" })
 public class Funding {
 
     public Funding() {
         this.uuid = UUID.randomUUID().toString();
     }
-
+    
     public Funding(String url, String description, Idea idea) {
         this.uuid = UUID.randomUUID().toString();
         this.url = url;
@@ -31,6 +34,6 @@ public class Funding {
     @Size(max = 50000)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Idea idea;
 }

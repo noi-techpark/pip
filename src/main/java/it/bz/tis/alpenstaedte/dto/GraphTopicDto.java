@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 @RooJavaBean
-public class StatusIdeasDto {
+public class GraphTopicDto {
 	private String name;
-	private List<GraphTopicDto> children = new ArrayList<GraphTopicDto>();
+	private List<ReducedIdeaDto> children = new ArrayList<ReducedIdeaDto>();
 }

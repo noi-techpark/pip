@@ -3,25 +3,25 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.Funding;
+import it.bz.tis.alpenstaedte.Topic;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-privileged aspect Funding_Roo_Equals {
+privileged aspect Topic_Roo_Equals {
     
-    public boolean Funding.equals(Object obj) {
-        if (!(obj instanceof Funding)) {
+    public boolean Topic.equals(Object obj) {
+        if (!(obj instanceof Topic)) {
             return false;
         }
         if (this == obj) {
             return true;
         }
-        Funding rhs = (Funding) obj;
-        return new EqualsBuilder().append(uuid, rhs.uuid).isEquals();
+        Topic rhs = (Topic) obj;
+        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).isEquals();
     }
     
-    public int Funding.hashCode() {
-        return new HashCodeBuilder().append(uuid).toHashCode();
+    public int Topic.hashCode() {
+        return new HashCodeBuilder().append(id).append(name).toHashCode();
     }
     
 }

@@ -27,6 +27,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 	}).when('/idea/:uuid', {
 		templateUrl: 'partials/idea-preview.html',
 		controller: 'IdeaListCtrl'
+	}).when('/topics', {
+		templateUrl: 'partials/topics.html',
+		controller: 'TopicCtrl'
 	}).otherwise({
 		redirectTo: '/'
 	});
@@ -34,11 +37,13 @@ alps.config(['$routeProvider',function($routeProvider) {
 
 alps.controller('RootCtrl', function ($scope,$http,Upload) {
 	var self = $scope;
+	self.me = "http://production.digital.tis.bz.it:8080/alpenstaedte"
 	self.createProjectIdea = function(){
-		console.log(self.idea);
 		$http.post("create",self.idea).success(function(response,status,headers,config){
 			if (self.files)
 				self.uploadFiles(response.data);
+            $('#idea-modal').modal('hide');
+
     	self.idea = {projectName:'',projectDesc:'',topics:[],fundings:[]};
 
 		}).error(function(data, status, headers, config) {
@@ -54,21 +59,34 @@ alps.controller('RootCtrl', function ($scope,$http,Upload) {
 	}
 	self.uploadFiles = function(uuid){
 		Upload.upload({
-			url:'http://localhost:8080/alpenstaedte/upload',
+			url:self.me+'/upload',
 			file:self.files,
 			fields:{uuid:uuid}
 		}).progress(function(evt){
-			  console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
+			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
 		}).success(function(data, status, headers, config){
 			  self.files = undefined;
-			  $('#idea-modal').modal('hide');
 		});
+	}
+	self.toggleTopic = function(topic){
+			var isContained = false;
+			$.each(self.idea.topics,function(index,object){
+				if (object.name==topic.name){
+					self.idea.topics.splice(index,1);
+					isContained=true;
+				}
+			});
+			if (!isContained)
+				self.idea.topics.push(topic);
 	}
 	self.openModal=function(){
 		$('#idea-modal').modal('show');
 	};
 
-	self.drawTree = function(){
+	self.drawTree = function(graph){
+		$("#display").empty();
+		if (graph==undefined)
+			graph='graph-data';
 		var margin = {top: 20, right: 120, bottom: 20, left: 120},
 		width = 960 - margin.right - margin.left,
 		height = 800 - margin.top - margin.bottom;
@@ -89,7 +107,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload) {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		d3.json("http://localhost:8080/alpenstaedte/graph-data", function(error, flare) {
+		d3.json(self.me+"/"+graph, function(error, flare) {
 			if (error) throw error;
 
 			root = flare;
@@ -134,7 +152,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload) {
 			.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 			
 			var link = nodeEnter.append("a")
-			.attr("xlink:href",function(d,i) {return "http://localhost:8080/alpenstaedte/#/idea/" + d.uuid;});
+			.attr("xlink:href",function(d,i) {if (d.uuid)return self.me+"/#/idea/" + d.uuid; else return "javascript:void(0)";});
 
 			link.append("text")
 			.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -254,18 +272,64 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			console.log(status);
 		});
 	}
+
 	self.syncFiles = function(uuid){
 		Upload.upload({
-			url:'http://localhost:8080/alpenstaedte/upload',
+			url:self.me+'/upload',
 			file:self.files,
 			fields:{uuid:uuid,alreadySavedFiles:self.idea.fileNames},
 			data:{alreadysavedfiles:self.idea.filenames},
 			sendFieldsAs:'blob-json'
 		}).progress(function(evt){
-			  console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
+			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
 		}).success(function(data, status, headers, config){
 			  self.files = undefined;
               self.getIdea();
+		});
+	}
+	self.isTopic = function(topic){
+		var value = false;
+		$.each(self.idea.topics,function(index,object){
+			if (object.name==topic)
+				value = true;
+		});
+		return value;
+	}
+	self.toggleTopic = function(topic){
+		var isContained = false;
+		$.each(self.idea.topics,function(index,object){
+			if (object.name==topic.name){
+				self.idea.topics.splice(index,1);
+				isContained=true;
+			}
+		});
+		if (!isContained)
+			self.idea.topics.push(topic);
+}
+});
+alps.controller('TopicCtrl', function ($scope,$http) {
+	var self = $scope;
+	self.createTopic = function(){
+		$http.post("topics",self.newTopic).success(function(response,status,headers,config){
+			self.getTopics();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.deleteTopic = function(uuid){
+		$http.delete("topics?uuid="+uuid).success(function(response,status,headers,config){
+			self.getTopics();
+		}).error(function(data, status, headers, config) {
+			if (status == 409)
+				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
+		});
+	}
+	self.updateTopic = function(topic){
+		$http.put("topics",topic).success(function(response,status,headers,config){
+			self.getTopics();
+			self.newTopic=undefined;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
 		});
 	}
 });

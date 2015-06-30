@@ -332,6 +332,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>alpenstaedte</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
