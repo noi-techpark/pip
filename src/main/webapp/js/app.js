@@ -13,6 +13,25 @@ function(){
           }
       };
 }]);
+alps.run(function($rootScope,$http) {
+	var self= $rootScope;
+	self.getPrincipal = function(){
+		$http.get("principal").success(function(data, status, headers, config){
+			console.log(data);
+			self.principal = data;
+			self.isAdmin=self.checkRole("ADMIN");
+		});
+	}
+
+	self.checkRole = function(roleString){
+		var hasRole = false;
+		$.each(self.principal.authorities,function(index,role){
+			if (role.authority=="ROLE_"+roleString)
+				hasRole= true;
+		});
+		return hasRole;
+	}
+});
 alps.config(['$routeProvider',function($routeProvider) {
 	$routeProvider.
 	when('/', {
@@ -30,6 +49,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 	}).when('/topics', {
 		templateUrl: 'partials/topics.html',
 		controller: 'TopicCtrl'
+	}).when('/user', {
+		templateUrl: 'partials/user.html',
+		controller: 'UserCtrl'
 	}).otherwise({
 		redirectTo: '/'
 	});
@@ -37,8 +59,8 @@ alps.config(['$routeProvider',function($routeProvider) {
 
 alps.controller('RootCtrl', function ($scope,$http,Upload) {
 	var self = $scope;
-	self.me = "http://projectideas.tis.bz.it/alpenstaedte"
-	//self.me = "http://localhost:8080/alpenstaedte"
+	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
+	self.me = "http://localhost:8080/alpenstaedte"
 	self.createProjectIdea = function(){
 		$http.post("create",self.idea).success(function(response,status,headers,config){
 			if (self.files)
@@ -329,6 +351,31 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 		$http.put("topics",topic).success(function(response,status,headers,config){
 			self.getTopics();
 			self.newTopic=undefined;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+});
+alps.controller('UserCtrl', function ($scope,$http) {
+	var self = $scope;
+	self.createUser = function(){
+		$http.post("user",self.user).success(function(response,status,headers,config){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.deleteUser = function(email){
+		$http.delete("user?email="+email).success(function(response,status,headers,config){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			if (status == 409)
+				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
+		});
+	}
+	self.getUser = function(){
+		$http.get("user").success(function(response,status,headers,config){
+			self.users = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});

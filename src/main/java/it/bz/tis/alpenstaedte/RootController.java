@@ -11,10 +11,12 @@ import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
 import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
+import it.bz.tis.alpenstaedte.dto.UserDto;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -31,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +53,16 @@ public class RootController {
 	@Autowired
 	private FileSystemResource documentFolder;
 	
+	@Autowired
+	private PasswordEncoder encoder;
+	
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@RequestMapping(value="principal")
+	public @ResponseBody ResponseEntity<Principal> getPrincipal(Principal principal){
+		return new ResponseEntity<Principal>(principal, HttpStatus.OK);
+	}
+	
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.POST, value = "create")
     public @ResponseBody ResponseEntity<ResponseObject> create(@RequestBody NewIdeaDto dto) {
     	Set<Topic> topics = new HashSet<Topic>();
@@ -70,6 +85,7 @@ public class RootController {
 
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.DELETE, value = "delete/{uuid}")
     public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid) throws IOException {
     	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
@@ -82,7 +98,7 @@ public class RootController {
     	}
     	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
     }
-
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.POST, value = "update")
     public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto) {
 		Set<Topic> topics = new HashSet<Topic>();
@@ -120,8 +136,9 @@ public class RootController {
     	idea.merge();
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "ideas")
-    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas() {
+    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas(Principal principal) {
     	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
     	for (Idea idea: Idea.findAllIdeas("name","ASC")){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
@@ -130,6 +147,7 @@ public class RootController {
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data")
     public @ResponseBody ResponseEntity <GraphDto> getGraphData() {
     	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
@@ -155,6 +173,7 @@ public class RootController {
     	}
     	return new ResponseEntity<GraphDto>(graph,HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data-topics")
     public @ResponseBody ResponseEntity <Graph2Dto> getGraphDataByTopics() {
     	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
@@ -180,6 +199,7 @@ public class RootController {
     	}
     	return new ResponseEntity<Graph2Dto>(graph,HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "idea")
     public @ResponseBody ResponseEntity<IdeaDto> getIdea(@RequestParam("uuid") String uuid) {
    		Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
@@ -211,6 +231,7 @@ public class RootController {
 		}
 		return fundings;
 	}
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.POST, value = "upload")
     public @ResponseBody ResponseEntity<ResponseObject> uploadFiles(@RequestParam("file")List<MultipartFile> files,@RequestParam("uuid")String uuid,@RequestParam(value="alreadySavedFiles",required=false)String currentFiles) throws JsonParseException, JsonMappingException, IOException {
 		if (documentFolder.exists()){
@@ -242,6 +263,7 @@ public class RootController {
 		}
     	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.GET, value = "files/{uuid}/{file}/{format}")
     public  void getFile(@PathVariable("uuid") String uuid,@PathVariable("file") String fileString,@PathVariable("format") String format,HttpServletResponse response) throws IOException{
 		if(documentFolder.exists()){
@@ -258,6 +280,7 @@ public class RootController {
     		};
     	};
 	}
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.GET, value = "statuses")
     public @ResponseBody ResponseEntity<List<String>> getStatuses() {
     	List<String> list = new ArrayList<String>();
@@ -265,6 +288,7 @@ public class RootController {
     		list.add(status.getName());
     	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
     }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "topics")
     public @ResponseBody ResponseEntity<List<TopicDto>> getTopics() {
     	List<TopicDto> list = new ArrayList<TopicDto>();
@@ -277,6 +301,7 @@ public class RootController {
     	}
     	return new ResponseEntity<List<TopicDto>>(list,HttpStatus.OK);
     }
+	@Secured(value={"ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.POST, value = "topics")
     public @ResponseBody void createTopic(@RequestBody TopicDto dto) {
     	Topic topic = new Topic();
@@ -284,6 +309,7 @@ public class RootController {
     	topic.setColor(dto.getColor());
     	topic.persist();
     }
+	@Secured(value={"ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.PUT, value = "topics")
     public @ResponseBody void updateTopic(@RequestBody TopicDto dto) {
     	Topic topic = Topic.findTopicsByUuidEquals(dto.getUuid()).getSingleResult();
@@ -291,6 +317,7 @@ public class RootController {
     	topic.setColor(dto.getColor());
     	topic.merge();
     }
+	@Secured(value={"ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.DELETE, value = "topics")
     public @ResponseBody ResponseEntity<Object> deleteTopic(@RequestParam("uuid")String uuid) {
     	Topic topic = Topic.findTopicsByUuidEquals(uuid).getSingleResult();
@@ -300,5 +327,34 @@ public class RootController {
     	}
     	topic.remove();
     	return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.GET, value = "user")
+    public @ResponseBody ResponseEntity<List<UserDto>> getUser() {
+    	List<UserDto> list = new ArrayList<UserDto>();
+    	for (AlpsUser user: AlpsUser.findAllAlpsUsers("name","asc")){
+    		UserDto dto = new UserDto();
+    		dto.setEmail(user.getEmail());
+    		list.add(dto);
+    	}
+    	return new ResponseEntity<List<UserDto>>(list,HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.DELETE, value = "user")
+    public @ResponseBody ResponseEntity<Object> deleteUser(@RequestParam("email")String email) {
+    	AlpsUser user = AlpsUser.findAlpsUsersByEmailEquals(email).getSingleResult();
+    	user.remove();
+    	return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.POST, value = "user")
+    public @ResponseBody void createUser(@RequestBody UserDto dto) {
+    	AlpsUser user = new AlpsUser();
+    	user.setEmail(dto.getEmail());
+    	String randomPassword = RandomStringUtils.randomAlphanumeric(5);
+		user.setPassword(encoder.encode(randomPassword));
+    	user.setRole("USER");
+    	user.persist();
     }
 }

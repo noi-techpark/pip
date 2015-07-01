@@ -1,11 +1,15 @@
 package it.bz.tis.alpenstaedte;
 
 import org.junit.Test;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(value = {"classpath:/META-INF/spring/applicationContext*.xml"})
 public class App extends AbstractJUnit4SpringContextTests{
+	
 	
 	String[] topics = new String[]{"Energy","Mobility","Environment"};
 	String[] status = new String[]{"idea","application done","funding granted","concluded"};
@@ -24,6 +28,16 @@ public class App extends AbstractJUnit4SpringContextTests{
 			status.setName(currentStatus);
 			status.persist();
 		}
+	}
+	@Test
+	public void createUsers(){
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		AlpsUser admin = new AlpsUser();
+		
+		admin.setEmail("aa@b.c");
+		admin.setPassword(encoder.encode("hi"));
+		admin.setRole("ADMIN");
+		admin.persist();
 	}
 	
 }

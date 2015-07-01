@@ -3,6 +3,7 @@
 
 package it.bz.tis.alpenstaedte;
 
+import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Funding;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.ProjectStatus;
@@ -65,6 +66,14 @@ privileged aspect Idea_Roo_JavaBean {
     
     public void Idea.setFundings(Set<Funding> fundings) {
         this.fundings = fundings;
+    }
+    
+    public AlpsUser Idea.getOwner() {
+        return this.owner;
+    }
+    
+    public void Idea.setOwner(AlpsUser owner) {
+        this.owner = owner;
     }
     
 }

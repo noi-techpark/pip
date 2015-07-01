@@ -40,6 +40,9 @@ public class Idea {
     @OneToMany(mappedBy="idea",cascade=CascadeType.ALL)
     private Set<Funding> fundings;
 
+    @ManyToOne
+    private AlpsUser owner;
+    
     public Idea() {
         this.uuid = UUID.randomUUID().toString();
     }

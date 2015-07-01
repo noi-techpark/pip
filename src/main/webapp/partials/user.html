@@ -1,0 +1,27 @@
+<div>
+	<div ng-init="getUser()" class="container">
+		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
+			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<form class="form-inline" ng-submit="createUser()">
+			<div class="form-group">
+				<label class="sr-only">Name</label> 
+				<input ng-model="user.email" type="email" class="form-control" placeholder="Email" required="required">
+			</div>
+			<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new user</button>
+		</form>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<th>Name</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="user in users | orderBy: 'email'">
+						<td>{{user.email}}</td>
+						<td><a class="btn glyphicon glyphicon-remove"  confirmed-click="deleteUser(user.email)" ng-confirm-click="Are you sure you want to delete this user?" ></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
