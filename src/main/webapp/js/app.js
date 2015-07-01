@@ -37,7 +37,8 @@ alps.config(['$routeProvider',function($routeProvider) {
 
 alps.controller('RootCtrl', function ($scope,$http,Upload) {
 	var self = $scope;
-	self.me = "http://production.digital.tis.bz.it:8080/alpenstaedte"
+	self.me = "http://projectideas.tis.bz.it/alpenstaedte"
+	//self.me = "http://localhost:8080/alpenstaedte"
 	self.createProjectIdea = function(){
 		$http.post("create",self.idea).success(function(response,status,headers,config){
 			if (self.files)

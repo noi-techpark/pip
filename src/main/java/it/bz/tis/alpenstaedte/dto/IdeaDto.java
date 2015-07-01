@@ -21,9 +21,10 @@ public class IdeaDto {
 	public IdeaDto() {
 	}
 	@JsonCreator
-	public IdeaDto(@JsonProperty("projectName") String projectName,@JsonProperty("projectDesc") String projectDesc,
-			@JsonProperty("topics") Set<TopicDto> topics,@JsonProperty("fundings") List<FundingDto> fundings, @JsonProperty("status") String status, @JsonProperty("fileNames") Set<String> fileNames) {
-		super();
+	public IdeaDto(@JsonProperty("uuid") String uuid ,@JsonProperty("projectName") String projectName,@JsonProperty("projectDesc") String projectDesc,
+			@JsonProperty("topics") Set<TopicDto> topics,@JsonProperty("fundings") List<FundingDto> fundings, @JsonProperty("status") String status, 
+			@JsonProperty("fileNames") Set<String> fileNames) {
+		this.uuid = uuid;
 		this.projectName = projectName;
 		this.projectDesc = projectDesc;
 		this.topics = topics;
