@@ -4,6 +4,10 @@
 package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.Organisazion;
+import it.bz.tis.alpenstaedte.Topic;
+import java.util.List;
+import java.util.Set;
 
 privileged aspect AlpsUser_Roo_JavaBean {
     
@@ -29,6 +33,46 @@ privileged aspect AlpsUser_Roo_JavaBean {
     
     public void AlpsUser.setRole(String role) {
         this.role = role;
+    }
+    
+    public String AlpsUser.getName() {
+        return this.name;
+    }
+    
+    public void AlpsUser.setName(String name) {
+        this.name = name;
+    }
+    
+    public String AlpsUser.getSurname() {
+        return this.surname;
+    }
+    
+    public void AlpsUser.setSurname(String surname) {
+        this.surname = surname;
+    }
+    
+    public String AlpsUser.getPhone() {
+        return this.phone;
+    }
+    
+    public void AlpsUser.setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public List<Organisazion> AlpsUser.getOrganisazions() {
+        return this.organisazions;
+    }
+    
+    public void AlpsUser.setOrganisazions(List<Organisazion> organisazions) {
+        this.organisazions = organisazions;
+    }
+    
+    public Set<Topic> AlpsUser.getPreferredTopics() {
+        return this.preferredTopics;
+    }
+    
+    public void AlpsUser.setPreferredTopics(Set<Topic> preferredTopics) {
+        this.preferredTopics = preferredTopics;
     }
     
 }

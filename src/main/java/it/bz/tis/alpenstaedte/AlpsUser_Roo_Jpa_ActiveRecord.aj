@@ -14,7 +14,7 @@ privileged aspect AlpsUser_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager AlpsUser.entityManager;
     
-    public static final List<String> AlpsUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("email", "password", "role");
+    public static final List<String> AlpsUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("email", "password", "role", "name", "surname", "phone", "organisazions", "preferredTopics");
     
     public static final EntityManager AlpsUser.entityManager() {
         EntityManager em = new AlpsUser().entityManager;

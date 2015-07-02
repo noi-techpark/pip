@@ -1,4 +1,5 @@
 package it.bz.tis.alpenstaedte;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findIdeasByUuidEquals" })
+@RooJpaActiveRecord(finders = { "findIdeasByUuidEquals","findIdeasByOwner" })
 public class Idea {
 
     private String name;
@@ -43,8 +44,17 @@ public class Idea {
     @ManyToOne
     private AlpsUser owner;
     
+    @OneToMany(cascade = CascadeType.ALL,mappedBy="owner")
+    private List<Comment> comments;
+    private Date created_on;
+    private Date updated_on;
+
+    
     public Idea() {
         this.uuid = UUID.randomUUID().toString();
+        Date now =  new Date();
+        this.created_on = now;
+        this.updated_on = now;
     }
 
     public Idea(String projectName, String projectDesc, Set<Topic> topics, ProjectStatus status) {
@@ -53,6 +63,9 @@ public class Idea {
         this.description = projectDesc;
         this.topics = topics;
         this.status = status;
+        Date now =  new Date();
+        this.created_on = now;
+        this.updated_on = now;
     }
 
 	public static List<Idea> findIdeaByStatusAndTopicsContainsTopic(ProjectStatus status,

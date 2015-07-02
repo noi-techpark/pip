@@ -1,0 +1,60 @@
+<div ng-init="user = {topics:[]}">
+	<div ng-init="getProfile()" class="container">
+		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
+			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<form ng-submit="updateProfile()" class="form-horizontal">
+			<div class="modal-header">
+				<h4 class="modal-title">Profile</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Name</label> 
+					<div class="col-sm-10">
+						<input type="text" class="form-control"	placeholder="Name" ng-model="user.name">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Surname</label>
+					<div class="col-sm-10"> 
+						<input type="text" class="form-control"	placeholder="Surname" ng-model="user.surname">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Phone</label>
+					<div class="col-sm-10"> 
+						<input type="text" class="form-control"	placeholder="Phone" ng-model="user.phone">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Profile pic</label>
+					<div class="col-sm-4">
+						<button ngf-select="true" ng-model="profilepic" type="button" ngf-multiple="false" >Upload files</button>
+						<p class="help-block">Only png and jpg files are supported</p>
+
+					</div>
+					<div class="col-sm-6">
+						<img ngf-src="{{profilepic}}"  ngf-default-src="" ngf-accept="'.png,.jpg'" /> 
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Main Topics</label> 
+					<div class="col-sm-10">
+						<div class="checkbox" ng-repeat="topic in availableTopics">
+							<label> <input type="checkbox" ng-click="toggleTopic(topic)" ng-checked="isTopic(topic.name)">{{topic.name}} </label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="form-group">
+					<div class="col-sm-offset-11 col-sm-1">
+						<button type="submit" class="btn btn-default">Save</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Your profile was successfully updated</div>
+		
+	</div>
+</div>

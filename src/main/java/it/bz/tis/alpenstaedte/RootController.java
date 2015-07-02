@@ -11,13 +11,13 @@ import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
 import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
-import it.bz.tis.alpenstaedte.dto.UserDto;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,7 +34,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,9 +51,6 @@ public class RootController {
 	@Autowired
 	private FileSystemResource documentFolder;
 	
-	@Autowired
-	private PasswordEncoder encoder;
-	
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(value="principal")
 	public @ResponseBody ResponseEntity<Principal> getPrincipal(Principal principal){
@@ -64,13 +59,14 @@ public class RootController {
 	
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.POST, value = "create")
-    public @ResponseBody ResponseEntity<ResponseObject> create(@RequestBody NewIdeaDto dto) {
+    public @ResponseBody ResponseEntity<ResponseObject> create(@RequestBody NewIdeaDto dto,Principal principal) {
     	Set<Topic> topics = new HashSet<Topic>();
     	for(TopicDto topicDto :dto.getTopics()){
     		Topic topic = Topic.findTopicsByNameEquals(topicDto.getName()).getSingleResult();
    			topics.add(topic);
     	}
     	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals("idea").getSingleResult();
+    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
     	Idea idea = new Idea(dto.getProjectName(),dto.getProjectDesc(),topics,status);
     	Set<Funding> fundings = new HashSet<Funding>();
     	for (FundingDto fundingDto:dto.getFundings()){
@@ -81,14 +77,17 @@ public class RootController {
     		funding.persist();
     	}
     	idea.setFundings(fundings);
+    	idea.setOwner(currentUser);
     	idea.persist();
-
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.DELETE, value = "delete/{uuid}")
-    public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid) throws IOException {
+    public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid,Principal principal) throws IOException {
     	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (!idea.getOwner().equals(currentUser))
+    		return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
     	idea.remove();
     	if (documentFolder.exists()){
     		File ideaDirectory = new File(documentFolder.getPath()+"/"+uuid);
@@ -100,7 +99,7 @@ public class RootController {
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.POST, value = "update")
-    public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto) {
+    public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto,Principal principal) {
 		Set<Topic> topics = new HashSet<Topic>();
     	for(TopicDto topicDto:dto.getTopics()){
    			Topic topic = Topic.findTopicsByNameEquals(topicDto.getName()).getSingleResult();
@@ -108,10 +107,14 @@ public class RootController {
     	}
     	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals(dto.getStatus()).getSingleResult();
     	Idea idea = Idea.findIdeasByUuidEquals(dto.getUuid()).getSingleResult();
+    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (!idea.getOwner().equals(currentUser))
+    		return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
     	idea.setName(dto.getProjectName());
     	idea.setDescription(dto.getProjectDesc());
     	idea.setStatus(status);
     	idea.setTopics(topics);
+    	idea.setUpdated_on(new Date());
     	idea.setFileNames(dto.getFileNames());
     	Set<Funding> fundings = new HashSet<Funding>();
     	for (FundingDto fDto : dto.getFundings()){
@@ -140,7 +143,8 @@ public class RootController {
     @RequestMapping(method = RequestMethod.GET, value = "ideas")
     public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas(Principal principal) {
     	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
-    	for (Idea idea: Idea.findAllIdeas("name","ASC")){
+    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	for (Idea idea: Idea.findIdeasByOwner(currentUser,"name","ASC").getResultList()){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
     		list.add(dto);
@@ -329,32 +333,4 @@ public class RootController {
     	return new ResponseEntity<Object>(HttpStatus.OK);
     }
 	
-	@Secured(value={"ROLE_ADMIN"})
-    @RequestMapping(method = RequestMethod.GET, value = "user")
-    public @ResponseBody ResponseEntity<List<UserDto>> getUser() {
-    	List<UserDto> list = new ArrayList<UserDto>();
-    	for (AlpsUser user: AlpsUser.findAllAlpsUsers("name","asc")){
-    		UserDto dto = new UserDto();
-    		dto.setEmail(user.getEmail());
-    		list.add(dto);
-    	}
-    	return new ResponseEntity<List<UserDto>>(list,HttpStatus.OK);
-    }
-	@Secured(value={"ROLE_ADMIN"})
-    @RequestMapping(method = RequestMethod.DELETE, value = "user")
-    public @ResponseBody ResponseEntity<Object> deleteUser(@RequestParam("email")String email) {
-    	AlpsUser user = AlpsUser.findAlpsUsersByEmailEquals(email).getSingleResult();
-    	user.remove();
-    	return new ResponseEntity<Object>(HttpStatus.OK);
-    }
-	@Secured(value={"ROLE_ADMIN"})
-    @RequestMapping(method = RequestMethod.POST, value = "user")
-    public @ResponseBody void createUser(@RequestBody UserDto dto) {
-    	AlpsUser user = new AlpsUser();
-    	user.setEmail(dto.getEmail());
-    	String randomPassword = RandomStringUtils.randomAlphanumeric(5);
-		user.setPassword(encoder.encode(randomPassword));
-    	user.setRole("USER");
-    	user.persist();
-    }
 }

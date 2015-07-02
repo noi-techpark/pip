@@ -26,10 +26,15 @@
 			    {{funding.description}}
 			  </a>
 			</div>
-		<div class="modal-footer">
-			<a type="button" href="#/" class="btn">Back</a>
-			<button type="submit" class="btn btn-primary">Comment</button>
-		</div>
-		<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+			<div class="modal-footer">
+				<div class="form-group">
+					<textarea ng-model="comment.text" class="form-control" rows="3" required="required" />
+				</div>
+				<div class="form-group">
+					<a type="button" href="#/" class="btn">Back</a>
+					<button type="submit" class="btn btn-primary">Comment</button>
+				</div>
+			</div>
+			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 	</div>
 </div>

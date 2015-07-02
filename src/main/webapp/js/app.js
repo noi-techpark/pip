@@ -17,7 +17,6 @@ alps.run(function($rootScope,$http) {
 	var self= $rootScope;
 	self.getPrincipal = function(){
 		$http.get("principal").success(function(data, status, headers, config){
-			console.log(data);
 			self.principal = data;
 			self.isAdmin=self.checkRole("ADMIN");
 		});
@@ -51,6 +50,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 		controller: 'TopicCtrl'
 	}).when('/user', {
 		templateUrl: 'partials/user.html',
+		controller: 'UserCtrl'
+	}).when('/profile', {
+		templateUrl: 'partials/profile.html',
 		controller: 'UserCtrl'
 	}).otherwise({
 		redirectTo: '/'
@@ -328,7 +330,15 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 		});
 		if (!isContained)
 			self.idea.topics.push(topic);
-}
+	}
+	self.comment = function(){
+		var comment;
+		$http.post("comment",self.comment).success(function(response,status,headers,config){
+
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {
 	var self = $scope;
@@ -356,7 +366,7 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 		});
 	}
 });
-alps.controller('UserCtrl', function ($scope,$http) {
+alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 	var self = $scope;
 	self.createUser = function(){
 		$http.post("user",self.user).success(function(response,status,headers,config){
@@ -374,10 +384,45 @@ alps.controller('UserCtrl', function ($scope,$http) {
 		});
 	}
 	self.getUser = function(){
-		$http.get("user").success(function(response,status,headers,config){
+		$http.get("user/list").success(function(response,status,headers,config){
 			self.users = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
+	}
+	self.updateProfile = function(){
+		$http.put("user",self.user).success(function(response,status,headers,config){
+			self.getUser();
+			self.ideaSaved=true;
+			$timeout(function(){self.ideaSaved=false},2000);
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.getProfile = function(){
+		$http.get("user").success(function(response,status,headers,config){
+			self.user = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.isTopic = function(topic){
+		var value = false;
+		$.each(self.user.topics,function(index,object){
+			if (object.name==topic)
+				value = true;
+		});
+		return value;
+	}
+	self.toggleTopic = function(topic){
+		var isContained = false;
+		$.each(self.user.topics,function(index,object){
+			if (object.name==topic.name){
+				self.user.topics.splice(index,1);
+				isContained=true;
+			}
+		});
+		if (!isContained)
+			self.user.topics.push(topic);
 	}
 });

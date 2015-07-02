@@ -4,10 +4,13 @@
 package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Funding;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.ProjectStatus;
 import it.bz.tis.alpenstaedte.Topic;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 privileged aspect Idea_Roo_JavaBean {
@@ -74,6 +77,30 @@ privileged aspect Idea_Roo_JavaBean {
     
     public void Idea.setOwner(AlpsUser owner) {
         this.owner = owner;
+    }
+    
+    public List<Comment> Idea.getComments() {
+        return this.comments;
+    }
+    
+    public void Idea.setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+    
+    public Date Idea.getCreated_on() {
+        return this.created_on;
+    }
+    
+    public void Idea.setCreated_on(Date created_on) {
+        this.created_on = created_on;
+    }
+    
+    public Date Idea.getUpdated_on() {
+        return this.updated_on;
+    }
+    
+    public void Idea.setUpdated_on(Date updated_on) {
+        this.updated_on = updated_on;
     }
     
 }
