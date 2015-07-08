@@ -3,6 +3,7 @@
 
 package it.bz.tis.alpenstaedte.dto;
 
+import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.IdeaDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
@@ -65,6 +66,14 @@ privileged aspect IdeaDto_Roo_JavaBean {
     
     public void IdeaDto.setFileNames(Set<String> fileNames) {
         this.fileNames = fileNames;
+    }
+    
+    public List<CommentDto> IdeaDto.getComments() {
+        return this.comments;
+    }
+    
+    public void IdeaDto.setComments(List<CommentDto> comments) {
+        this.comments = comments;
     }
     
 }

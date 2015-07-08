@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.ManyToMany;
 
@@ -16,6 +17,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(finders={"findAlpsUsersByEmailEquals"})
 public class AlpsUser {
+	private String uuid = UUID.randomUUID().toString();
 	@Email
 	private String email;
 	private String password;

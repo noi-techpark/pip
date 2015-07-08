@@ -11,6 +11,14 @@ import java.util.Set;
 
 privileged aspect AlpsUser_Roo_JavaBean {
     
+    public String AlpsUser.getUuid() {
+        return this.uuid;
+    }
+    
+    public void AlpsUser.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
     public String AlpsUser.getEmail() {
         return this.email;
     }

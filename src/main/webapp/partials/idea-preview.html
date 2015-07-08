@@ -6,6 +6,7 @@
 			</div>
 		</div>
 		<div class="idea">
+				<a ng-show="principal.name==idea.owner.name" class="btn pull-right" href="#/ideas/{{idea.uuid}}"><span class="glyphicon glyphicon-edit"></span></a>
 				<h1>{{idea.projectName}}</h1>
 				<p class="collumnsx2">{{idea.projectDesc}}</p>
 				<div class="form-group" ng-show="idea.fileNames.length>0" >
@@ -27,14 +28,31 @@
 			  </a>
 			</div>
 			<div class="modal-footer">
-				<div class="form-group">
-					<textarea ng-model="comment.text" class="form-control" rows="3" required="required" />
+				<div class="form-group row">
+					<img class="col-md-1 profile-pic" src="user/profile-pic" />
+					<div class="col-md-11">
+						<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
+					</div> 
 				</div>
 				<div class="form-group">
 					<a type="button" href="#/" class="btn">Back</a>
-					<button type="submit" class="btn btn-primary">Comment</button>
+					<button type="button" ng-click="comment()" class="btn btn-primary">Comment</button>
 				</div>
 			</div>
-			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+		<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
+			<div class="row">
+				<img class="col-md-1 profile-pic" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
+				<div class="col-md-11"> 
+					<h5>
+						<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
+						<small>{{comment.created_on|date}}</small>
+					</h5>
+					<p>{{comment.text}}</p>
+				</div>
+			</div>
+			
+			<hr/>
+		</div>
+		<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 	</div>
 </div>

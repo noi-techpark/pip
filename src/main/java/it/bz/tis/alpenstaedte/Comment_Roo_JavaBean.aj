@@ -5,6 +5,7 @@ package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Comment;
+import it.bz.tis.alpenstaedte.Idea;
 import java.util.Date;
 
 privileged aspect Comment_Roo_JavaBean {
@@ -23,6 +24,14 @@ privileged aspect Comment_Roo_JavaBean {
     
     public void Comment.setOwner(AlpsUser owner) {
         this.owner = owner;
+    }
+    
+    public Idea Comment.getIdea() {
+        return this.idea;
+    }
+    
+    public void Comment.setIdea(Idea idea) {
+        this.idea = idea;
     }
     
     public Date Comment.getCreated_on() {

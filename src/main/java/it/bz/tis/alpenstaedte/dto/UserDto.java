@@ -15,6 +15,7 @@ public class UserDto {
 	private String surname;
 	private String phone;
 	private Set<TopicDto> topics = new HashSet<TopicDto>();
+	private String uuid;
 	
 	public UserDto() {
 	}

@@ -1,5 +1,6 @@
 package it.bz.tis.alpenstaedte.dto;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ public class IdeaDto {
 	private List<FundingDto> fundings;
 	private String status;
 	private Set<String> fileNames = new HashSet<String>();
+	private List<CommentDto> comments = new ArrayList<CommentDto>();
 	
 	public IdeaDto() {
 	}

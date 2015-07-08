@@ -29,12 +29,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Profile pic</label>
 					<div class="col-sm-4">
-						<button ngf-select="true" ng-model="profilepic" type="button" ngf-multiple="false" >Upload files</button>
-						<p class="help-block">Only png and jpg files are supported</p>
-
+						<button ngf-select="true" ng-model="profilepic" type="button" ngf-accept="'.png,.jpg'"  ngf-multiple="false" ngf-max-size='10485760'>Upload files</button>
+						<p class="help-block">Only png and jpg files &lt;10MB  are supported</p>
+						<p>{{profilepic[0].name}}</p>
 					</div>
 					<div class="col-sm-6">
-						<img ngf-src="{{profilepic}}"  ngf-default-src="" ngf-accept="'.png,.jpg'" /> 
+						<img class="profile-pic" ngf-src="profilepic[0]"  ngf-default-src="user/profile-pic" ngf-accept="'.png,.jpg'" /> 
 					</div>
 				</div>
 				<div class="form-group">

@@ -19,7 +19,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findIdeasByUuidEquals","findIdeasByOwner" })
+@RooJpaActiveRecord(finders = { "findIdeasByUuidEquals","findIdeasByOwner","findIdeasByStatus" })
 public class Idea {
 
     private String name;
@@ -44,7 +44,7 @@ public class Idea {
     @ManyToOne
     private AlpsUser owner;
     
-    @OneToMany(cascade = CascadeType.ALL,mappedBy="owner")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy="idea")
     private List<Comment> comments;
     private Date created_on;
     private Date updated_on;

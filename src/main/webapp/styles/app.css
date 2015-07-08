@@ -44,3 +44,7 @@
 .idea{
 	margin:30px 0;
 }
+.profile-pic{
+	max-width: 150px;
+	max-height: 220px;
+}

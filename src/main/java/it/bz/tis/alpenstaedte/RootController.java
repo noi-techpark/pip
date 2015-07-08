@@ -1,7 +1,6 @@
 package it.bz.tis.alpenstaedte;
+import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
-import it.bz.tis.alpenstaedte.dto.Graph2Dto;
-import it.bz.tis.alpenstaedte.dto.GraphDto;
 import it.bz.tis.alpenstaedte.dto.GraphTopicDto;
 import it.bz.tis.alpenstaedte.dto.GraphTopicRootDto;
 import it.bz.tis.alpenstaedte.dto.IdeaDto;
@@ -11,6 +10,7 @@ import it.bz.tis.alpenstaedte.dto.ReducedIdeaDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
 import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
+import it.bz.tis.alpenstaedte.util.DtoCastUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -153,55 +153,44 @@ public class RootController {
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data")
-    public @ResponseBody ResponseEntity <GraphDto> getGraphData() {
+    public @ResponseBody ResponseEntity <GraphTopicRootDto> getGraphData() {
     	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
-    	List<Topic> topics = Topic.findAllTopics();
-    	GraphDto graph = new GraphDto();
+    	GraphTopicRootDto root = new GraphTopicRootDto();
+
     	for (ProjectStatus status:statuses){
-    		StatusIdeasDto statusDto = new StatusIdeasDto();
-    		for (Topic topic:topics){
-    			GraphTopicDto topicDto = new GraphTopicDto();
-        		List<Idea> ideas = Idea.findIdeaByStatusAndTopicsContainsTopic(status,topic);
-        		topicDto.setName(topic.getName());
-        		for(Idea idea:ideas){
-        			ReducedIdeaDto dto = new ReducedIdeaDto();
-        			dto.setName(idea.getName());
-        			dto.setUuid(idea.getUuid());
-        			topicDto.getChildren().add(dto);
-        		}
-        		if(!topicDto.getChildren().isEmpty())
-        			statusDto.getChildren().add(topicDto);
-    		}
+    		ProjectStatusDto statusDto = new ProjectStatusDto();
     		statusDto.setName(status.getName());
-    		graph.getChildren().add(statusDto);
+    		List<Idea> ideas = Idea.findIdeasByStatus(status,"name","ASC").getResultList();
+    		for(Idea idea:ideas){
+				ReducedIdeaDto dto = new ReducedIdeaDto();
+				dto.setName(idea.getName());
+				dto.setUuid(idea.getUuid());
+				statusDto.getChildren().add(dto);
+			}
+    		if (!statusDto.getChildren().isEmpty())
+    			root.getChildren().add(statusDto);
     	}
-    	return new ResponseEntity<GraphDto>(graph,HttpStatus.OK);
+    	return new ResponseEntity<GraphTopicRootDto>(root,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data-topics")
-    public @ResponseBody ResponseEntity <Graph2Dto> getGraphDataByTopics() {
-    	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
+    public @ResponseBody ResponseEntity <StatusIdeasDto> getGraphDataByTopics() {
     	List<Topic> topics = Topic.findAllTopics();
-    	Graph2Dto graph = new Graph2Dto();
+    	StatusIdeasDto graph = new StatusIdeasDto();
     	for (Topic topic:topics){
-			GraphTopicRootDto topicDto = new GraphTopicRootDto();
+    		GraphTopicDto topicDto = new GraphTopicDto();
 			topicDto.setName(topic.getName());
-    		for (ProjectStatus status:statuses){
-    			ProjectStatusDto statusDto = new ProjectStatusDto();
-    			statusDto.setName(status.getName());
-    			List<Idea> ideas = Idea.findIdeaByStatusAndTopicsContainsTopic(status,topic);
-    			for(Idea idea:ideas){
-    				ReducedIdeaDto dto = new ReducedIdeaDto();
-    				dto.setName(idea.getName());
-    				dto.setUuid(idea.getUuid());
-    				statusDto.getChildren().add(dto);
-    			}
-    			if(!statusDto.getChildren().isEmpty())
-    				topicDto.getChildren().add(statusDto);
-    		}
-    		graph.getChildren().add(topicDto);
+			List<Idea> ideas = Idea.findIdeaByContainsTopic(topic);
+			for(Idea idea:ideas){
+				ReducedIdeaDto dto = new ReducedIdeaDto();
+				dto.setName(idea.getName());
+				dto.setUuid(idea.getUuid());
+				topicDto.getChildren().add(dto);
+			}
+			if (!topicDto.getChildren().isEmpty())
+    			graph.getChildren().add(topicDto);	
     	}
-    	return new ResponseEntity<Graph2Dto>(graph,HttpStatus.OK);
+    	return new ResponseEntity<StatusIdeasDto>(graph,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(method = RequestMethod.GET, value = "idea")
@@ -209,7 +198,8 @@ public class RootController {
    		Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
    		List<Funding> possibleFundings = Funding.findFundingsByIdea(idea).getResultList();
    		List<FundingDto> fundingsDto = castToDto(possibleFundings);
-   		Set<TopicDto> topics = castToDtos(idea.getTopics());
+   		Set<TopicDto> topics = DtoCastUtil.cast(idea.getTopics());
+   		List<CommentDto> comments = DtoCastUtil.cast(idea.getComments());
    		IdeaDto dto = new IdeaDto();
    		dto.setUuid(idea.getUuid());
    		dto.setProjectName(idea.getName());
@@ -217,6 +207,7 @@ public class RootController {
    		dto.setStatus(idea.getStatus().getName());
    		dto.setTopics(topics);
    		dto.setFundings(fundingsDto);
+   		dto.setComments(comments);
    		dto.getFileNames().addAll(idea.getFileNames());
     	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
     }
@@ -240,7 +231,7 @@ public class RootController {
     public @ResponseBody ResponseEntity<ResponseObject> uploadFiles(@RequestParam("file")List<MultipartFile> files,@RequestParam("uuid")String uuid,@RequestParam(value="alreadySavedFiles",required=false)String currentFiles) throws JsonParseException, JsonMappingException, IOException {
 		if (documentFolder.exists()){
 			Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
-			File directory = new File(documentFolder.getPath()+"/"+uuid);
+			File directory = new File(documentFolder.getPath()+"/attachements/"+uuid);
 			directory.mkdirs();
 			List<String> current = new ArrayList<String>();
 			if (currentFiles != null){
@@ -267,11 +258,12 @@ public class RootController {
 		}
     	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
     }
+
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
 	@RequestMapping(method = RequestMethod.GET, value = "files/{uuid}/{file}/{format}")
     public  void getFile(@PathVariable("uuid") String uuid,@PathVariable("file") String fileString,@PathVariable("format") String format,HttpServletResponse response) throws IOException{
 		if(documentFolder.exists()){
-			File file = new File(documentFolder.getFile(),uuid+"/"+fileString+"."+format);
+			File file = new File(documentFolder.getFile(),"attachements/"+uuid+"/"+fileString+"."+format);
 			response.setHeader("Content-Disposition", "attachment; filename=" + "\"" + file.getName()+ "\"");
 			IOUtils.copy(new FileInputStream(file), response.getOutputStream());
 		}
@@ -331,6 +323,18 @@ public class RootController {
     	}
     	topic.remove();
     	return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_USER"})
+    @RequestMapping(method = RequestMethod.POST, value = "idea/comment/{uuid}")
+    public @ResponseBody ResponseEntity<CommentDto> comment(@RequestBody String commentString,@PathVariable("uuid")String ideaId,Principal principal) {
+    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+		Idea idea = Idea.findIdeasByUuidEquals(ideaId).getSingleResult();
+		Comment comment = new Comment();
+		comment.setText(commentString);
+		comment.setOwner(currentUser);
+		comment.setIdea(idea);
+		comment.persist();
+		return new ResponseEntity<CommentDto>(DtoCastUtil.cast(comment),HttpStatus.OK);
     }
 	
 }

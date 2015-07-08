@@ -17,6 +17,9 @@ public class Comment {
 	private String text;
 	@ManyToOne
 	private AlpsUser owner;
+	
+	@ManyToOne
+	private Idea idea;
 	private Date created_on;
 	private Date updated_on;
 	

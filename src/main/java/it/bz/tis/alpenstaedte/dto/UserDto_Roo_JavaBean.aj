@@ -58,4 +58,12 @@ privileged aspect UserDto_Roo_JavaBean {
         this.topics = topics;
     }
     
+    public String UserDto.getUuid() {
+        return this.uuid;
+    }
+    
+    public void UserDto.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
 }

@@ -46,7 +46,7 @@
 					<ul>
 						<li ng-repeat="file in idea.fileNames |orderBy:'file' ">{{file}} <a class="btn" ng-click="idea.fileNames.splice($index,1)"><span class="glyphicon glyphicon-remove"></span></a></li>
 					</ul> 
-					<button ngf-select="true" ng-model="files" type="button" ngf-multiple="true" >Upload files</button>
+					<button ngf-select="true" ng-model="files" type="button" ngf-multiple="true" ngf-max-size='10485760' >Upload files</button>
 					<p class="help-block">to select multiple files, hold down the CTRL or SHIFT key while selecting</p>
 					<div ng-if="files.length>0">
 						<label> Files:</label>

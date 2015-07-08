@@ -59,7 +59,7 @@ alps.config(['$routeProvider',function($routeProvider) {
 	});
 }]);
 
-alps.controller('RootCtrl', function ($scope,$http,Upload) {
+alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 	var self = $scope;
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
 	self.me = "http://localhost:8080/alpenstaedte"
@@ -68,6 +68,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload) {
 			if (self.files)
 				self.uploadFiles(response.data);
             $('#idea-modal').modal('hide');
+            $location.path("ideas/"+response.data);
 
     	self.idea = {projectName:'',projectDesc:'',topics:[],fundings:[]};
 
@@ -332,12 +333,13 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			self.idea.topics.push(topic);
 	}
 	self.comment = function(){
-		var comment;
-		$http.post("comment",self.comment).success(function(response,status,headers,config){
-
-		}).error(function(data, status, headers, config) {
-			console.log(status);
-		});
+		if (self.commentText != undefined && self.commentText.length>0){
+			$http.post("idea/comment/"+self.idea.uuid,self.commentText).success(function(response,status,headers,config){
+				self.idea.comments.push(response);
+			}).error(function(data, status, headers, config) {
+				console.log(status);
+			});
+		}
 	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {
@@ -345,6 +347,7 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 	self.createTopic = function(){
 		$http.post("topics",self.newTopic).success(function(response,status,headers,config){
 			self.getTopics();
+			self.newTopic=undefined;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -360,7 +363,6 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 	self.updateTopic = function(topic){
 		$http.put("topics",topic).success(function(response,status,headers,config){
 			self.getTopics();
-			self.newTopic=undefined;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -392,11 +394,24 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 	}
 	self.updateProfile = function(){
 		$http.put("user",self.user).success(function(response,status,headers,config){
-			self.getUser();
-			self.ideaSaved=true;
+			if (self.profilepic)
+			self.uploadProfilePic();
 			$timeout(function(){self.ideaSaved=false},2000);
 		}).error(function(data, status, headers, config) {
 			console.log(status);
+		});
+	}
+	self.uploadProfilePic = function(){
+		Upload.upload({	
+			url:self.me + '/user/upload-profile-pic',
+			file:self.profilepic,
+			sendFieldsAs:'blob-json'
+		}).progress(function(evt){
+			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
+		}).success(function(data, status, headers, config){
+			  self.profilepic = undefined;
+			self.getUser();
+			self.ideaSaved=true;
 		});
 	}
 	self.getProfile = function(){

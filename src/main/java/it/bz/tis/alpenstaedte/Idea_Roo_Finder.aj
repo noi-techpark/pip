@@ -5,6 +5,7 @@ package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Idea;
+import it.bz.tis.alpenstaedte.ProjectStatus;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -15,6 +16,14 @@ privileged aspect Idea_Roo_Finder {
         EntityManager em = Idea.entityManager();
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM Idea AS o WHERE o.owner = :owner", Long.class);
         q.setParameter("owner", owner);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long Idea.countFindIdeasByStatus(ProjectStatus status) {
+        if (status == null) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = Idea.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM Idea AS o WHERE o.status = :status", Long.class);
+        q.setParameter("status", status);
         return ((Long) q.getSingleResult());
     }
     
@@ -46,6 +55,29 @@ privileged aspect Idea_Roo_Finder {
         }
         TypedQuery<Idea> q = em.createQuery(queryBuilder.toString(), Idea.class);
         q.setParameter("owner", owner);
+        return q;
+    }
+    
+    public static TypedQuery<Idea> Idea.findIdeasByStatus(ProjectStatus status) {
+        if (status == null) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = Idea.entityManager();
+        TypedQuery<Idea> q = em.createQuery("SELECT o FROM Idea AS o WHERE o.status = :status", Idea.class);
+        q.setParameter("status", status);
+        return q;
+    }
+    
+    public static TypedQuery<Idea> Idea.findIdeasByStatus(ProjectStatus status, String sortFieldName, String sortOrder) {
+        if (status == null) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = Idea.entityManager();
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM Idea AS o WHERE o.status = :status");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                queryBuilder.append(" ").append(sortOrder);
+            }
+        }
+        TypedQuery<Idea> q = em.createQuery(queryBuilder.toString(), Idea.class);
+        q.setParameter("status", status);
         return q;
     }
     
