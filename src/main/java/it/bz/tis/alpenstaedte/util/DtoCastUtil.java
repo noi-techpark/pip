@@ -53,7 +53,7 @@ public class DtoCastUtil {
 		return dto;
 	}
 
-	private static UserDto cast(PipUser user) {
+	public static UserDto cast(PipUser user) {
 		UserDto dto = new UserDto();
 		
 		dto.setName(user.getName());

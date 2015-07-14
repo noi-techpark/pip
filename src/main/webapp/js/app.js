@@ -145,7 +145,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 		.projection(function(d) { return [d.y, d.x]; });
 
 		var svg = d3.select("#display").append("svg")
-		.attr("width", width + margin.right + margin.left)
+		.attr("width", "100%")//.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");

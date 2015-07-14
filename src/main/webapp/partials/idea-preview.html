@@ -8,6 +8,7 @@
 			</div>
 			<div class="idea">
 					<h1>{{idea.projectName}}</h1>
+					<h4><small>by {{idea.author.name}} {{idea.author.surname}} on {{idea.created_on|date}}</small></h4>
 					<p class="collumnsx2">{{idea.projectDesc}}</p>
 					<div class="form-group" ng-show="idea.fileNames.length>0" >
 						<label>Details</label>

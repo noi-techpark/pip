@@ -1,6 +1,7 @@
 package it.bz.tis.alpenstaedte.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,8 @@ public class IdeaDto {
 	private Set<String> fileNames = new HashSet<String>();
 	private List<CommentDto> comments = new ArrayList<CommentDto>();
 	private Set<OrganisazionDto> interestedOrganisazions = new HashSet<OrganisazionDto>();
+	private UserDto author;
+	private Date created_on;
 	
 	public IdeaDto() {
 	}

@@ -8,6 +8,8 @@ import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.IdeaDto;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
+import it.bz.tis.alpenstaedte.dto.UserDto;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -83,6 +85,22 @@ privileged aspect IdeaDto_Roo_JavaBean {
     
     public void IdeaDto.setInterestedOrganisazions(Set<OrganisazionDto> interestedOrganisazions) {
         this.interestedOrganisazions = interestedOrganisazions;
+    }
+    
+    public UserDto IdeaDto.getAuthor() {
+        return this.author;
+    }
+    
+    public void IdeaDto.setAuthor(UserDto author) {
+        this.author = author;
+    }
+    
+    public Date IdeaDto.getCreated_on() {
+        return this.created_on;
+    }
+    
+    public void IdeaDto.setCreated_on(Date created_on) {
+        this.created_on = created_on;
     }
     
 }

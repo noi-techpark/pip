@@ -245,8 +245,10 @@ public class RootController {
    		dto.setTopics(topics);
    		dto.setFundings(fundingsDto);
    		dto.setComments(comments);
+   		dto.setAuthor(DtoCastUtil.cast(idea.getOwner()));
    		dto.setInterestedOrganisazions(DtoCastUtil.castOrgs(new ArrayList<Organisazion>(idea.getInterestedOrganisations())));
    		dto.getFileNames().addAll(idea.getFileNames());
+   		dto.setCreated_on(idea.getCreated_on());
     	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
     }
 
