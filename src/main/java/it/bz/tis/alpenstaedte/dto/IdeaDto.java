@@ -19,6 +19,7 @@ public class IdeaDto {
 	private String status;
 	private Set<String> fileNames = new HashSet<String>();
 	private List<CommentDto> comments = new ArrayList<CommentDto>();
+	private Set<OrganisazionDto> interestedOrganisazions = new HashSet<OrganisazionDto>();
 	
 	public IdeaDto() {
 	}

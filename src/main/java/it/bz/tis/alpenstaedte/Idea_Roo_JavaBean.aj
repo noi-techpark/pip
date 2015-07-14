@@ -3,10 +3,11 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Funding;
 import it.bz.tis.alpenstaedte.Idea;
+import it.bz.tis.alpenstaedte.Organisazion;
+import it.bz.tis.alpenstaedte.PipUser;
 import it.bz.tis.alpenstaedte.ProjectStatus;
 import it.bz.tis.alpenstaedte.Topic;
 import java.util.Date;
@@ -71,11 +72,11 @@ privileged aspect Idea_Roo_JavaBean {
         this.fundings = fundings;
     }
     
-    public AlpsUser Idea.getOwner() {
+    public PipUser Idea.getOwner() {
         return this.owner;
     }
     
-    public void Idea.setOwner(AlpsUser owner) {
+    public void Idea.setOwner(PipUser owner) {
         this.owner = owner;
     }
     
@@ -101,6 +102,14 @@ privileged aspect Idea_Roo_JavaBean {
     
     public void Idea.setUpdated_on(Date updated_on) {
         this.updated_on = updated_on;
+    }
+    
+    public Set<Organisazion> Idea.getInterestedOrganisations() {
+        return this.interestedOrganisations;
+    }
+    
+    public void Idea.setInterestedOrganisations(Set<Organisazion> interestedOrganisations) {
+        this.interestedOrganisations = interestedOrganisations;
     }
     
 }

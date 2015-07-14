@@ -14,7 +14,7 @@ privileged aspect Idea_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager Idea.entityManager;
     
-    public static final List<String> Idea.fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "description", "uuid", "topics", "status", "fileNames", "fundings", "owner", "comments", "created_on", "updated_on");
+    public static final List<String> Idea.fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "description", "uuid", "topics", "status", "fileNames", "fundings", "owner", "comments", "created_on", "updated_on", "interestedOrganisations");
     
     public static final EntityManager Idea.entityManager() {
         EntityManager em = new Idea().entityManager;

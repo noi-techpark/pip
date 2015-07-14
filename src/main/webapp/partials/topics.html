@@ -21,7 +21,7 @@
 					<th>Color</th>
 				</thead>
 				<tbody>
-					<tr ng-repeat="topic in availableTopics | orderBy: 'name'">
+					<tr ng-repeat="topic in availableTopics | filter:textFilter | orderBy: 'name'">
 						<td><input type="text" ng-model="topic.name" ng-blur="updateTopic(topic)"></td>
 						<td  style="background-color:{{topic.color}}"><input type="text" ng-model="topic.color" ng-blur="updateTopic(topic)"></td>
 						<td><a class="btn glyphicon glyphicon-remove"  confirmed-click="deleteTopic(topic.uuid)" ng-confirm-click="Are you sure you want to delete this topic?" ></a></td>

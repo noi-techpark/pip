@@ -16,17 +16,19 @@ public class UserDto {
 	private String phone;
 	private Set<TopicDto> topics = new HashSet<TopicDto>();
 	private String uuid;
-	
+	private String role;
+	private Set<String> languageSkills = new HashSet<String>();
 	public UserDto() {
 	}
 
 	@JsonCreator
-	public UserDto(@JsonProperty("email") String email,@JsonProperty("name") String name,@JsonProperty("surname") String surname,@JsonProperty("phone") String phone,@JsonProperty("topics") Set<TopicDto> topics) {
+	public UserDto(@JsonProperty("email") String email,@JsonProperty("name") String name,@JsonProperty("surname") String surname,@JsonProperty("phone") String phone,@JsonProperty("topics") Set<TopicDto> topics,@JsonProperty("languageSkills")Set<String> languageSkills) {
 		this.email = email;
 		this.name = name;
 		this.surname = surname;
 		this.topics = topics;
 		this.phone = phone;
+		this.languageSkills= languageSkills;
 	}
 	
 }

@@ -6,6 +6,7 @@ package it.bz.tis.alpenstaedte.dto;
 import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.IdeaDto;
+import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
 import java.util.List;
 import java.util.Set;
@@ -74,6 +75,14 @@ privileged aspect IdeaDto_Roo_JavaBean {
     
     public void IdeaDto.setComments(List<CommentDto> comments) {
         this.comments = comments;
+    }
+    
+    public Set<OrganisazionDto> IdeaDto.getInterestedOrganisazions() {
+        return this.interestedOrganisazions;
+    }
+    
+    public void IdeaDto.setInterestedOrganisazions(Set<OrganisazionDto> interestedOrganisazions) {
+        this.interestedOrganisazions = interestedOrganisazions;
     }
     
 }

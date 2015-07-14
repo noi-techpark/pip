@@ -58,6 +58,7 @@
 				<a type="button" href="#/ideas" class="btn">Back</a>
 				<button type="button" class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
 				<button type="submit" class="btn btn-primary">Save changes</button>
+				<a href="#/idea/{{idea.uuid}}" class="btn btn-primary">Show</a>
 			</div>
 			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 		</form>

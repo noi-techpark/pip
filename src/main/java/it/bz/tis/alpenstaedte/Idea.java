@@ -42,19 +42,18 @@ public class Idea {
     private Set<Funding> fundings;
 
     @ManyToOne
-    private AlpsUser owner;
+    private PipUser owner;
     
     @OneToMany(cascade = CascadeType.ALL,mappedBy="idea")
     private List<Comment> comments;
-    private Date created_on;
-    private Date updated_on;
-
+    private Date created_on = new Date();
+    private Date updated_on = new Date();
+    
+    @ManyToMany
+    private Set<Organisazion> interestedOrganisations = new HashSet<Organisazion>();
     
     public Idea() {
         this.uuid = UUID.randomUUID().toString();
-        Date now =  new Date();
-        this.created_on = now;
-        this.updated_on = now;
     }
 
     public Idea(String projectName, String projectDesc, Set<Topic> topics, ProjectStatus status) {
@@ -63,9 +62,6 @@ public class Idea {
         this.description = projectDesc;
         this.topics = topics;
         this.status = status;
-        Date now =  new Date();
-        this.created_on = now;
-        this.updated_on = now;
     }
 
 	public static List<Idea> findIdeaByStatusAndTopicsContainsTopic(ProjectStatus status,

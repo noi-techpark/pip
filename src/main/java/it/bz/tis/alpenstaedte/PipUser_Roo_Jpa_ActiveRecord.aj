@@ -3,97 +3,97 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.PipUser;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 
-privileged aspect AlpsUser_Roo_Jpa_ActiveRecord {
+privileged aspect PipUser_Roo_Jpa_ActiveRecord {
     
     @PersistenceContext
-    transient EntityManager AlpsUser.entityManager;
+    transient EntityManager PipUser.entityManager;
     
-    public static final List<String> AlpsUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("uuid", "email", "password", "role", "name", "surname", "phone", "organisazions", "preferredTopics");
+    public static final List<String> PipUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("uuid", "email", "password", "role", "name", "surname", "phone", "languageSkills", "organisazions", "preferredTopics");
     
-    public static final EntityManager AlpsUser.entityManager() {
-        EntityManager em = new AlpsUser().entityManager;
+    public static final EntityManager PipUser.entityManager() {
+        EntityManager em = new PipUser().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
     
-    public static long AlpsUser.countAlpsUsers() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM AlpsUser o", Long.class).getSingleResult();
+    public static long PipUser.countPipUsers() {
+        return entityManager().createQuery("SELECT COUNT(o) FROM PipUser o", Long.class).getSingleResult();
     }
     
-    public static List<AlpsUser> AlpsUser.findAllAlpsUsers() {
-        return entityManager().createQuery("SELECT o FROM AlpsUser o", AlpsUser.class).getResultList();
+    public static List<PipUser> PipUser.findAllPipUsers() {
+        return entityManager().createQuery("SELECT o FROM PipUser o", PipUser.class).getResultList();
     }
     
-    public static List<AlpsUser> AlpsUser.findAllAlpsUsers(String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM AlpsUser o";
+    public static List<PipUser> PipUser.findAllPipUsers(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PipUser o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, AlpsUser.class).getResultList();
+        return entityManager().createQuery(jpaQuery, PipUser.class).getResultList();
     }
     
-    public static AlpsUser AlpsUser.findAlpsUser(Long id) {
+    public static PipUser PipUser.findPipUser(Long id) {
         if (id == null) return null;
-        return entityManager().find(AlpsUser.class, id);
+        return entityManager().find(PipUser.class, id);
     }
     
-    public static List<AlpsUser> AlpsUser.findAlpsUserEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM AlpsUser o", AlpsUser.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<PipUser> PipUser.findPipUserEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM PipUser o", PipUser.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
-    public static List<AlpsUser> AlpsUser.findAlpsUserEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM AlpsUser o";
+    public static List<PipUser> PipUser.findPipUserEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PipUser o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, AlpsUser.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery(jpaQuery, PipUser.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
-    public void AlpsUser.persist() {
+    public void PipUser.persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
     }
     
     @Transactional
-    public void AlpsUser.remove() {
+    public void PipUser.remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            AlpsUser attached = AlpsUser.findAlpsUser(this.id);
+            PipUser attached = PipUser.findPipUser(this.id);
             this.entityManager.remove(attached);
         }
     }
     
     @Transactional
-    public void AlpsUser.flush() {
+    public void PipUser.flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
     }
     
     @Transactional
-    public void AlpsUser.clear() {
+    public void PipUser.clear() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.clear();
     }
     
     @Transactional
-    public AlpsUser AlpsUser.merge() {
+    public PipUser PipUser.merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        AlpsUser merged = this.entityManager.merge(this);
+        PipUser merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }

@@ -19,6 +19,12 @@ alps.run(function($rootScope,$http) {
 		$http.get("principal").success(function(data, status, headers, config){
 			self.principal = data;
 			self.isAdmin=self.checkRole("ADMIN");
+			self.isManager=self.checkRole("MANAGER")||self.isAdmin;
+		});
+	}
+	self.getUser = function(){
+		$http.get("user").success(function(data, status, headers, config){
+			self.myUser = data;
 		});
 	}
 
@@ -36,9 +42,6 @@ alps.config(['$routeProvider',function($routeProvider) {
 	when('/', {
 		templateUrl: 'partials/index.html',
 		controller: 'RootCtrl'
-	}).when('/ideas', {
-		templateUrl: 'partials/ideas.html',
-		controller: 'IdeaListCtrl'
 	}).when('/ideas/:uuid', {
 		templateUrl: 'partials/idea.html',
 		controller: 'IdeaListCtrl'
@@ -72,6 +75,20 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 
     	self.idea = {projectName:'',projectDesc:'',topics:[],fundings:[]};
 
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.getMyIdeas = function(){
+		$http.get("myideas").success(function(response,status,headers,config){
+			self.ideas = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.getIdeas = function(){
+		$http.get("ideas").success(function(response,status,headers,config){
+			self.ideas = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -260,20 +277,31 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 
 alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$timeout,$location) {
 	var self = $scope;
-	self.getIdeas = function(){
-		$http.get("ideas").success(function(response,status,headers,config){
-			self.ideas = response;
+	self.checkIsOwner = function (){
+		$http.get("idea/is-owner?uuid="+self.idea.uuid).success(function(response,status,headers,config){
+			self.isOwner = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
+			self.isOwner = false;
 		});
 	}
 	self.getIdea = function(){
 		var params={uuid:$routeParams.uuid};
 		$http.get("idea?"+$.param(params)).success(function(response,status,headers,config){
 			self.idea = response;
+			self.checkIsOwner();
+			self.followsIdea();
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
+	}
+	self.followsIdea = function(){
+		var follows = false;
+		$.each(self.idea.interestedOrganisazions, function(index,value){
+			if (value.name==self.myUser.organizations[0].name)
+				follows=true;
+		});
+		self.follows =  follows;
 	}
 	self.getStatuses = function(){
 		$http.get("statuses").success(function(response,status,headers,config){
@@ -336,10 +364,25 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 		if (self.commentText != undefined && self.commentText.length>0){
 			$http.post("idea/comment/"+self.idea.uuid,self.commentText).success(function(response,status,headers,config){
 				self.idea.comments.push(response);
+				self.commentText= undefined;
 			}).error(function(data, status, headers, config) {
 				console.log(status);
 			});
 		}
+	}
+	self.follow = function(){
+		$http.get("idea/"+self.idea.uuid+"/follow").success(function(response,status,headers,config){
+			self.getIdea();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.unfollow = function(){
+		$http.get("idea/"+self.idea.uuid+"/unfollow").success(function(response,status,headers,config){
+			self.getIdea();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
 	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {
@@ -362,7 +405,6 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 	}
 	self.updateTopic = function(topic){
 		$http.put("topics",topic).success(function(response,status,headers,config){
-			self.getTopics();
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -395,7 +437,18 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 	self.updateProfile = function(){
 		$http.put("user",self.user).success(function(response,status,headers,config){
 			if (self.profilepic)
-			self.uploadProfilePic();
+				self.uploadProfilePic();
+			self.ideaSaved = true;
+			$timeout(function(){self.ideaSaved=false},2000);
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.updateOrganisazion= function(user){
+		$http.put("user/organization",user).success(function(response,status,headers,config){
+			if (self.profilepic)
+				self.uploadProfilePic();
+			self.ideaSaved = true;
 			$timeout(function(){self.ideaSaved=false},2000);
 		}).error(function(data, status, headers, config) {
 			console.log(status);
@@ -439,5 +492,47 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 		});
 		if (!isContained)
 			self.user.topics.push(topic);
+	}
+	self.promote = function(userid){
+		$http.put("user/promote",userid).success(function(){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.demote = function(userid){
+		$http.put("user/demote",userid).success(function(){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.getOrganisations = function(){
+		$http.get("user/organizations").success(function(response,status,headers,config){
+			self.organisations = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.languageSkills=["EN","DE","IT","FR","SL"];
+	self.containsLanguage = function(lang){
+		var value = false;
+		$.each(self.user.languageSkills,function(index,object){
+			if (object==lang)
+				value = true;
+		});
+		return value;
+	}
+
+	self.toggleLang = function(lang){
+		var isContained = false;
+		$.each(self.user.languageSkills,function(index,object){
+			if (object==lang){
+				self.user.languageSkills.splice(index,1);
+				isContained=true;
+			}
+		});
+		if (!isContained)
+			self.user.languageSkills.push(lang);
 	}
 });

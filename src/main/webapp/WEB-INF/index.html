@@ -24,20 +24,19 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#/">Alpenstaedte Projects</a>
+				<a class="navbar-brand" href="#/">Projects</a>
 			</div>
 	
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a href="#/" data-toggle="modal" data-target="#idea-modal" >New Project</a></li>
-					<li><a ng-show="isAdmin" href="#/user">User</a></li>
+					<li><a href="javascript:void(0)" data-toggle="modal" data-target="#idea-modal" >New Project</a></li>
+					<li><a ng-show="isManager" href="#/user">User</a></li>
 					<li><a ng-show="isAdmin" href="#/topics">Topics</a></li>
-					<li><a href="#/ideas">Projects</a></li>
 				</ul>
 				<form class="navbar-form navbar-left" role="search">
 					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Filter">
+						<input type="text" class="form-control" placeholder="Filter" ng-model="textFilter">
 					</div>
 				</form>
 				<ul class="nav navbar-nav navbar-right">

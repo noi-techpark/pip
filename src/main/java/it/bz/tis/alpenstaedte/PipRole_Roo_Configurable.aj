@@ -3,11 +3,11 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.PipRole;
 import org.springframework.beans.factory.annotation.Configurable;
 
-privileged aspect AlpsUser_Roo_Configurable {
+privileged aspect PipRole_Roo_Configurable {
     
-    declare @type: AlpsUser: @Configurable;
+    declare @type: PipRole: @Configurable;
     
 }

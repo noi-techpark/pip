@@ -51,13 +51,21 @@ public class RootController {
 	@Autowired
 	private FileSystemResource documentFolder;
 	
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN","ROLE_MANAGER"})
 	@RequestMapping(value="principal")
 	public @ResponseBody ResponseEntity<Principal> getPrincipal(Principal principal){
 		return new ResponseEntity<Principal>(principal, HttpStatus.OK);
 	}
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN","ROLE_MANAGER"})
+	@RequestMapping(value="idea/is-owner")
+	public @ResponseBody ResponseEntity<Boolean> isOwner(Principal principal,@RequestParam("uuid") String uuid){
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+    	boolean isOwner = (currentUser.getUuid().equals(idea.getOwner().getUuid()));
+		return new ResponseEntity<Boolean>(isOwner, HttpStatus.OK);
+	}
 	
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN","ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.POST, value = "create")
     public @ResponseBody ResponseEntity<ResponseObject> create(@RequestBody NewIdeaDto dto,Principal principal) {
     	Set<Topic> topics = new HashSet<Topic>();
@@ -66,7 +74,7 @@ public class RootController {
    			topics.add(topic);
     	}
     	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals("idea").getSingleResult();
-    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	Idea idea = new Idea(dto.getProjectName(),dto.getProjectDesc(),topics,status);
     	Set<Funding> fundings = new HashSet<Funding>();
     	for (FundingDto fundingDto:dto.getFundings()){
@@ -81,12 +89,12 @@ public class RootController {
     	idea.persist();
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.DELETE, value = "delete/{uuid}")
     public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid,Principal principal) throws IOException {
     	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
-    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
-    	if (!idea.getOwner().equals(currentUser))
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (!idea.getOwner().equals(currentUser) && !PipRole.ADMIN.equals(currentUser.getRole()))
     		return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
     	idea.remove();
     	if (documentFolder.exists()){
@@ -97,7 +105,7 @@ public class RootController {
     	}
     	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.POST, value = "update")
     public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto,Principal principal) {
 		Set<Topic> topics = new HashSet<Topic>();
@@ -107,7 +115,7 @@ public class RootController {
     	}
     	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals(dto.getStatus()).getSingleResult();
     	Idea idea = Idea.findIdeasByUuidEquals(dto.getUuid()).getSingleResult();
-    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	if (!idea.getOwner().equals(currentUser))
     		return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
     	idea.setName(dto.getProjectName());
@@ -139,11 +147,11 @@ public class RootController {
     	idea.merge();
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
-    @RequestMapping(method = RequestMethod.GET, value = "ideas")
-    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas(Principal principal) {
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "myideas")
+    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getMyIdeas(Principal principal) {
     	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
-    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	for (Idea idea: Idea.findIdeasByOwner(currentUser,"name","ASC").getResultList()){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
@@ -151,7 +159,36 @@ public class RootController {
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "ideas")
+    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas() {
+    	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
+    	for (Idea idea: Idea.findAllIdeas()){
+    		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
+    		dto.setUuid(idea.getUuid());
+    		list.add(dto);
+    	}
+    	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "idea/{uuid}/follow")
+    public @ResponseBody void followIdea(@PathVariable("uuid")String uuid, Principal principal) {
+    	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	Organisazion organisazion = currentUser.getOrganisazions().get(0);
+    	idea.getInterestedOrganisations().add(organisazion);
+    	idea.merge();
+    }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "idea/{uuid}/unfollow")
+    public @ResponseBody void unfollowIdea(@PathVariable("uuid")String uuid, Principal principal) {
+    	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
+		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	Organisazion organisazion = currentUser.getOrganisazions().get(0);
+    	idea.getInterestedOrganisations().remove(organisazion);
+    	idea.merge();
+    }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data")
     public @ResponseBody ResponseEntity <GraphTopicRootDto> getGraphData() {
     	List<ProjectStatus> statuses = ProjectStatus.findAllProjectStatuses();
@@ -172,7 +209,7 @@ public class RootController {
     	}
     	return new ResponseEntity<GraphTopicRootDto>(root,HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data-topics")
     public @ResponseBody ResponseEntity <StatusIdeasDto> getGraphDataByTopics() {
     	List<Topic> topics = Topic.findAllTopics();
@@ -192,12 +229,12 @@ public class RootController {
     	}
     	return new ResponseEntity<StatusIdeasDto>(graph,HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "idea")
     public @ResponseBody ResponseEntity<IdeaDto> getIdea(@RequestParam("uuid") String uuid) {
    		Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
    		List<Funding> possibleFundings = Funding.findFundingsByIdea(idea).getResultList();
-   		List<FundingDto> fundingsDto = castToDto(possibleFundings);
+   		List<FundingDto> fundingsDto = DtoCastUtil.castFundings(possibleFundings);
    		Set<TopicDto> topics = DtoCastUtil.cast(idea.getTopics());
    		List<CommentDto> comments = DtoCastUtil.cast(idea.getComments());
    		IdeaDto dto = new IdeaDto();
@@ -208,25 +245,12 @@ public class RootController {
    		dto.setTopics(topics);
    		dto.setFundings(fundingsDto);
    		dto.setComments(comments);
+   		dto.setInterestedOrganisazions(DtoCastUtil.castOrgs(new ArrayList<Organisazion>(idea.getInterestedOrganisations())));
    		dto.getFileNames().addAll(idea.getFileNames());
     	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
     }
-    private Set<TopicDto> castToDtos(Set<Topic> topics) {
-    	Set<TopicDto> dtos = new HashSet<TopicDto>();
-		for (Topic topic: topics){
-			TopicDto dto = new TopicDto(topic.getUuid(), topic.getName(), topic.getColor());
-			dtos.add(dto);
-		}
-		return dtos;
-	}
-	private List<FundingDto> castToDto(List<Funding> possibleFundings) {
-		List<FundingDto> fundings = new ArrayList<FundingDto>();
-		for (Funding funding : possibleFundings){
-			fundings.add(new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription()));
-		}
-		return fundings;
-	}
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.POST, value = "upload")
     public @ResponseBody ResponseEntity<ResponseObject> uploadFiles(@RequestParam("file")List<MultipartFile> files,@RequestParam("uuid")String uuid,@RequestParam(value="alreadySavedFiles",required=false)String currentFiles) throws JsonParseException, JsonMappingException, IOException {
 		if (documentFolder.exists()){
@@ -259,7 +283,7 @@ public class RootController {
     	return new ResponseEntity<ResponseObject>(HttpStatus.OK);
     }
 
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.GET, value = "files/{uuid}/{file}/{format}")
     public  void getFile(@PathVariable("uuid") String uuid,@PathVariable("file") String fileString,@PathVariable("format") String format,HttpServletResponse response) throws IOException{
 		if(documentFolder.exists()){
@@ -276,7 +300,7 @@ public class RootController {
     		};
     	};
 	}
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.GET, value = "statuses")
     public @ResponseBody ResponseEntity<List<String>> getStatuses() {
     	List<String> list = new ArrayList<String>();
@@ -284,7 +308,7 @@ public class RootController {
     		list.add(status.getName());
     	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
     }
-	@Secured(value={"ROLE_USER", "ROLE_ADMIN"})
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "topics")
     public @ResponseBody ResponseEntity<List<TopicDto>> getTopics() {
     	List<TopicDto> list = new ArrayList<TopicDto>();
@@ -324,10 +348,10 @@ public class RootController {
     	topic.remove();
     	return new ResponseEntity<Object>(HttpStatus.OK);
     }
-	@Secured(value={"ROLE_ADMIN","ROLE_USER"})
+	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.POST, value = "idea/comment/{uuid}")
     public @ResponseBody ResponseEntity<CommentDto> comment(@RequestBody String commentString,@PathVariable("uuid")String ideaId,Principal principal) {
-    	AlpsUser currentUser = AlpsUser.findAlpsUsersByEmailEquals(principal.getName()).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
 		Idea idea = Idea.findIdeasByUuidEquals(ideaId).getSingleResult();
 		Comment comment = new Comment();
 		comment.setText(commentString);

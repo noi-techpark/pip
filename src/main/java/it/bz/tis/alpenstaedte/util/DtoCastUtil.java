@@ -1,9 +1,13 @@
 package it.bz.tis.alpenstaedte.util;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.Funding;
+import it.bz.tis.alpenstaedte.Organisazion;
+import it.bz.tis.alpenstaedte.PipUser;
 import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Topic;
 import it.bz.tis.alpenstaedte.dto.CommentDto;
+import it.bz.tis.alpenstaedte.dto.FundingDto;
+import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 
@@ -49,12 +53,43 @@ public class DtoCastUtil {
 		return dto;
 	}
 
-	private static UserDto cast(AlpsUser user) {
+	private static UserDto cast(PipUser user) {
 		UserDto dto = new UserDto();
+		
 		dto.setName(user.getName());
 		dto.setSurname(user.getSurname());
 		dto.setUuid(user.getUuid());
+		if (user.getName()== null && user.getSurname() == null)
+			dto.setName("Anonymous");
 		return dto;
+	}
+
+
+	public static Set<OrganisazionDto> castOrgs(
+			List<Organisazion> organisazions) {
+		Set<OrganisazionDto> dtos = new HashSet<OrganisazionDto>();
+		for (Organisazion org: organisazions) {
+			OrganisazionDto dto = cast(org);
+			dtos.add(dto);
+		}
+		return dtos;
+	}
+
+	public static OrganisazionDto cast(Organisazion org) {
+		return new OrganisazionDto(org.getName());
+	}
+
+	public static List<FundingDto> castFundings(List<Funding> possibleFundings) {
+		List<FundingDto> fundings = new ArrayList<FundingDto>();
+		for (Funding funding : possibleFundings){
+			FundingDto fundingDto = cast(funding);
+			fundings.add(fundingDto);
+		}
+		return fundings;
+	}
+
+	public static FundingDto cast(Funding funding) {
+		return new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription());
 	}
 
 }

@@ -3,7 +3,7 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
+import it.bz.tis.alpenstaedte.PipUser;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,32 +11,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-privileged aspect AlpsUser_Roo_Jpa_Entity {
+privileged aspect PipUser_Roo_Jpa_Entity {
     
-    declare @type: AlpsUser: @Entity;
+    declare @type: PipUser: @Entity;
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private Long AlpsUser.id;
+    private Long PipUser.id;
     
     @Version
     @Column(name = "version")
-    private Integer AlpsUser.version;
+    private Integer PipUser.version;
     
-    public Long AlpsUser.getId() {
+    public Long PipUser.getId() {
         return this.id;
     }
     
-    public void AlpsUser.setId(Long id) {
+    public void PipUser.setId(Long id) {
         this.id = id;
     }
     
-    public Integer AlpsUser.getVersion() {
+    public Integer PipUser.getVersion() {
         return this.version;
     }
     
-    public void AlpsUser.setVersion(Integer version) {
+    public void PipUser.setVersion(Integer version) {
         this.version = version;
     }
     

@@ -3,15 +3,15 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Idea;
+import it.bz.tis.alpenstaedte.PipUser;
 import it.bz.tis.alpenstaedte.ProjectStatus;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 privileged aspect Idea_Roo_Finder {
     
-    public static Long Idea.countFindIdeasByOwner(AlpsUser owner) {
+    public static Long Idea.countFindIdeasByOwner(PipUser owner) {
         if (owner == null) throw new IllegalArgumentException("The owner argument is required");
         EntityManager em = Idea.entityManager();
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM Idea AS o WHERE o.owner = :owner", Long.class);
@@ -35,7 +35,7 @@ privileged aspect Idea_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<Idea> Idea.findIdeasByOwner(AlpsUser owner) {
+    public static TypedQuery<Idea> Idea.findIdeasByOwner(PipUser owner) {
         if (owner == null) throw new IllegalArgumentException("The owner argument is required");
         EntityManager em = Idea.entityManager();
         TypedQuery<Idea> q = em.createQuery("SELECT o FROM Idea AS o WHERE o.owner = :owner", Idea.class);
@@ -43,7 +43,7 @@ privileged aspect Idea_Roo_Finder {
         return q;
     }
     
-    public static TypedQuery<Idea> Idea.findIdeasByOwner(AlpsUser owner, String sortFieldName, String sortOrder) {
+    public static TypedQuery<Idea> Idea.findIdeasByOwner(PipUser owner, String sortFieldName, String sortOrder) {
         if (owner == null) throw new IllegalArgumentException("The owner argument is required");
         EntityManager em = Idea.entityManager();
         StringBuilder queryBuilder = new StringBuilder("SELECT o FROM Idea AS o WHERE o.owner = :owner");

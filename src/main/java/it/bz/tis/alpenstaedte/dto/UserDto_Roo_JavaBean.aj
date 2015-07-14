@@ -66,4 +66,20 @@ privileged aspect UserDto_Roo_JavaBean {
         this.uuid = uuid;
     }
     
+    public String UserDto.getRole() {
+        return this.role;
+    }
+    
+    public void UserDto.setRole(String role) {
+        this.role = role;
+    }
+    
+    public Set<String> UserDto.getLanguageSkills() {
+        return this.languageSkills;
+    }
+    
+    public void UserDto.setLanguageSkills(Set<String> languageSkills) {
+        this.languageSkills = languageSkills;
+    }
+    
 }

@@ -1,7 +1,17 @@
-<div class="container">
-	<button class="btn btn-default" type="submit" ng-click="drawTree('graph-data-topics')">By Topics</button>
-	<button class="btn btn-default" type="submit" ng-click="drawTree('graph-data')">By Project state</button>
+<div class="container" ng-init="list=false">
+	<button class="btn btn-default" type="submit" ng-click="list=false;drawTree('graph-data-topics')">By Topics</button>
+	<button class="btn btn-default" type="submit" ng-click="list=false;drawTree('graph-data')">By Project state</button>
+	<button class="btn btn-default" type="submit" ng-click="list=true;getIdeas()">All projects as List</button>
+	<button class="btn btn-default" type="submit" ng-click="getMyIdeas();list=true">My projects</button>
 </div>
-<div id="display" ng-init="drawTree()" class="container">
+<div ng-if="!list" id="display" ng-init="drawTree()" class="container">
 
+</div>
+<div ng-if="list"  class="container">
+	<div ng-init="" class="list-group" style="margin-top: 35px">
+		<a ng-repeat="idea in ideas|filter:textFilter" class="list-group-item" href="#/idea/{{idea.uuid}}">
+			<h4 class="list-group-item-heading">{{idea.projectName}}</h4>
+			<p class="list-group-item-text">{{idea.projectDesc}}</p>
+		</a>
+	</div>
 </div>

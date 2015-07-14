@@ -3,9 +3,9 @@
 
 package it.bz.tis.alpenstaedte;
 
-import it.bz.tis.alpenstaedte.AlpsUser;
 import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Idea;
+import it.bz.tis.alpenstaedte.PipUser;
 import java.util.Date;
 
 privileged aspect Comment_Roo_JavaBean {
@@ -18,11 +18,11 @@ privileged aspect Comment_Roo_JavaBean {
         this.text = text;
     }
     
-    public AlpsUser Comment.getOwner() {
+    public PipUser Comment.getOwner() {
         return this.owner;
     }
     
-    public void Comment.setOwner(AlpsUser owner) {
+    public void Comment.setOwner(PipUser owner) {
         this.owner = owner;
     }
     

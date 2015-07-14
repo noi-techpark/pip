@@ -1,33 +1,52 @@
 <div>
 	<div class="container" ng-init="getIdea()">
-		<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
-			<div class="btn-group" role="group" ng-repeat="status in statuses">
-				<a ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</a>
-			</div>
-		</div>
-		<div class="idea">
-				<a ng-show="principal.name==idea.owner.name" class="btn pull-right" href="#/ideas/{{idea.uuid}}"><span class="glyphicon glyphicon-edit"></span></a>
-				<h1>{{idea.projectName}}</h1>
-				<p class="collumnsx2">{{idea.projectDesc}}</p>
-				<div class="form-group" ng-show="idea.fileNames.length>0" >
-					<label>Details</label>
-					<ul>
-						<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me}}/files/{{idea.uuid}}/{{file.substring(0,file.indexOf('.'))}}/{{file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
-					</ul> 
+		<div class="clearfix modal-body">
+			<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
+				<div class="btn-group" role="group" ng-repeat="status in statuses">
+					<button ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</button>
 				</div>
 			</div>
+			<div class="idea">
+					<h1>{{idea.projectName}}</h1>
+					<p class="collumnsx2">{{idea.projectDesc}}</p>
+					<div class="form-group" ng-show="idea.fileNames.length>0" >
+						<label>Details</label>
+						<ul>
+							<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me}}/files/{{idea.uuid}}/{{file.substring(0,file.indexOf('.'))}}/{{file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
+						</ul> 
+					</div>
+				</div>
 			<div class="topics form-group">
-				<button type="button"  ng-repeat="topic in idea.topics" class="btn" style="margin-right:5px;background-color:{{topic.color}}">{{topic.name}}</button>
+				<button type="button" ng-repeat="topic in idea.topics" class="btn"
+					style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
 			</div>
-			<div class="form-group" ng-if="idea.fundings.length>0">
-				<label for="project-fundings">Possible funding programs</label>
+			<h3 ng-if="idea.fundings.length>0">Possible funding programs</h3>
+			<div class="list-group-item" ng-repeat="funding in idea.fundings">
+				<h4>
+					<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
+				</h4>
+				<p>{{funding.description}}</p>
 			</div>
-			<div class="list-group">
-			  <a href="{{funding.url}}" target="_blank" class="list-group-item" ng-repeat="funding in idea.fundings">
-			    {{funding.description}}
-			  </a>
+			<div class="form-group" ng-if="idea.interestedOrganisazions.length>0">
+				<h3>Interested organisations</h3>
+				<ul>
+					<li ng-repeat="org in idea.interestedOrganisazions">
+						{{org.name}}
+					</li>
+				</ul>
 			</div>
-			<div class="modal-footer">
+			<div class="pull-right" style="margin-top:20px"  ng-init="getUser();">
+				<a type="button" href="#/" class="btn">Back</a>
+				<a ng-show="isAdmin || isOwner" class="btn btn-primary" href="#/ideas/{{idea.uuid}}">Edit</a>
+				<button ng-show="!follows" class="btn btn-primary" ng-click="follow()">
+					<span >Follow</span>
+				</button>
+				<button ng-show="follows" class="btn btn-primary" ng-click="unfollow()">
+					<span >Unfollow</span>
+				</button>
+			</div>
+		</div>
+		<div class="modal-footer">
 				<div class="form-group row">
 					<img class="col-md-1 profile-pic" src="user/profile-pic" />
 					<div class="col-md-11">
@@ -35,8 +54,7 @@
 					</div> 
 				</div>
 				<div class="form-group">
-					<a type="button" href="#/" class="btn">Back</a>
-					<button type="button" ng-click="comment()" class="btn btn-primary">Comment</button>
+					<button type="button" ng-click="comment()" class="btn btn-default">Comment</button>
 				</div>
 			</div>
 		<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
@@ -45,7 +63,7 @@
 				<div class="col-md-11"> 
 					<h5>
 						<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
-						<small>{{comment.created_on|date}}</small>
+						<small>{{comment.created_on|date:'dd. MMM yyyy hh:mm'}}</small>
 					</h5>
 					<p>{{comment.text}}</p>
 				</div>
