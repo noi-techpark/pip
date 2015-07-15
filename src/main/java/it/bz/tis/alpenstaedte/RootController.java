@@ -155,6 +155,7 @@ public class RootController {
     	for (Idea idea: Idea.findIdeasByOwner(currentUser,"name","ASC").getResultList()){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
+    		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
     		list.add(dto);
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
@@ -166,6 +167,7 @@ public class RootController {
     	for (Idea idea: Idea.findAllIdeas()){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
+    		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
     		list.add(dto);
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);

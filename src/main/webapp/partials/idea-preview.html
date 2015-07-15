@@ -8,7 +8,7 @@
 			</div>
 			<div class="idea">
 					<h1>{{idea.projectName}}</h1>
-					<h4><small>by {{idea.author.name}} {{idea.author.surname}} on {{idea.created_on|date}}</small></h4>
+					<h4 ng-if="idea.author.name || idea.author.surname"><small>by <a href="#/profile/{{idea.author.uuid}}">{{idea.author.name}} {{idea.author.surname}}</a> {{idea.created_on|date}}</small></h4>
 					<p class="collumnsx2">{{idea.projectDesc}}</p>
 					<div class="form-group" ng-show="idea.fileNames.length>0" >
 						<label>Details</label>
@@ -64,7 +64,7 @@
 				<div class="col-md-11"> 
 					<h5>
 						<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
-						<small>{{comment.created_on|date:'dd. MMM yyyy hh:mm'}}</small>
+						<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
 					</h5>
 					<p>{{comment.text}}</p>
 				</div>

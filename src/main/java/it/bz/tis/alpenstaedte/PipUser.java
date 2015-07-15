@@ -20,7 +20,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders={"findPipUsersByEmailEquals"})
+@RooJpaActiveRecord(finders={"findPipUsersByEmailEquals","findPipUsersByUuidEquals"})
 @Table(name="alps_user")
 public class PipUser {
 	private String uuid = UUID.randomUUID().toString();
@@ -59,6 +59,13 @@ public class PipUser {
 		TypedQuery<PipUser> query = entityManager().createQuery("Select user from PipUser user where role=:role AND :organisazion in elements(user.organisazions)", PipUser.class);
 		query.setParameter("organisazion", organisazion);
 		query.setParameter("role", role);
+		List<PipUser> resultList = query.getResultList();
+		return resultList;
+	}
+	public static List<PipUser> findPipUserByInterestedTopic(
+			Topic topic) {
+		TypedQuery<PipUser> query = entityManager().createQuery("Select user from PipUser user where :topic in elements(user.preferredTopics)", PipUser.class);
+		query.setParameter("topic", topic);
 		List<PipUser> resultList = query.getResultList();
 		return resultList;
 	}

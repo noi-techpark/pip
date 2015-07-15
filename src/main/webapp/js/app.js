@@ -22,7 +22,7 @@ alps.run(function($rootScope,$http) {
 			self.isManager=self.checkRole("MANAGER")||self.isAdmin;
 		});
 	}
-	self.getUser = function(){
+	self.getMyUser = function(){
 		$http.get("user").success(function(data, status, headers, config){
 			self.myUser = data;
 		});
@@ -56,6 +56,12 @@ alps.config(['$routeProvider',function($routeProvider) {
 		controller: 'UserCtrl'
 	}).when('/profile', {
 		templateUrl: 'partials/profile.html',
+		controller: 'UserCtrl'
+	}).when('/profile/:uuid', {
+		templateUrl: 'partials/profile-details.html',
+		controller: 'UserCtrl'
+	}).when('/contact', {
+		templateUrl: 'partials/contact.html',
 		controller: 'UserCtrl'
 	}).otherwise({
 		redirectTo: '/'
@@ -410,8 +416,15 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 		});
 	}
 });
-alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
+alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams) {
 	var self = $scope;
+	self.getUserByTopics = function(){
+		$http.get("user/user-by-topics").success(function(response,status,headers,config){
+			self.userByTopics = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 	self.createUser = function(){
 		$http.post("user",self.user).success(function(response,status,headers,config){
 			self.getUser();
@@ -434,6 +447,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 			console.log(status);
 		});
 	}
+
 	self.updateProfile = function(){
 		$http.put("user",self.user).success(function(response,status,headers,config){
 			if (self.profilepic)
@@ -468,7 +482,10 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 		});
 	}
 	self.getProfile = function(){
-		$http.get("user").success(function(response,status,headers,config){
+		var url= "user";
+		if ($routeParams.uuid!=undefined)
+			url+='?uuid='+$routeParams.uuid;
+		$http.get(url).success(function(response,status,headers,config){
 			self.user = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);

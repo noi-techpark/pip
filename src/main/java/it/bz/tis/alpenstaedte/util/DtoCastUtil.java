@@ -55,9 +55,13 @@ public class DtoCastUtil {
 
 	public static UserDto cast(PipUser user) {
 		UserDto dto = new UserDto();
-		
-		dto.setName(user.getName());
-		dto.setSurname(user.getSurname());
+    	dto.setEmail(user.getEmail());
+    	dto.setName(user.getName());
+    	dto.setSurname(user.getSurname());
+    	dto.setPhone(user.getPhone());
+    	dto.setLanguageSkills(user.getLanguageSkills());
+    	dto.setTopics(DtoCastUtil.cast(user.getPreferredTopics()));
+    	dto.getOrganizations().add(DtoCastUtil.cast(user.getOrganisazions().get(0)));
 		dto.setUuid(user.getUuid());
 		if (user.getName()== null && user.getSurname() == null)
 			dto.setName("Anonymous");
@@ -90,6 +94,15 @@ public class DtoCastUtil {
 
 	public static FundingDto cast(Funding funding) {
 		return new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription());
+	}
+
+	public static List<UserDto> castUser(List<PipUser> users) {
+		List<UserDto> dtos = new ArrayList<UserDto>();
+		for(PipUser user:users){
+			UserDto userDto = cast(user);
+			dtos.add(userDto);
+		}
+		return dtos;
 	}
 
 }

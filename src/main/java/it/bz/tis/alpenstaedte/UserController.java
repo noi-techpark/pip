@@ -1,6 +1,7 @@
 package it.bz.tis.alpenstaedte;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
+import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 import it.bz.tis.alpenstaedte.util.DALCastUtil;
 import it.bz.tis.alpenstaedte.util.DtoCastUtil;
@@ -9,8 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -58,6 +61,7 @@ public class UserController {
     		UserDto dto = new UserDto();
     		dto.setEmail(user.getEmail());
     		dto.setRole(user.getRole());
+        	dto.setUuid(user.getUuid());
     		Set<OrganisazionDto> organisations = new HashSet<OrganisazionDto>();
     		OrganisazionDto organ = DtoCastUtil.cast(user.getOrganisazions().get(0));
     		organisations.add(organ);
@@ -68,16 +72,13 @@ public class UserController {
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<UserDto> getUser(Principal principal) {
-    	PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
-    	UserDto dto = new UserDto();
-    	dto.setEmail(user.getEmail());
-    	dto.setName(user.getName());
-    	dto.setSurname(user.getSurname());
-    	dto.setPhone(user.getPhone());
-    	dto.setLanguageSkills(user.getLanguageSkills());
-    	dto.setTopics(DtoCastUtil.cast(user.getPreferredTopics()));
-    	dto.getOrganizations().add(DtoCastUtil.cast(user.getOrganisazions().get(0)));
+    public @ResponseBody ResponseEntity<UserDto> getUser(Principal principal,@RequestParam(value="uuid",required=false)String uuid) {
+    	PipUser user;
+    	if(uuid!=null)
+    		user = PipUser.findPipUsersByUuidEquals(uuid).getSingleResult();
+    	else
+    		user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	UserDto dto = DtoCastUtil.cast(user);
     	return new ResponseEntity<UserDto>(dto,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
@@ -210,5 +211,18 @@ public class UserController {
 		user.getOrganisazions().clear();
 		user.getOrganisazions().add(organisazion);
 		user.merge();
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
+    @RequestMapping(method = RequestMethod.GET,value="user-by-topics")
+    public @ResponseBody ResponseEntity<Map<String,List<UserDto>>> getUserByTopics(Principal principal) {
+		PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+		Map<String,List<UserDto>> userByTopics = new HashMap<String, List<UserDto>>();
+		for (Topic topic: user.getPreferredTopics()){
+			List<PipUser> userByInterestedTopic = PipUser.findPipUserByInterestedTopic(topic);
+			TopicDto topicDto = DtoCastUtil.cast(topic);
+			List<UserDto> userDto = DtoCastUtil.castUser(userByInterestedTopic);
+			userByTopics.put(topicDto.getName(), userDto);
+		}
+    	return new ResponseEntity<Map<String,List<UserDto>>>(userByTopics,HttpStatus.OK);
     }
 }
