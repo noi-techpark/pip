@@ -12,7 +12,7 @@
 				<label class="sr-only">Organisation</label>
 				 
 				<select ng-model="user.organizations[0]" class="form-control" required="required">
-					<option  ng-repeat="org in organisations">{{org.name}}</option>
+					<option  ng-repeat="org in organisations|orderBy:'name'">{{org.name}}</option>
 				</select>
 			</div>
 			<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new user</button>

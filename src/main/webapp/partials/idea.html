@@ -1,6 +1,6 @@
 <div ng-controller="IdeaListCtrl">
 	<div class="container" ng-init="getIdea()">
-		<form ng-submit="updateIdea()">
+		<form ng-submit="updateIdea()" name="projectidea" novalidate>
 			<div class="modal-body">
 				<div class="form-group">
 					<label>Project status</label>
@@ -12,11 +12,19 @@
 				</div>
 				<div class="form-group">
 					<label for="project-name">Project name</label> 
-					<input type="text" class="form-control" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required"/>
+					<input type="text" class="form-control" name="name" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required" ng-maxlength="200"/>
+					<div ng-messages="projectidea.name.$error">
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="maxlength" class="alert alert-warning">The title shouldn't be longer than 200 characters</div>
+					</div>
 				</div>
 				<div class="form-group">
 					<label for="project-desc">Project description</label> 
-					<textarea id ="project-desc" ng-model="idea.projectDesc" class="form-control" rows="3" placeholder="Description" required="required"></textarea>
+					<textarea id ="project-desc" ng-model="idea.projectDesc" name="description" class="form-control" rows="3" placeholder="Description" required="required" ng-minlength="8"></textarea>
+					<div ng-messages="projectidea.description.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe your Project with at least a sentence</div>
+					</div>
 				</div>
 				<div class="form-group" ng-init="getTopics()">
 					<label for="project-topics">Associated Topics</label> 

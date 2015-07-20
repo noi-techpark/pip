@@ -11,6 +11,7 @@ import it.bz.tis.alpenstaedte.dto.ResponseObject;
 import it.bz.tis.alpenstaedte.dto.StatusIdeasDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.util.DtoCastUtil;
+import it.bz.tis.alpenstaedte.util.MailingUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,6 +52,9 @@ public class RootController {
 	@Autowired
 	private FileSystemResource documentFolder;
 	
+	@Autowired
+	private MailingUtil mailingUtil;
+	
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN","ROLE_MANAGER"})
 	@RequestMapping(value="principal")
 	public @ResponseBody ResponseEntity<Principal> getPrincipal(Principal principal){
@@ -87,8 +91,13 @@ public class RootController {
     	idea.setFundings(fundings);
     	idea.setOwner(currentUser);
     	idea.persist();
+		Set<PipUser> users = PipUser.getUserByInterestedTopics(idea);
+		users.remove(currentUser);
+		String[] mails = PipUser.getMailsFromUsers(users);
+    	mailingUtil.sendCreationMail(idea,mails);
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
+
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.DELETE, value = "delete/{uuid}")
     public @ResponseBody ResponseEntity<ResponseObject> delete(@PathVariable("uuid") String uuid,Principal principal) throws IOException {
@@ -145,6 +154,10 @@ public class RootController {
     	}
     	idea.setFundings(fundings);
     	idea.merge();
+		Set<PipUser> users = PipUser.getUserByOwnerAndCommenterAndOrganisazion(idea);
+		users.remove(currentUser);
+		String[] mails = PipUser.getMailsFromUsers(users);
+    	mailingUtil.sendUpdateMail(idea,mails);
     	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
@@ -362,6 +375,10 @@ public class RootController {
 		comment.setOwner(currentUser);
 		comment.setIdea(idea);
 		comment.persist();
+		Set<PipUser> users = PipUser.getUserByOwnerAndCommenterAndOrganisazion(idea);
+		users.remove(currentUser);
+		String[] mails = PipUser.getMailsFromUsers(users);
+		mailingUtil.sendUpdateMail(comment.getIdea(),mails);
 		return new ResponseEntity<CommentDto>(DtoCastUtil.cast(comment),HttpStatus.OK);
     }
 	

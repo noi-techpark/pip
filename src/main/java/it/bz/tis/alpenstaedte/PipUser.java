@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.validator.constraints.Email;
+import org.springframework.roo.addon.equals.RooEquals;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -21,6 +22,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(finders={"findPipUsersByEmailEquals","findPipUsersByUuidEquals"})
+@RooEquals(excludeFields={"id","uuid","password","role","name","surname","phone","languageSkills","organisazions","preferredTopics"})
 @Table(name="alps_user")
 public class PipUser {
 	private String uuid = UUID.randomUUID().toString();
@@ -68,5 +70,32 @@ public class PipUser {
 		query.setParameter("topic", topic);
 		List<PipUser> resultList = query.getResultList();
 		return resultList;
+	}
+
+	public static String[] getMailsFromUsers(Set<PipUser> users) {
+		List<String> strings = new ArrayList<String>();
+		for (PipUser user:users){
+			strings.add(user.getEmail());
+		}
+		return strings.toArray(new String[strings.size()]);
+	}
+
+	public static Set<PipUser> getUserByInterestedTopics(Idea idea) {
+		Set<PipUser> users = new HashSet<PipUser>();
+		for(Topic topic:idea.getTopics())
+			users.addAll(findPipUserByInterestedTopic(topic));
+		return users;
+	}
+
+	public static Set<PipUser> getUserByOwnerAndCommenterAndOrganisazion(
+			Idea idea) {
+		Set<PipUser> users = new HashSet<PipUser>();
+		users.add(idea.getOwner());
+		for (Comment comment:idea.getComments())
+			users.add(comment.getOwner());
+		for (Organisazion org: idea.getInterestedOrganisations())
+			for (PipUser user: PipUser.findPipUserByOrganisazion(org))
+				users.add(user);
+		return users;
 	}
 }

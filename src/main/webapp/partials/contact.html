@@ -3,18 +3,23 @@
 		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
 			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
 		</div>
-		<h1>Lorem Ipsum</h1>
-		<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+		<h1>Get in touch with like-minded people</h1>
+		<p>This platform was created to encourage <strong>collaboration and sharing of information</strong> between like-minded people of different organisations, with different skillsets but common interests.
+		Share your interests and you will see a lot more people in this section. To find specific people you can also user the filter function in the navigation bar.
+		</p>
 		<div>
 			<div ng-repeat="(topic,tusers) in userByTopics" class="clearfix" ng-show="tusers.length>0">
 				<h2><small>{{topic}}</small></h2>
-				<a  ng-repeat="user in tusers|filter:textFilter" href="#/profile/{{user.uuid}}" class="pull-left profile-thumb">
+				<a  ng-repeat="user in tusers|filter:textFilter|orderBy:'name'" href="#/profile/{{user.uuid}}" class="pull-left profile-thumb">
 						<div>
 							<img class="img-rounded profile-pic" ng-src="{{'user/profile-pic?user='+user.uuid}}" />
 						</div>
 						<p>{{user.name}} {{user.surname}}<br/>
 						{{user.organizations[0].name}}</p>
 				</a>
+			</div>
+			<div ng-show="objectIsEmpty(userByTopics)" class="alert alert-info" role="alert">
+				If you can see this it means you need to<strong> <a href="#/profile">complete your profile informations</a></strong> before you can visualize other people which are interested in the same topics as you 
 			</div>
 		</div>
 	</div>
