@@ -3,7 +3,7 @@
 		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
 			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
 		</div>
-		<form ng-submit="updateProfile()" class="form-horizontal">
+		<form ng-submit="updateProfile()" class="form-horizontal" name="profile">
 			<div class="modal-header">
 				<h4 class="modal-title">Profile</h4>
 			</div>
@@ -11,19 +11,29 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Name</label> 
 					<div class="col-sm-10">
-						<input type="text" class="form-control"	placeholder="Name" ng-model="user.name">
+						<input type="text" class="form-control"	placeholder="Name" ng-model="user.name" name="name" ng-maxlength="200">
+						<div ng-messages="profile.name.$error">
+							<div ng-message="maxlength" class="alert alert-warning">Your first name shouldn't be longer than 200 characters</div>
+						</div>
 					</div>
+
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Surname</label>
 					<div class="col-sm-10"> 
-						<input type="text" class="form-control"	placeholder="Surname" ng-model="user.surname">
+						<input type="text" class="form-control"	placeholder="Surname" name="surname" ng-model="user.surname" ng-maxlength="200">
+						<div ng-messages="profile.surname.$error">
+							<div ng-message="maxlength" class="alert alert-warning">Your surname shouldn't be longer than 200 characters</div>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Phone</label>
 					<div class="col-sm-10"> 
-						<input type="text" class="form-control"	placeholder="Phone" ng-model="user.phone">
+						<input type="text" class="form-control"	placeholder="Phone" ng-model="user.phone" ng-maxlength="200" name="phone">
+						<div ng-messages="profile.phone.$error">
+							<div ng-message="maxlength" class="alert alert-warning">Your phone number shouldn't be longer than 200 characters</div>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -57,7 +67,7 @@
 			<div class="modal-footer">
 				<div class="form-group">
 					<div class="col-sm-offset-11 col-sm-1">
-						<button type="submit" class="btn btn-default">Save</button>
+						<button type="submit" class="btn btn-primary">Save</button>
 					</div>
 				</div>
 			</div>

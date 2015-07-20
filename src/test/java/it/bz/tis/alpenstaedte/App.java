@@ -34,7 +34,7 @@ public class App extends AbstractJUnit4SpringContextTests{
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		PipUser admin = new PipUser();
 		
-		admin.setEmail("a@b.c");
+		admin.setEmail("patrick.bertolla@tis.bz.it");
 		admin.setPassword(encoder.encode("hi"));
 		admin.setRole("ADMIN");
 		Organisazion organisazion = new Organisazion();

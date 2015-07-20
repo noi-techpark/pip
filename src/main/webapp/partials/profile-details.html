@@ -1,0 +1,24 @@
+<div ng-init="getProfile()" class="container">
+	<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
+		<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
+	</div>
+	<div >
+			<div class="clearfix">
+     			<img class="img-rounded pull-left profile-pic" ng-src="{{'user/profile-pic?user='+ user.uuid}}"  />
+   			</div>
+     		<div class="pull-left">
+   				<h4>{{user.name}} {{user.surname}}</h4>
+       			<p>{{user.organizations[0].name}}<br/>
+       				{{user.phone}}<br/>
+       				<a href="mailto:{{user.email}}">{{user.email}}</a>
+       			</p>
+       			<p>    				<span  ng-repeat="topic in user.topics| orderBy:'name'" class="label"
+					style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</span>
+				</p>
+				<p>
+					<span ng-repeat="lang in user.languageSkills" class="label label-default"
+					style="margin-right: 5px;">{{lang}}</span>
+       			</p>
+     		</div>
+	</div>
+</div>

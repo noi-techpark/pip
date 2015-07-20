@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -22,10 +22,19 @@ alps.run(function($rootScope,$http) {
 			self.isManager=self.checkRole("MANAGER")||self.isAdmin;
 		});
 	}
-	self.getUser = function(){
+	self.getMyUser = function(){
 		$http.get("user").success(function(data, status, headers, config){
 			self.myUser = data;
 		});
+	}
+	self.objectIsEmpty = function(obj){
+	    if (obj == null) return true;
+	    if (obj.length > 0)    return false;
+	    if (obj.length === 0)  return true;
+	    for (var key in obj) {
+	        if (hasOwnProperty.call(obj, key)) return false;
+	    }
+	    return true;
 	}
 
 	self.checkRole = function(roleString){
@@ -36,6 +45,9 @@ alps.run(function($rootScope,$http) {
 		});
 		return hasRole;
 	}
+	self.encode = function(string){
+		return encodeURIComponent(string);
+	};
 });
 alps.config(['$routeProvider',function($routeProvider) {
 	$routeProvider.
@@ -57,6 +69,15 @@ alps.config(['$routeProvider',function($routeProvider) {
 	}).when('/profile', {
 		templateUrl: 'partials/profile.html',
 		controller: 'UserCtrl'
+	}).when('/profile/:uuid', {
+		templateUrl: 'partials/profile-details.html',
+		controller: 'UserCtrl'
+	}).when('/contact', {
+		templateUrl: 'partials/contact.html',
+		controller: 'UserCtrl'
+	}).when('/pw-reset', {
+		templateUrl: 'partials/password.html',
+		controller: 'UserCtrl'
 	}).otherwise({
 		redirectTo: '/'
 	});
@@ -67,17 +88,19 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
 	self.me = "http://localhost:8080/alpenstaedte"
 	self.createProjectIdea = function(){
-		$http.post("create",self.idea).success(function(response,status,headers,config){
-			if (self.files)
-				self.uploadFiles(response.data);
-            $('#idea-modal').modal('hide');
-            $location.path("ideas/"+response.data);
-
-    	self.idea = {projectName:'',projectDesc:'',topics:[],fundings:[]};
-
-		}).error(function(data, status, headers, config) {
-			console.log(status);
-		});
+		if(self.projectidea.$valid){
+			$http.post("create",self.idea).success(function(response,status,headers,config){
+				if (self.files)
+					self.uploadFiles(response.data);
+	            $('#idea-modal').modal('hide');
+	            $location.path("ideas/"+response.data);
+	
+	    	self.idea = {projectName:'',projectDesc:'',topics:[],fundings:[]};
+	
+			}).error(function(data, status, headers, config) {
+				console.log(status);
+			});
+		}
 	}
 	self.getMyIdeas = function(){
 		$http.get("myideas").success(function(response,status,headers,config){
@@ -311,13 +334,15 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 		});
 	}
 	self.updateIdea = function(){
-		$http.post("update",self.idea).success(function(response,status,headers,config){
-			self.syncFiles(response.data);
-			self.ideaSaved = true;
-			$timeout(function(){self.ideaSaved=false},2000);
-		}).error(function(data, status, headers, config) {
-			console.log(status);
-		});
+		if(self.projectidea.$valid){
+			$http.post("update",self.idea).success(function(response,status,headers,config){
+				self.syncFiles(response.data);
+				self.ideaSaved = true;
+				$timeout(function(){self.ideaSaved=false},2000);
+			}).error(function(data, status, headers, config) {
+				console.log(status);
+			});
+		}
 	}
 	self.deleteIdea = function(){
 		$http.delete("delete/"+self.idea.uuid).success(function(response,status,headers,config){
@@ -410,8 +435,15 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 		});
 	}
 });
-alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
+alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams) {
 	var self = $scope;
+	self.getUserByTopics = function(){
+		$http.get("user/user-by-topics").success(function(response,status,headers,config){
+			self.userByTopics = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 	self.createUser = function(){
 		$http.post("user",self.user).success(function(response,status,headers,config){
 			self.getUser();
@@ -434,15 +466,18 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 			console.log(status);
 		});
 	}
+
 	self.updateProfile = function(){
-		$http.put("user",self.user).success(function(response,status,headers,config){
-			if (self.profilepic)
-				self.uploadProfilePic();
-			self.ideaSaved = true;
-			$timeout(function(){self.ideaSaved=false},2000);
-		}).error(function(data, status, headers, config) {
-			console.log(status);
-		});
+		if (self.profile.$valid){
+			$http.put("user",self.user).success(function(response,status,headers,config){
+				if (self.profilepic)
+					self.uploadProfilePic();
+				self.ideaSaved = true;
+				$timeout(function(){self.ideaSaved=false},2000);
+			}).error(function(data, status, headers, config) {
+				console.log(status);
+			});
+		}
 	}
 	self.updateOrganisazion= function(user){
 		$http.put("user/organization",user).success(function(response,status,headers,config){
@@ -468,7 +503,10 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 		});
 	}
 	self.getProfile = function(){
-		$http.get("user").success(function(response,status,headers,config){
+		var url= "user";
+		if ($routeParams.uuid!=undefined)
+			url+='?uuid='+$routeParams.uuid;
+		$http.get(url).success(function(response,status,headers,config){
 			self.user = response;
 		}).error(function(data, status, headers, config) {
 			console.log(status);
@@ -534,5 +572,23 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload) {
 		});
 		if (!isContained)
 			self.user.languageSkills.push(lang);
+	}
+	self.resetPassword= function(){
+		var params ={
+				oldpw: self.oldpw,
+				newpw: self.newpw
+		}
+		$http.get("user/reset-password?"+$.param(params)).success(function(response,status,headers,config){
+			self.success=true;
+			self.newpw="";
+			self.oldpw="";
+		}).error(function(data, status, headers, config) {
+			if (status==403){	
+				self.newpw="";
+				self.oldpw="";
+				self.warning="Your current password was incorrect. Pls retry";
+			
+			}
+		});
 	}
 });

@@ -28,4 +28,5 @@ public class NewIdeaDto {
 	private String projectDesc;
 	private Set<TopicDto> topics;
 	private List<FundingDto> fundings;
+	private Integer numberOfOrganisazions;
 }

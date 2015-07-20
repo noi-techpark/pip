@@ -1,16 +1,20 @@
 package it.bz.tis.alpenstaedte;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
+import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 import it.bz.tis.alpenstaedte.util.DALCastUtil;
 import it.bz.tis.alpenstaedte.util.DtoCastUtil;
+import it.bz.tis.alpenstaedte.util.MailingUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -23,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +43,8 @@ public class UserController {
 	@Autowired
 	private FileSystemResource documentFolder;
 	
+	@Autowired
+	private MailingUtil mailingUtil;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -58,6 +65,7 @@ public class UserController {
     		UserDto dto = new UserDto();
     		dto.setEmail(user.getEmail());
     		dto.setRole(user.getRole());
+        	dto.setUuid(user.getUuid());
     		Set<OrganisazionDto> organisations = new HashSet<OrganisazionDto>();
     		OrganisazionDto organ = DtoCastUtil.cast(user.getOrganisazions().get(0));
     		organisations.add(organ);
@@ -68,16 +76,13 @@ public class UserController {
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<UserDto> getUser(Principal principal) {
-    	PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
-    	UserDto dto = new UserDto();
-    	dto.setEmail(user.getEmail());
-    	dto.setName(user.getName());
-    	dto.setSurname(user.getSurname());
-    	dto.setPhone(user.getPhone());
-    	dto.setLanguageSkills(user.getLanguageSkills());
-    	dto.setTopics(DtoCastUtil.cast(user.getPreferredTopics()));
-    	dto.getOrganizations().add(DtoCastUtil.cast(user.getOrganisazions().get(0)));
+    public @ResponseBody ResponseEntity<UserDto> getUser(Principal principal,@RequestParam(value="uuid",required=false)String uuid) {
+    	PipUser user;
+    	if(uuid!=null)
+    		user = PipUser.findPipUsersByUuidEquals(uuid).getSingleResult();
+    	else
+    		user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	UserDto dto = DtoCastUtil.cast(user);
     	return new ResponseEntity<UserDto>(dto,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
@@ -123,9 +128,10 @@ public class UserController {
     	}
     		
     	String randomPassword = RandomStringUtils.randomAlphanumeric(6);
-		user.setPassword(encoder.encode("hi"));
+		user.setPassword(encoder.encode(randomPassword));
     	user.setRole(PipRole.USER.getName());
     	user.persist();
+    	mailingUtil.sendCreationMail(user,randomPassword);
     }
 	
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
@@ -210,5 +216,44 @@ public class UserController {
 		user.getOrganisazions().clear();
 		user.getOrganisazions().add(organisazion);
 		user.merge();
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
+    @RequestMapping(method = RequestMethod.GET,value="user-by-topics")
+    public @ResponseBody ResponseEntity<Map<String,List<UserDto>>> getUserByTopics(Principal principal) {
+		PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+		Map<String,List<UserDto>> userByTopics = new HashMap<String, List<UserDto>>();
+		for (Topic topic: user.getPreferredTopics()){
+			List<PipUser> userByInterestedTopic = PipUser.findPipUserByInterestedTopic(topic);
+			TopicDto topicDto = DtoCastUtil.cast(topic);
+			List<UserDto> userDto = DtoCastUtil.castUser(userByInterestedTopic);
+			userByTopics.put(topicDto.getName(), userDto);
+		}
+    	return new ResponseEntity<Map<String,List<UserDto>>>(userByTopics,HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
+    @RequestMapping(method = RequestMethod.GET,value="reset-password")
+    public @ResponseBody ResponseEntity<Object> resetPassword(Principal principal,@RequestParam("oldpw")String oldPassword,@RequestParam("newpw")String newPassword) {
+		PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+		if (!encoder.matches(oldPassword, user.getPassword()))
+			return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+		user.setPassword(encoder.encode(newPassword));
+		user.merge();
+		return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.GET,value="request-new-pw")
+    public String requestPassword(@RequestParam("email") String email, ModelMap model) {
+		List<PipUser> resultList = PipUser.findPipUsersByEmailEquals(email).getResultList();
+		boolean userExists = !resultList.isEmpty();
+		if (!userExists)
+			model.addAttribute("error", "User already exists");
+		else{
+			PipUser user = resultList.get(0);
+	    	String randomPassword = RandomStringUtils.randomAlphanumeric(6);
+			user.setPassword(encoder.encode(randomPassword));
+			user.merge();
+			mailingUtil.sendCreationMail(user, randomPassword);
+			model.addAttribute("success", "Password was send to your email-address.\nDon't forget to reset it after you logged in.\nGood luck!!");
+		}
+		return "redirect:login";
     }
 }

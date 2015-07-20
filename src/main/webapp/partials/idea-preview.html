@@ -1,77 +1,75 @@
-<div>
-	<div class="container" ng-init="getIdea()">
-		<div class="clearfix modal-body">
-			<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
-				<div class="btn-group" role="group" ng-repeat="status in statuses">
-					<button ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</button>
-				</div>
-			</div>
-			<div class="idea">
-					<h1>{{idea.projectName}}</h1>
-					<h4><small>by {{idea.author.name}} {{idea.author.surname}} on {{idea.created_on|date}}</small></h4>
-					<p class="collumnsx2">{{idea.projectDesc}}</p>
-					<div class="form-group" ng-show="idea.fileNames.length>0" >
-						<label>Details</label>
-						<ul>
-							<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me}}/files/{{idea.uuid}}/{{file.substring(0,file.indexOf('.'))}}/{{file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
-						</ul> 
-					</div>
-				</div>
-			<div class="topics form-group">
-				<button type="button" ng-repeat="topic in idea.topics" class="btn"
-					style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
-			</div>
-			<h3 ng-if="idea.fundings.length>0">Possible funding programs</h3>
-			<div class="list-group-item" ng-repeat="funding in idea.fundings">
-				<h4>
-					<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
-				</h4>
-				<p>{{funding.description}}</p>
-			</div>
-			<div class="form-group" ng-if="idea.interestedOrganisazions.length>0">
-				<h3>Interested organisations</h3>
-				<ul>
-					<li ng-repeat="org in idea.interestedOrganisazions">
-						{{org.name}}
-					</li>
-				</ul>
-			</div>
-			<div class="pull-right" style="margin-top:20px"  ng-init="getUser();">
-				<a type="button" href="#/" class="btn">Back</a>
-				<a ng-show="isAdmin || isOwner" class="btn btn-primary" href="#/ideas/{{idea.uuid}}">Edit</a>
-				<button ng-show="!follows" class="btn btn-primary" ng-click="follow()">
-					<span >Follow</span>
-				</button>
-				<button ng-show="follows" class="btn btn-primary" ng-click="unfollow()">
-					<span >Unfollow</span>
-				</button>
+<div class="container" ng-init="getMyUser();getIdea();">
+	<div class="clearfix modal-body">
+		<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
+			<div class="btn-group" role="group" ng-repeat="status in statuses">
+				<button ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</button>
 			</div>
 		</div>
-		<div class="modal-footer">
-				<div class="form-group row">
-					<img class="col-md-1 profile-pic" src="user/profile-pic" />
-					<div class="col-md-11">
-						<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
-					</div> 
-				</div>
-				<div class="form-group">
-					<button type="button" ng-click="comment()" class="btn btn-default">Comment</button>
-				</div>
-			</div>
-		<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
-			<div class="row">
-				<img class="col-md-1 profile-pic" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
-				<div class="col-md-11"> 
-					<h5>
-						<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
-						<small>{{comment.created_on|date:'dd. MMM yyyy hh:mm'}}</small>
-					</h5>
-					<p>{{comment.text}}</p>
+		<div class="idea">
+				<h1>{{idea.projectName}}</h1>
+				<h4 ng-if="idea.author.name || idea.author.surname"><small>by <a href="#/profile/{{idea.author.uuid}}">{{idea.author.name}} {{idea.author.surname}}</a> {{idea.created_on|date}}</small></h4>
+				<p class="collumnsx2">{{idea.projectDesc}}</p>
+				<div class="form-group" ng-show="idea.fileNames.length>0" >
+					<label>Details</label>
+					<ul>
+						<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me+'/files/'+idea.uuid+'/'+encode(file.substring(0,file.indexOf('.')))+'/'+file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
+					</ul> 
 				</div>
 			</div>
-			
-			<hr/>
+		<div class="topics form-group">
+			<button type="button" ng-repeat="topic in idea.topics" class="btn"
+				style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
 		</div>
-		<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+		<h3 ng-if="idea.fundings.length>0">Possible funding programs</h3>
+		<div class="list-group-item" ng-repeat="funding in idea.fundings">
+			<h4>
+				<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
+			</h4>
+			<p>{{funding.description}}</p>
+		</div>
+		<div class="form-group" ng-if="idea.interestedOrganisazions.length>0">
+			<h3>Interested organisations</h3>
+			<ul>
+				<li ng-repeat="org in idea.interestedOrganisazions">
+					{{org.name}}
+				</li>
+			</ul>
+		</div>
+		<div class="pull-right" style="margin-top:20px"  ng-init="getUser();">
+			<a type="button" href="#/" class="btn">Back</a>
+			<a ng-show="isAdmin || isOwner" class="btn btn-primary" href="#/ideas/{{idea.uuid}}">Edit</a>
+			<button ng-show="!follows" class="btn btn-primary" ng-click="follow()">
+				<span >Follow</span>
+			</button>
+			<button ng-show="follows" class="btn btn-primary" ng-click="unfollow()">
+				<span >Unfollow</span>
+			</button>
+		</div>
 	</div>
+	<div class="modal-footer">
+			<div class="form-group row">
+				<img class="col-md-1 profile-pic" src="user/profile-pic" />
+				<div class="col-md-11">
+					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
+				</div> 
+			</div>
+			<div class="form-group">
+				<button type="button" ng-click="comment()" class="btn btn-default">Comment</button>
+			</div>
+		</div>
+	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
+		<div class="row">
+			<img class="col-md-1 profile-pic" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
+			<div class="col-md-11"> 
+				<h5>
+					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
+					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
+				</h5>
+				<p>{{comment.text}}</p>
+			</div>
+		</div>
+		
+		<hr/>
+	</div>
+	<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 </div>

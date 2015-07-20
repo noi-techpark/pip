@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html ng-app="alps">
 <head>
 <link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css" />
@@ -6,11 +7,12 @@
 <script src="js/jquery.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/angular.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/angular-route.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/angular-messages.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/app.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/bootstrap.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/d3.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/ng-file-upload.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
-
+<meta charset="utf-8"/>
 </head>
 <body ng-init="getPrincipal()">
 	<nav class="navbar navbar-default">
@@ -31,6 +33,7 @@
 				id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li><a href="javascript:void(0)" data-toggle="modal" data-target="#idea-modal" >New Project</a></li>
+					<li><a href="#/contact">Get in touch</a></li>
 					<li><a ng-show="isManager" href="#/user">User</a></li>
 					<li><a ng-show="isAdmin" href="#/topics">Topics</a></li>
 				</ul>
@@ -45,7 +48,7 @@
 						aria-expanded="false">My Profile<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="#/profile">Edit</a></li>
-							<li><a href="#">Change Password</a></li>
+							<li><a href="#/pw-reset">Change Password</a></li>
 							<li><a href="resources/j_spring_security_logout">Logout</a></li>
 						</ul></li>
 				</ul>
@@ -65,15 +68,23 @@
 						</button>
 						<h4 class="modal-title">Project Idea</h4>
 					</div>
-					<form ng-submit="createProjectIdea()">
+					<form ng-submit="createProjectIdea()" name="projectidea" novalidate>
 						<div class="modal-body" ng-init="idea={projectName:'',projectDesc:'',topics:[],fundings:[]}">
 							<div class="form-group">
 								<label for="project-name">Project name</label> 
-								<input type="text" class="form-control" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required"/>
+								<input type="text" class="form-control" ng-model="idea.projectName" name ="name" id="project-name" placeholder="Name" required="required" ng-maxlength="200" />
+								<div ng-messages="projectidea.name.$error" multiple>
+									<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+									<div ng-message="maxlength" class="alert alert-warning">The title shouldn't be longer than 200 characters</div>
+								</div>
 							</div>
 							<div class="form-group">
 								<label for="project-desc">Project description</label> 
-								<textarea id ="project-desc" ng-model="idea.projectDesc" class="form-control" rows="3" placeholder="Description" required="required"></textarea>
+								<textarea id ="project-desc" ng-model="idea.projectDesc" name="description" class="form-control" rows="3" placeholder="Description" required="required" ng-minlength="8" ></textarea>
+								<div ng-messages="projectidea.description.$error" multiple>
+									<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+									<div ng-message="minlength" class="alert alert-warning">Please describe your Project with at least a sentence</div>
+								</div>
 							</div>
 							<div class="form-group" ng-init="getTopics()">
 								<label for="project-topics">Associated Topics</label> 

@@ -46,5 +46,12 @@
 }
 .profile-pic{
 	max-width: 150px;
-	max-height: 220px;
+	max-height: 200px;
+}
+.profile-thumb{
+	width: 150px;
+	margin:20px;
+}
+.profile-thumb>div{
+	height: 200px;
 }

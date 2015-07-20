@@ -51,4 +51,12 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
         this.fundings = fundings;
     }
     
+    public Integer NewIdeaDto.getNumberOfOrganisazions() {
+        return this.numberOfOrganisazions;
+    }
+    
+    public void NewIdeaDto.setNumberOfOrganisazions(Integer numberOfOrganisazions) {
+        this.numberOfOrganisazions = numberOfOrganisazions;
+    }
+    
 }
