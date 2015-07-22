@@ -112,4 +112,12 @@ privileged aspect Idea_Roo_JavaBean {
         this.interestedOrganisations = interestedOrganisations;
     }
     
+    public Set<PipUser> Idea.getFollower() {
+        return this.follower;
+    }
+    
+    public void Idea.setFollower(Set<PipUser> follower) {
+        this.follower = follower;
+    }
+    
 }

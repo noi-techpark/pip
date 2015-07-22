@@ -52,6 +52,9 @@ public class Idea {
     @ManyToMany
     private Set<Organisazion> interestedOrganisations = new HashSet<Organisazion>();
     
+    @ManyToMany
+    private Set<PipUser> follower = new HashSet<PipUser>();
+    
     public Idea() {
         this.uuid = UUID.randomUUID().toString();
     }

@@ -30,7 +30,7 @@
 		<div class="form-group" ng-if="idea.interestedOrganisazions.length>0">
 			<h3>Interested organisations</h3>
 			<ul>
-				<li ng-repeat="org in idea.interestedOrganisazions">
+				<li ng-repeat="org in idea.interestedOrganisazions" >
 					{{org.name}}
 				</li>
 			</ul>
@@ -48,7 +48,9 @@
 	</div>
 	<div class="modal-footer">
 			<div class="form-group row">
-				<img class="col-md-1 profile-pic" src="user/profile-pic" />
+				<div class="col-md-1">
+					<img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" />
+				</div>
 				<div class="col-md-11">
 					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
 				</div> 
@@ -59,7 +61,9 @@
 		</div>
 	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
 		<div class="row">
-			<img class="col-md-1 profile-pic" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
+			<div class="col-md-1">
+				<img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
+			</div>
 			<div class="col-md-11"> 
 				<h5>
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>

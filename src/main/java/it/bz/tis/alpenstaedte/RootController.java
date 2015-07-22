@@ -192,6 +192,7 @@ public class RootController {
 		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	Organisazion organisazion = currentUser.getOrganisazions().get(0);
     	idea.getInterestedOrganisations().add(organisazion);
+    	idea.getFollower().add(currentUser);
     	idea.merge();
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
@@ -201,6 +202,7 @@ public class RootController {
 		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	Organisazion organisazion = currentUser.getOrganisazions().get(0);
     	idea.getInterestedOrganisations().remove(organisazion);
+    	idea.getFollower().remove(currentUser);
     	idea.merge();
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})

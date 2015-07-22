@@ -10,7 +10,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.validator.constraints.Email;
@@ -23,7 +22,6 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(finders={"findPipUsersByEmailEquals","findPipUsersByUuidEquals"})
 @RooEquals(excludeFields={"id","uuid","password","role","name","surname","phone","languageSkills","organisazions","preferredTopics"})
-@Table(name="alps_user")
 public class PipUser {
 	private String uuid = UUID.randomUUID().toString();
 	@Email
@@ -93,9 +91,11 @@ public class PipUser {
 		users.add(idea.getOwner());
 		for (Comment comment:idea.getComments())
 			users.add(comment.getOwner());
-		for (Organisazion org: idea.getInterestedOrganisations())
-			for (PipUser user: PipUser.findPipUserByOrganisazion(org))
-				users.add(user);
+//		for (Organisazion org: idea.getInterestedOrganisations())
+//			for (PipUser user: PipUser.findPipUserByOrganisazion(org))
+//				users.add(user);
+		for (PipUser user: idea.getFollower())
+			users.add(user);
 		return users;
 	}
 }
