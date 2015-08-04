@@ -98,7 +98,6 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
 	self.me = "http://localhost:8080/alpenstaedte";
 	self.isHidden = function(object){
-		console.log(object);
 		 return(self.topicFilter?object.name.toLowerCase().indexOf(self.topicFilter.toLowerCase()) < 0:false);
 	}
 	self.createProjectIdea = function(){
@@ -196,13 +195,16 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 
 			function collapse(d) {
 				if (d.children) {
+					console.log(d);
 					d._children = d.children;
 					d._children.forEach(collapse);
 					d.children = null;
 				}
 			}
-
-			root.children.forEach(collapse);
+			$.each(root.children,function(index,value){
+				value.children.forEach(collapse);
+			});
+			
 			update(root);
 		});
 

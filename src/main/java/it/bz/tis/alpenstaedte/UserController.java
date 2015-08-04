@@ -151,7 +151,6 @@ public class UserController {
 			if (listFiles != null && listFiles.length > 0)
 				file = listFiles[0];
 			else{
-				
 				file = new ServletContextResource(session.getServletContext(),"/images/profile.jpg").getFile();
 			}
 			return new FileSystemResource(file);
