@@ -40,7 +40,7 @@
 							<div ng-if="isAdmin" class="form-group"
 								ng-init="getOrganisations()">
 								<label class="sr-only">Organisation</label> 
-								<select	ng-model="user.organizations[0]" ng-change="updateOrganisazion(user)" class="form-control" ng-options="org.name for org in organisations track by org.name">
+								<select	ng-model="user.organizations[0]" ng-change="updateOrganisazion(user)" class="form-control" ng-options="org.name for org in organisations|orderBy:'name' track by org.name">
 								</select>
 							</div>
 						</td>
