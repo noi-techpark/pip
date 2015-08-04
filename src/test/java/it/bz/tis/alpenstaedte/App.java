@@ -38,7 +38,7 @@ public class App extends AbstractJUnit4SpringContextTests{
 		admin.setPassword(encoder.encode("hi"));
 		admin.setRole("ADMIN");
 		Organisazion organisazion = new Organisazion();
-		organisazion.setName("Tis innovation park");
+		organisazion.setName("TIS innovation park South Tyrol");
 		admin.getOrganisazions().add(organisazion);
 		admin.persist();
 	}

@@ -9,7 +9,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 @Service
 public class MailingUtil {
-	private static final String PIP = "PIP.com";
+	private static final String PIP = "open@tis.bz.it";
 	@Autowired
 	private MailSender mailSender;
 	
