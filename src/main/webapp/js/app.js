@@ -13,6 +13,16 @@ function(){
           }
       };
 }]);
+alps.filter('limitText', function() {
+    return function(text, limit, tail) {
+
+        var length = text.length;
+        var finalString = text.length > limit ? text.substr(0, limit - 1) : text;
+        if (text.length>limit && tail!= undefined && tail.length>0)
+        	finalString += tail;
+        return finalString;
+    }
+});
 alps.run(function($rootScope,$http) {
 	var self= $rootScope;
 	self.getPrincipal = function(){
@@ -86,7 +96,11 @@ alps.config(['$routeProvider',function($routeProvider) {
 alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 	var self = $scope;
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
-	self.me = "http://localhost:8080/alpenstaedte"
+	self.me = "http://localhost:8080/alpenstaedte";
+	self.isHidden = function(object){
+		console.log(object);
+		 return(self.topicFilter?object.name.toLowerCase().indexOf(self.topicFilter.toLowerCase()) < 0:false);
+	}
 	self.createProjectIdea = function(){
 		if(self.projectidea.$valid){
 			$http.post("create",self.idea).success(function(response,status,headers,config){

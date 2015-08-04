@@ -6,6 +6,7 @@ package it.bz.tis.alpenstaedte.dto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +58,14 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
     
     public void NewIdeaDto.setNumberOfOrganisazions(Integer numberOfOrganisazions) {
         this.numberOfOrganisazions = numberOfOrganisazions;
+    }
+    
+    public Date NewIdeaDto.getUpdated_on() {
+        return this.updated_on;
+    }
+    
+    public void NewIdeaDto.setUpdated_on(Date updated_on) {
+        this.updated_on = updated_on;
     }
     
 }

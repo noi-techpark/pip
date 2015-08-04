@@ -36,7 +36,6 @@
 			</ul>
 		</div>
 		<div class="pull-right" style="margin-top:20px"  ng-init="getUser();">
-			<a type="button" href="#/" class="btn">Back</a>
 			<a ng-show="isAdmin || isOwner" class="btn btn-primary" href="#/ideas/{{idea.uuid}}">Edit</a>
 			<button ng-show="!follows" class="btn btn-primary" ng-click="follow()">
 				<span >Follow</span>
@@ -48,10 +47,10 @@
 	</div>
 	<div class="modal-footer">
 			<div class="form-group row">
-				<div class="col-md-1">
+				<div class="col-md-1 col-xs-3">
 					<img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" />
 				</div>
-				<div class="col-md-11">
+				<div class="col-md-11 col-xs-9">
 					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
 				</div> 
 			</div>
@@ -61,10 +60,10 @@
 		</div>
 	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
 		<div class="row">
-			<div class="col-md-1">
+			<div class="col-md-1 col-xs-3">
 				<img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
 			</div>
-			<div class="col-md-11"> 
+			<div class="col-md-11 col-xs-9"> 
 				<h5>
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
 					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>

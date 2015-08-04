@@ -26,6 +26,7 @@
 }
 .topics button{
 	color:white;
+	margin-top:5px;
 }
 .topics button:hover,.topics button:FOCUS{
 	color:white;
@@ -54,4 +55,13 @@
 }
 .profile-thumb>div{
 	height: 200px;
+}
+.aligned-checkbox{
+	float:left;
+	width:189px;
+}
+@media (max-device-width: 480px) and (orientation: portrait) {
+	.btn-group-justified button{
+		font-size:11px;
+	}
 }

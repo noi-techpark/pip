@@ -1,5 +1,6 @@
 package it.bz.tis.alpenstaedte.dto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -29,4 +30,5 @@ public class NewIdeaDto {
 	private Set<TopicDto> topics;
 	private List<FundingDto> fundings;
 	private Integer numberOfOrganisazions;
+	private Date updated_on;
 }

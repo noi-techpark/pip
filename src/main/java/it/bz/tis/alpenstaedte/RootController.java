@@ -90,6 +90,8 @@ public class RootController {
     	}
     	idea.setFundings(fundings);
     	idea.setOwner(currentUser);
+    	idea.getFollower().add(currentUser);
+    	idea.getInterestedOrganisations().add(currentUser.getOrganisazions().get(0));
     	idea.persist();
 		Set<PipUser> users = PipUser.getUserByInterestedTopics(idea);
 		users.remove(currentUser);
@@ -169,6 +171,7 @@ public class RootController {
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
     		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
+    		dto.setUpdated_on(idea.getUpdated_on());
     		list.add(dto);
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
@@ -181,6 +184,7 @@ public class RootController {
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
     		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
+    		dto.setUpdated_on(idea.getUpdated_on());
     		list.add(dto);
     	}
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);

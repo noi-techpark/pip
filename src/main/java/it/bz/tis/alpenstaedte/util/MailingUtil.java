@@ -19,7 +19,7 @@ public class MailingUtil {
 			message.setTo(toMails);
 			message.setFrom(PIP);
 			message.setSubject("New project idea");
-			message.setText("A new project idea named "+idea.getName()+" was created.\r\nTo find out more about it visit http://projectideas.tis.bz.it/");
+			message.setText("A new project idea named "+idea.getName()+" has been created.\r\nTo find out more about it visit http://projectideas.tis.bz.it/");
 			mailSender.send(message);
 		}
 	}
@@ -28,8 +28,8 @@ public class MailingUtil {
 			SimpleMailMessage message = new SimpleMailMessage();
 			message.setTo(toMails);
 			message.setFrom(PIP);
-			message.setSubject("The project ["+idea.getName()+"] got changed");
-			message.setText(idea.getName()+" got updated. To find out more about it visit: http://projectideas.tis.bz.it/");
+			message.setSubject("The project ["+idea.getName()+"] has been changed");
+			message.setText(idea.getName()+" has been updated. To find out more about it visit: http://projectideas.tis.bz.it/");
 			mailSender.send(message);
 		}
 	}

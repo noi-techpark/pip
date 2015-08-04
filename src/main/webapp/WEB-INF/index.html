@@ -86,9 +86,14 @@
 									<div ng-message="minlength" class="alert alert-warning">Please describe your Project with at least a sentence</div>
 								</div>
 							</div>
-							<div class="form-group" ng-init="getTopics()">
+							<div class="form-group clearfix" ng-init="getTopics()">
 								<label for="project-topics">Associated Topics</label> 
-								<div class="checkbox" ng-repeat="topic in availableTopics">
+								<div class="row">
+									<div class="col-md-3 col-xs-8">
+										<input type="text" class="form-control" ng-model="topicFilter"  placeholder="Filter topics"/>
+									</div>
+								</div> 
+								<div class="checkbox aligned-checkbox" style="margin-top:5px" ng-repeat="topic in availableTopics" ng-class="{'hidden': isHidden(topic)}">
 									<label> <input type="checkbox" ng-click="toggleTopic(topic)">{{topic.name}}</label>
 								</div>
 							</div>

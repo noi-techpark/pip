@@ -15,7 +15,7 @@
 							<img class="img-rounded profile-pic" ng-src="{{'user/profile-pic?user='+user.uuid}}" />
 						</div>
 						<p>{{user.name}} {{user.surname}}<br/>
-						{{user.organizations[0].name}}</p>
+						<span class="label label-primary">{{user.organizations[0].name|limitText:25:'...'}}</span></p>
 				</a>
 			</div>
 			<div ng-show="objectIsEmpty(userByTopics)" class="alert alert-info" role="alert">
