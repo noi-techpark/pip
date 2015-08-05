@@ -17,7 +17,7 @@
 				</div>
 			</div>
 		<div class="topics form-group">
-			<button type="button" ng-repeat="topic in idea.topics" class="btn"
+			<button type="button" ng-repeat="topic in idea.topics|orderBy:'name'" class="btn"
 				style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
 		</div>
 		<h3 ng-if="idea.fundings.length>0">Possible funding programs</h3>
@@ -27,7 +27,7 @@
 			</h4>
 			<p>{{funding.description}}</p>
 		</div>
-		<div class="form-group" ng-if="idea.interestedOrganisazions.length>0">
+		<div class="form-group" ng-show="idea.interestedOrganisazions.length>0">
 			<h3>Interested organisations</h3>
 			<ul>
 				<li ng-repeat="org in idea.interestedOrganisazions" >

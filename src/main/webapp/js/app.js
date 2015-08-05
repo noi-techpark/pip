@@ -336,8 +336,8 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 	}
 	self.followsIdea = function(){
 		var follows = false;
-		$.each(self.idea.interestedOrganisazions, function(index,value){
-			if (value.name==self.myUser.organizations[0].name)
+		$.each(self.idea.followers, function(index,value){
+			if (value.email==self.myUser.email)
 				follows=true;
 		});
 		self.follows =  follows;

@@ -95,6 +95,14 @@ privileged aspect IdeaDto_Roo_JavaBean {
         this.author = author;
     }
     
+    public List<UserDto> IdeaDto.getFollowers() {
+        return this.followers;
+    }
+    
+    public void IdeaDto.setFollowers(List<UserDto> followers) {
+        this.followers = followers;
+    }
+    
     public Date IdeaDto.getCreated_on() {
         return this.created_on;
     }

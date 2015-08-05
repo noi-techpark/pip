@@ -22,6 +22,7 @@ public class IdeaDto {
 	private List<CommentDto> comments = new ArrayList<CommentDto>();
 	private Set<OrganisazionDto> interestedOrganisazions = new HashSet<OrganisazionDto>();
 	private UserDto author;
+	private List<UserDto> followers = new ArrayList<UserDto>() ;
 	private Date created_on;
 	
 	public IdeaDto() {

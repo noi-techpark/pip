@@ -183,7 +183,7 @@ public class RootController {
     	for (Idea idea: Idea.findAllIdeas()){
     		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
     		dto.setUuid(idea.getUuid());
-    		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
+    		dto.setNumberOfOrganisazions(idea.getFollower().size());
     		dto.setUpdated_on(idea.getUpdated_on());
     		list.add(dto);
     	}
@@ -205,8 +205,16 @@ public class RootController {
     	Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
 		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	Organisazion organisazion = currentUser.getOrganisazions().get(0);
-    	idea.getInterestedOrganisations().remove(organisazion);
     	idea.getFollower().remove(currentUser);
+    	boolean orgFollows = false;
+    	for(PipUser user : idea.getFollower()){
+    		if (!user.getOrganisazions().get(0).equals(organisazion))
+    			continue;
+    		orgFollows = true;
+    	}
+    	if (!orgFollows){
+        	idea.getInterestedOrganisations().remove(organisazion);
+    	}
     	idea.merge();
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
@@ -268,6 +276,7 @@ public class RootController {
    		dto.setComments(comments);
    		dto.setAuthor(DtoCastUtil.cast(idea.getOwner()));
    		dto.setInterestedOrganisazions(DtoCastUtil.castOrgs(new ArrayList<Organisazion>(idea.getInterestedOrganisations())));
+   		dto.setFollowers(DtoCastUtil.castUser(new ArrayList<PipUser>(idea.getFollower())));
    		dto.getFileNames().addAll(idea.getFileNames());
    		dto.setCreated_on(idea.getCreated_on());
     	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
