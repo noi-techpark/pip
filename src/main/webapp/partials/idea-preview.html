@@ -68,7 +68,12 @@
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
 					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
 				</h5>
-				<p>{{comment.text}}</p>
+				<a ng-show="isAdmin && !comment.banned" type="button" class="close" confirmed-click="blockComment(comment)" ng-confirm-click="Should this comment really be blocked?"><span class="glyphicon glyphicon-ban-circle"></span></a>
+				<p ng-if="!comment.banned">{{comment.text}}</p>
+				<p ng-if="comment.banned" class="alert alert-warning">This comment was removed, due it's content not being retained adequate
+				<a ng-show="isAdmin && comment.banned"type="button"class="close" confirmed-click="unblockComment(comment)" ng-confirm-click="Do you realy want to unblock this comment?"><span class="glyphicon glyphicon-leaf"></span></a>
+				
+				</p>
 			</div>
 		</div>
 		

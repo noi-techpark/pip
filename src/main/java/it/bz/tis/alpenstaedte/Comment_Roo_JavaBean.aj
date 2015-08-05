@@ -50,4 +50,20 @@ privileged aspect Comment_Roo_JavaBean {
         this.updated_on = updated_on;
     }
     
+    public boolean Comment.isBanned() {
+        return this.banned;
+    }
+    
+    public void Comment.setBanned(boolean banned) {
+        this.banned = banned;
+    }
+    
+    public String Comment.getUuid() {
+        return this.uuid;
+    }
+    
+    public void Comment.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
 }

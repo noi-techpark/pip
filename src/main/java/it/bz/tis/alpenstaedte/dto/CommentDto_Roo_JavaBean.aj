@@ -33,4 +33,20 @@ privileged aspect CommentDto_Roo_JavaBean {
         this.created_on = created_on;
     }
     
+    public boolean CommentDto.isBanned() {
+        return this.banned;
+    }
+    
+    public void CommentDto.setBanned(boolean banned) {
+        this.banned = banned;
+    }
+    
+    public String CommentDto.getUuid() {
+        return this.uuid;
+    }
+    
+    public void CommentDto.setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
 }

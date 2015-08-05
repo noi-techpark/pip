@@ -9,4 +9,6 @@ public class CommentDto {
 	private String text;
 	private UserDto author;
 	private Date created_on;
+	private boolean banned;
+	private String uuid;
 }

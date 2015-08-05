@@ -425,6 +425,20 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			console.log(status);
 		});
 	}
+	self.blockComment= function(comment){
+		$http.get("idea/comment/"+comment.uuid+"/block").success(function(response,status,headers,config){
+			comment.banned=true;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.unblockComment= function(comment){
+		$http.get("idea/comment/"+comment.uuid+"/unblock").success(function(response,status,headers,config){
+			comment.banned=false;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {
 	var self = $scope;

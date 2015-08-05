@@ -387,5 +387,20 @@ public class RootController {
 		mailingUtil.sendUpdateMail(comment.getIdea(),mails);
 		return new ResponseEntity<CommentDto>(DtoCastUtil.cast(comment),HttpStatus.OK);
     }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.GET, value = "idea/comment/{uuid}/block")
+    public @ResponseBody void blockComment(@PathVariable("uuid") String uuid) {
+		Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
+		comment.setBanned(true);
+		comment.merge();
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.GET, value = "idea/comment/{uuid}/unblock")
+    public @ResponseBody void unblockComment(@PathVariable("uuid") String uuid) {
+		Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
+		comment.setBanned(false);
+		comment.merge();
+    }
+	
 	
 }

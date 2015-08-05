@@ -50,6 +50,8 @@ public class DtoCastUtil {
 		dto.setCreated_on(comment.getCreated_on());
 		UserDto userDto = DtoCastUtil.cast(comment.getOwner()); 
 		dto.setAuthor(userDto);
+		dto.setBanned(comment.isBanned());
+		dto.setUuid(comment.getUuid());
 		return dto;
 	}
 
