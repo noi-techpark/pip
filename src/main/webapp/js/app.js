@@ -23,6 +23,16 @@ alps.filter('limitText', function() {
         return finalString;
     }
 });
+alps.filter('orgFilter', function() {
+    return function(array, org) {
+    	var finalArray=[];
+    	$.each(array,function(index,value){
+    		if (value.organizations[0].name==org.name)
+    			finalArray.push(value);
+    	});
+        return finalArray;
+    }
+});
 alps.run(function($rootScope,$http) {
 	var self= $rootScope;
 	self.getPrincipal = function(){
@@ -334,6 +344,7 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			console.log(status);
 		});
 	}
+
 	self.followsIdea = function(){
 		var follows = false;
 		$.each(self.idea.followers, function(index,value){

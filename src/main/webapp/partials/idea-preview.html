@@ -32,6 +32,9 @@
 			<ul>
 				<li ng-repeat="org in idea.interestedOrganisazions" >
 					{{org.name}}
+					(
+					<span ng-repeat="follower in idea.followers|orgFilter:org|orderBy:'name'"><span ng-show="$index!=0">, </span><a href="#/profile/{{follower.uuid}}">{{follower.name}} {{follower.surname}}</a></span>
+					)
 				</li>
 			</ul>
 		</div>
