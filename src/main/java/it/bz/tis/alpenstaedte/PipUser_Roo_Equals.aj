@@ -17,11 +17,11 @@ privileged aspect PipUser_Roo_Equals {
             return true;
         }
         PipUser rhs = (PipUser) obj;
-        return new EqualsBuilder().append(email, rhs.email).isEquals();
+        return new EqualsBuilder().append(active, rhs.active).append(email, rhs.email).isEquals();
     }
     
     public int PipUser.hashCode() {
-        return new HashCodeBuilder().append(email).toHashCode();
+        return new HashCodeBuilder().append(active).append(email).toHashCode();
     }
     
 }

@@ -61,17 +61,7 @@ public class UserController {
     	else{
     		users = PipUser.findPipUserByOrganisazionAndRole(prince.getOrganisazions().get(0),PipRole.USER.getName());
     	}
-		for (PipUser user: users){
-    		UserDto dto = new UserDto();
-    		dto.setEmail(user.getEmail());
-    		dto.setRole(user.getRole());
-        	dto.setUuid(user.getUuid());
-    		Set<OrganisazionDto> organisations = new HashSet<OrganisazionDto>();
-    		OrganisazionDto organ = DtoCastUtil.cast(user.getOrganisazions().get(0));
-    		organisations.add(organ);
-    		dto.setOrganizations(organisations);
-    		list.add(dto);
-    	}
+    	list = DtoCastUtil.castUser(users);
     	return new ResponseEntity<List<UserDto>>(list,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
@@ -108,6 +98,32 @@ public class UserController {
         	return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
     	if (!PipRole.ADMIN.getName().equals(user.getRole()))
     		user.remove();
+    	return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET,value="deactivate")
+    public @ResponseBody ResponseEntity<Object> deactivateUser(@RequestParam("email")String email,Principal principal) {
+    	PipUser user = PipUser.findPipUsersByEmailEquals(email).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (PipRole.MANAGER.equals(currentUser.getRole()) && !currentUser.organisationMatches(user))
+        	return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+    	if (!PipRole.ADMIN.getName().equals(user.getRole())){
+    		user.setActive(false);
+    		user.merge();
+    	}
+    	return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET,value="activate")
+    public @ResponseBody ResponseEntity<Object> activateUser(@RequestParam("email")String email,Principal principal) {
+    	PipUser user = PipUser.findPipUsersByEmailEquals(email).getSingleResult();
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (PipRole.MANAGER.equals(currentUser.getRole()) && !currentUser.organisationMatches(user))
+        	return new ResponseEntity<Object>(HttpStatus.FORBIDDEN);
+    	if (!PipRole.ADMIN.getName().equals(user.getRole())){
+    		user.setActive(true);
+    		user.merge();
+    	}
     	return new ResponseEntity<Object>(HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER"})

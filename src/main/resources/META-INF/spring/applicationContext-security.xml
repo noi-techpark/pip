@@ -21,7 +21,7 @@
     <authentication-manager alias="authenticationManager">
         <authentication-provider>
             <password-encoder ref="encoder"/>
-            <jdbc-user-service data-source-ref="dataSource" role-prefix="ROLE_"  users-by-username-query="select email,password,true from pip_user where email = ?" authorities-by-username-query="select email,role from pip_user where email = ?"  />
+            <jdbc-user-service data-source-ref="dataSource" role-prefix="ROLE_"  users-by-username-query="select email,password,active from pip_user where email = ?" authorities-by-username-query="select email,role from pip_user where email = ?"  />
         </authentication-provider>
     </authentication-manager>
     <beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>

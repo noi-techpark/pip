@@ -3,20 +3,29 @@
 		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
 			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
 		</div>
-		<form class="form-inline" ng-init="user = {organizations:[],name:''}" ng-submit="createUser()">
-			<div class="form-group">
-				<label class="sr-only">Name</label> 
-				<input ng-model="user.email" type="email" class="form-control" placeholder="Email" required="required">
+		<div class="clearfix" >
+			<form class="form-inline pull-left" ng-init="user = {organizations:[],name:''}" ng-submit="createUser()">
+				<div class="form-group">
+					<label class="sr-only">Name</label> 
+					<input ng-model="user.email" type="email" class="form-control" placeholder="Email" required="required">
+				</div>
+				<div ng-if="isAdmin" class="form-group" ng-init="getOrganisations()">
+					<label class="sr-only">Organisation</label>
+					 
+					<select ng-model="user.organizations[0]" class="form-control" required="required">
+						<option  ng-repeat="org in organisations|orderBy:'name'">{{org.name}}</option>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new user</button>
+			</form>
+			<div class="input-group pull-right" style="max-width: 200px">
+  				<span class="input-group-addon">Order</span>
+				<select  ng-init="usersorts =['email','organisazion','active','role'];usersort='email'" class="form-control" ng-model="usersort" ng-options="sort for sort in usersorts" style="width: auto;" ></select>
+				<span class="input-group-btn">
+        			<button class="btn btn-default" type="button" ng-init="order=false" ng-click="order=!order">Reverse</button>
+      			</span>
 			</div>
-			<div ng-if="isAdmin" class="form-group" ng-init="getOrganisations()">
-				<label class="sr-only">Organisation</label>
-				 
-				<select ng-model="user.organizations[0]" class="form-control" required="required">
-					<option  ng-repeat="org in organisations|orderBy:'name'">{{org.name}}</option>
-				</select>
-			</div>
-			<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new user</button>
-		</form>
+		</div>
 		<div class="table-responsive">
 			<table class="table">
 				<thead>
@@ -27,13 +36,13 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="user in users | filter:textFilter | orderBy: 'email'">
+					<tr ng-repeat="user in users | filter:textFilter | orderBy: usersort:order">
 						<td>{{user.email}}</td>
 						<td>
 							<div ng-show="isAdmin && user.role!='ADMIN'">
 								{{user.role}}
-								<a href="javascript:void(0)" ng-click="promote(user.email)" ng-show="{{user.role=='USER'}}" class="glyphicon glyphicon-chevron-up"></a>
-								<a href="javascript:void(0)" ng-click="demote(user.email)" ng-show="{{user.role=='MANAGER'}}"class="glyphicon glyphicon-chevron-down"></a>
+								<a href="javascript:void(0)" ng-click="promote(user.email)" title="Upgrade to manager" ng-show="{{user.role=='USER'}}" class="glyphicon glyphicon-chevron-up"></a>
+								<a href="javascript:void(0)" ng-click="demote(user.email)" title="Downgrade to user" ng-show="{{user.role=='MANAGER'}}"class="glyphicon glyphicon-chevron-down"></a>
 							</div>
 						</td>
 						<td ng-show="isAdmin">
@@ -44,7 +53,13 @@
 								</select>
 							</div>
 						</td>
-						<td><a ng-show="isManager" class="btn glyphicon glyphicon-remove"  confirmed-click="deleteUser(user.email)" ng-confirm-click="Are you sure you want to delete this user?" ></a></td>
+						<td>
+							<div ng-show="isManager && user.role!='ADMIN'">
+								<a ng-show="user.active" title="Deactivate user" class="btn glyphicon glyphicon-ban-circle" ng-click="deactivateUser(user.email)" ></a>
+								<a ng-show="!user.active" title="Activate user" class="btn glyphicon glyphicon-leaf" ng-click="activateUser(user.email)" ></a>
+							</div>
+						</td>
+						<td><a ng-show="isManager && user.role!='ADMIN'" title="Delete user" class="btn glyphicon glyphicon-remove"  confirmed-click="deleteUser(user.email)" ng-confirm-click="Are you sure you want to delete this user?" ></a></td>
 					</tr>
 				</tbody>
 			</table>

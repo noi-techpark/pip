@@ -500,6 +500,20 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
 		});
 	}
+	self.deactivateUser = function(email){
+		$http.get("user/deactivate?email="+email).success(function(response,status,headers,config){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			console.log(data);
+		});
+	}
+	self.activateUser = function(email){
+		$http.get("user/activate?email="+email).success(function(response,status,headers,config){
+			self.getUser();
+		}).error(function(data, status, headers, config) {
+			console.log(data);
+		});
+	}
 	self.getUser = function(){
 		$http.get("user/list").success(function(response,status,headers,config){
 			self.users = response;

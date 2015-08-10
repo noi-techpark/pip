@@ -67,6 +67,14 @@ privileged aspect PipUser_Roo_JavaBean {
         this.phone = phone;
     }
     
+    public Boolean PipUser.getActive() {
+        return this.active;
+    }
+    
+    public void PipUser.setActive(Boolean active) {
+        this.active = active;
+    }
+    
     public Set<String> PipUser.getLanguageSkills() {
         return this.languageSkills;
     }

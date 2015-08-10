@@ -18,6 +18,7 @@ public class UserDto {
 	private String uuid;
 	private String role;
 	private Set<String> languageSkills = new HashSet<String>();
+	private boolean active;
 	public UserDto() {
 	}
 

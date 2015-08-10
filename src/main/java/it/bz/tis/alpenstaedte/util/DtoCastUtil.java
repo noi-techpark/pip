@@ -65,6 +65,8 @@ public class DtoCastUtil {
     	dto.setTopics(DtoCastUtil.cast(user.getPreferredTopics()));
     	dto.getOrganizations().add(DtoCastUtil.cast(user.getOrganisazions().get(0)));
 		dto.setUuid(user.getUuid());
+		dto.setActive(user.getActive());
+		dto.setRole(user.getRole());
 		if (user.getName()== null && user.getSurname() == null)
 			dto.setName("Anonymous");
 		return dto;

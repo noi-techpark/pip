@@ -12,7 +12,7 @@ public class App extends AbstractJUnit4SpringContextTests{
 	
 	String[] topics = new String[]{"Energy","Mobility","Environment"};
 	String[] status = new String[]{"idea","application done","funding granted","concluded"};
-	String[] orgs = new String[]{"Chamonix","Lecco","Annecy","Idrija","Bad Aussee","Bolzano","Brig-Glis","Sondrio","Chambéry","Sonthofen","Herisau","Gap","Bad Reichenhall","Maribor","Belluno","Villach"};
+	String[] orgs = new String[]{"Alpine Town of the Year Association","Chamonix","Lecco","Annecy","Idrija","Bad Aussee","Bolzano","Brig-Glis","Sondrio","Chambéry","Sonthofen","Herisau","Gap","Bad Reichenhall","Maribor","Belluno","Villach"};
 	/*@Test
 	public void createTopics(){
 		for (String stringtopic : topics){

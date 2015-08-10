@@ -82,4 +82,12 @@ privileged aspect UserDto_Roo_JavaBean {
         this.languageSkills = languageSkills;
     }
     
+    public boolean UserDto.isActive() {
+        return this.active;
+    }
+    
+    public void UserDto.setActive(boolean active) {
+        this.active = active;
+    }
+    
 }

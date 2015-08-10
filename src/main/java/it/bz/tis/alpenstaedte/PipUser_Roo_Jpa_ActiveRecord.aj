@@ -14,7 +14,7 @@ privileged aspect PipUser_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager PipUser.entityManager;
     
-    public static final List<String> PipUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("uuid", "email", "password", "role", "name", "surname", "phone", "languageSkills", "organisazions", "preferredTopics");
+    public static final List<String> PipUser.fieldNames4OrderClauseFilter = java.util.Arrays.asList("uuid", "email", "password", "role", "name", "surname", "phone", "active", "languageSkills", "organisazions", "preferredTopics");
     
     public static final EntityManager PipUser.entityManager() {
         EntityManager em = new PipUser().entityManager;

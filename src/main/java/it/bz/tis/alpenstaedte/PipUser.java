@@ -32,6 +32,7 @@ public class PipUser {
 	private String name;
 	private String surname;
 	private String phone;
+	private Boolean active = true;
 	
 	@ElementCollection
 	private Set<String> languageSkills;
