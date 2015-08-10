@@ -1,7 +1,7 @@
 <div class="container">
 	<div class="pull-left" ng-init="list=true;getIdeas()">
-		<button class="btn btn-default" type="submit" ng-click="list=true;getIdeas()">All Projects</button>
-		<button class="btn btn-default" type="submit" ng-click="getMyIdeas();list=true">My Projects</button>
+		<button class="btn btn-primary" type="submit" ng-click="list=true;getIdeas()">All Projects</button>
+		<button class="btn btn-primary" type="submit" ng-click="getMyIdeas();list=true">My Projects</button>
 		<button class="btn btn-default hidden-xs" type="submit" ng-click="list=false;drawTree('graph-data-topics')">By Topics</button>
 		<button class="btn btn-default hidden-xs" type="submit" ng-click="list=false;drawTree('graph-data')">By Project State</button>
 	</div>
@@ -10,9 +10,9 @@
 	</div>
 	<div ng-show="list"> 
 		<div class="pull-right">
-				<button class="btn btn-default" type="submit" ng-click="sort='projectName';order=false">By Name</button>
-				<button class="btn btn-default" type="submit" ng-click="sort='numberOfOrganisazions';order=true">By Followers</button>
-				<button class="btn btn-default" type="submit" ng-click="sort='updated_on';order=true">Most Recent</button>
+				<button class="btn btn-primary" type="submit" ng-click="sort='projectName';order=false">By Name</button>
+				<button class="btn btn-primary" type="submit" ng-click="sort='numberOfOrganisazions';order=true">By Followers</button>
+				<button class="btn btn-primary" type="submit" ng-click="sort='updated_on';order=true">Most Recent</button>
 		</div>
 		<div ng-init="sort='projectName';order=false" class="list-group" style="margin-top: 25px; width:100%;float:left">
 			<a ng-repeat="idea in ideas| orderBy:sort:order|filter:textFilter" class="list-group-item" href="#/idea/{{idea.uuid}}">
