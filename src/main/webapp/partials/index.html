@@ -17,7 +17,7 @@
 		</div>
 		<div ng-init="sort='projectName';order=false" class="list-group" style="margin-top: 25px; width:100%;float:left">
 			<a ng-repeat="idea in ideas| orderBy:sort:order|filter:textFilter" class="list-group-item" href="#/idea/{{idea.uuid}}">
-				<h4 class="list-group-item-heading">{{idea.projectName}} <small class="badge" style="background-color: #5bc0de">{{idea.followers}}</small></h4>
+				<h4 class="list-group-item-heading">{{idea.projectName}} <small class="badge" style="background-color: #5bc0de">{{idea.numberOfOrganisazions}}</small></h4>
 				<p class="list-group-item-text">{{idea.projectDesc|limitText:500:'...'}}</p>
 			</a>
 		</div>
