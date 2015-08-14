@@ -17,11 +17,11 @@ privileged aspect Organisazion_Roo_Equals {
             return true;
         }
         Organisazion rhs = (Organisazion) obj;
-        return new EqualsBuilder().append(name, rhs.name).isEquals();
+        return new EqualsBuilder().append(name, rhs.name).append(pic, rhs.pic).isEquals();
     }
     
     public int Organisazion.hashCode() {
-        return new HashCodeBuilder().append(name).toHashCode();
+        return new HashCodeBuilder().append(name).append(pic).toHashCode();
     }
     
 }

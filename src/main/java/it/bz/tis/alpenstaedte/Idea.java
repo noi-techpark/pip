@@ -1,4 +1,5 @@
 package it.bz.tis.alpenstaedte;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -38,14 +39,14 @@ public class Idea {
     @ElementCollection
     private Set<String> fileNames;
     
-    @OneToMany(mappedBy="idea",cascade=CascadeType.ALL)
-    private Set<Funding> fundings;
+    @OneToMany(mappedBy="idea",cascade=CascadeType.ALL,orphanRemoval=true)
+    private Set<Funding> fundings = new HashSet<Funding>();
 
     @ManyToOne
     private PipUser owner;
     
     @OneToMany(cascade = CascadeType.ALL,mappedBy="idea")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<Comment>();
     private Date created_on = new Date();
     private Date updated_on = new Date();
     
@@ -79,6 +80,12 @@ public class Idea {
 	public static List<Idea> findIdeaByContainsTopic(Topic topic) {
 		TypedQuery<Idea> query = entityManager().createQuery("select idea from Idea idea where :topic in elements(idea.topics)",Idea.class);
 		query.setParameter("topic", topic);
+		return query.getResultList();
+	}
+
+	public static List<Idea> findIdeasFollowed(PipUser currentUser) {
+		TypedQuery<Idea> query = entityManager().createQuery("select idea from Idea idea where :user in elements(idea.follower)",Idea.class);
+		query.setParameter("user",currentUser);
 		return query.getResultList();
 	}
 }

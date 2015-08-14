@@ -132,6 +132,13 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 			console.log(status);
 		});
 	}
+	self.getFavoriteIdeas = function(){
+		$http.get("myfavorites").success(function(response,status,headers,config){
+			self.ideas = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 	self.getIdeas = function(){
 		$http.get("ideas").success(function(response,status,headers,config){
 			self.ideas = response;
@@ -340,6 +347,7 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			self.idea = response;
 			self.checkIsOwner();
 			self.followsIdea();
+			self.getProgress();
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -360,12 +368,16 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			console.log(status);
 		});
 	}
-	self.updateIdea = function(){
+	self.updateIdea = function(move){
 		if(self.projectidea.$valid){
 			$http.post("update",self.idea).success(function(response,status,headers,config){
 				self.syncFiles(response.data);
-				self.ideaSaved = true;
-				$timeout(function(){self.ideaSaved=false},2000);
+				if (move){
+					$location.path("idea/"+self.idea.uuid);
+				}else{
+					self.ideaSaved = true;
+					$timeout(function(){self.ideaSaved=false},2000);
+				}
 			}).error(function(data, status, headers, config) {
 				console.log(status);
 			});
@@ -449,6 +461,27 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
+	}
+	self.deleteComment = function(uuid,index){
+		$http.delete("idea/comment/"+uuid).success(function(response,status,headers,config){
+			self.getIdea();
+		}).error(function(data, status, headers, config) {
+			console.log(data);
+		});
+	}
+	self.getProgress = function(){
+		var width='0';
+		if(self.idea.status == 'idea')
+			width='25%';
+		else if(self.idea.status == 'application done')
+			width='50%';
+		else if(self.idea.status == 'funding granted')
+			width='75%';
+		else if(self.idea.status == 'concluded')
+			width='100%';
+		var style={'width':width};
+		
+		self.progress=style;
 	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {

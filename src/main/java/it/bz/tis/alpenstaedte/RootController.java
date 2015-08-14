@@ -118,75 +118,76 @@ public class RootController {
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.POST, value = "update")
-    public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto,Principal principal) {
+	public @ResponseBody ResponseEntity<ResponseObject> update(@RequestBody IdeaDto dto,Principal principal) {
 		Set<Topic> topics = new HashSet<Topic>();
-    	for(TopicDto topicDto:dto.getTopics()){
-   			Topic topic = Topic.findTopicsByNameEquals(topicDto.getName()).getSingleResult();
- 				topics.add(topic);
-    	}
-    	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals(dto.getStatus()).getSingleResult();
-    	Idea idea = Idea.findIdeasByUuidEquals(dto.getUuid()).getSingleResult();
-    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
-    	if (!idea.getOwner().equals(currentUser))
-    		return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
-    	idea.setName(dto.getProjectName());
-    	idea.setDescription(dto.getProjectDesc());
-    	idea.setStatus(status);
-    	idea.setTopics(topics);
-    	idea.setUpdated_on(new Date());
-    	idea.setFileNames(dto.getFileNames());
-    	Set<Funding> fundings = new HashSet<Funding>();
-    	for (FundingDto fDto : dto.getFundings()){
-    		Funding f;
-    		if (fDto.getUuid()!=null){
-    			f=Funding.findFundingsByUuid(fDto.getUuid()).getSingleResult();
-    			f.setUrl(fDto.getUrl());
-    			f.setDescription(fDto.getDescription());
-        		f.merge();
-    		}
-    		else{
-    			f = new Funding(fDto.getUrl(),fDto.getDescription(),idea);
-    			f.persist();
-    		}
-    		fundings.add(f);
-    	}
-    	for (Funding f:idea.getFundings()){
-    		if (!fundings.contains(f))
-    			f.remove();
-    	}
-    	idea.setFundings(fundings);
-    	idea.merge();
-		Set<PipUser> users = PipUser.getUserByOwnerAndCommenterAndOrganisazion(idea);
-		users.remove(currentUser);
-		String[] mails = PipUser.getMailsFromUsers(users);
-    	mailingUtil.sendUpdateMail(idea,mails);
-    	return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
+		for(TopicDto topicDto:dto.getTopics()){
+			Topic topic = Topic.findTopicsByNameEquals(topicDto.getName()).getSingleResult();
+			topics.add(topic);
+		}
+		ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals(dto.getStatus()).getSingleResult();
+		Idea idea = Idea.findIdeasByUuidEquals(dto.getUuid()).getSingleResult();
+		PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+		if (idea.getOwner().equals(currentUser) || PipRole.ADMIN.getName().equals(currentUser.getRole())){
+			idea.setName(dto.getProjectName());
+			idea.setDescription(dto.getProjectDesc());
+			idea.setStatus(status);
+			idea.setTopics(topics);
+			idea.setUpdated_on(new Date());
+			idea.setFileNames(dto.getFileNames());
+			for (Funding funding:idea.getFundings()){
+				boolean toDelete = true;
+				for  (FundingDto fDto : dto.getFundings()){
+					if (fDto.getUuid()!=null && fDto.getUuid().equals(funding.getUuid()))
+						toDelete = false;
+				}
+				if (toDelete){
+					idea.getFundings().remove(funding);
+					funding.remove();
+				}
+			}
+			for (FundingDto fDto : dto.getFundings()){
+				Funding f;
+				if (fDto.getUuid() != null){
+					f = Funding.findFundingsByUuid(fDto.getUuid()).getSingleResult();
+					f.setUrl(fDto.getUrl());
+					f.setDescription(fDto.getDescription());
+					f.merge();
+				}
+				else{
+					f = new Funding(fDto.getUrl(),fDto.getDescription(),idea);
+					f.persist();
+					idea.getFundings().add(f);
+				}
+			}
+			idea.merge();
+			Set<PipUser> users = PipUser.getUserByOwnerAndCommenterAndOrganisazion(idea);
+			users.remove(currentUser);
+			String[] mails = PipUser.getMailsFromUsers(users);
+			mailingUtil.sendUpdateMail(idea,mails);
+			return new ResponseEntity<ResponseObject>(new ResponseObject(idea.getUuid()),HttpStatus.OK);
+		}else
+			return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "myideas")
     public @ResponseBody ResponseEntity<List<NewIdeaDto>> getMyIdeas(Principal principal) {
-    	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
     	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
-    	for (Idea idea: Idea.findIdeasByOwner(currentUser,"name","ASC").getResultList()){
-    		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
-    		dto.setUuid(idea.getUuid());
-    		dto.setNumberOfOrganisazions(idea.getInterestedOrganisations().size());
-    		dto.setUpdated_on(idea.getUpdated_on());
-    		list.add(dto);
-    	}
+    	List<Idea> ideas = Idea.findIdeasByOwner(currentUser,"name","ASC").getResultList();
+		List<NewIdeaDto> list = DtoCastUtil.castIdeaList(ideas);
+    	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "myfavorites")
+    public @ResponseBody ResponseEntity<List<NewIdeaDto>> getMyFavorites(Principal principal) {
+    	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	List<Idea> ideas = Idea.findIdeasFollowed(currentUser);
+		List<NewIdeaDto> list = DtoCastUtil.castIdeaList(ideas);
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "ideas")
     public @ResponseBody ResponseEntity<List<NewIdeaDto>> getIdeas() {
-    	List<NewIdeaDto> list = new ArrayList<NewIdeaDto>();
-    	for (Idea idea: Idea.findAllIdeas()){
-    		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
-    		dto.setUuid(idea.getUuid());
-    		dto.setNumberOfOrganisazions(idea.getFollower().size());
-    		dto.setUpdated_on(idea.getUpdated_on());
-    		list.add(dto);
-    	}
+    	List<NewIdeaDto> list = DtoCastUtil.castIdeaList(Idea.findAllIdeas());
     	return new ResponseEntity<List<NewIdeaDto>>(list,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
@@ -409,6 +410,12 @@ public class RootController {
 		Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
 		comment.setBanned(false);
 		comment.merge();
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.DELETE, value = "idea/comment/{uuid}")
+    public @ResponseBody void deleteComment(@PathVariable("uuid") String uuid) {
+		Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
+		comment.remove();
     }
 	
 	

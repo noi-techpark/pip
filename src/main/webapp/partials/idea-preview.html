@@ -1,82 +1,106 @@
 <div class="container" ng-init="getMyUser();getIdea();">
-	<div class="clearfix modal-body">
-		<div class="btn-group btn-group-justified" role="group"	ng-init="getStatuses()">
-			<div class="btn-group" role="group" ng-repeat="status in statuses">
-				<button ng-class="idea.status==status?'btn btn-primary':'btn'">{{status}}</button>
-			</div>
-		</div>
-		<div class="idea">
-				<h1>{{idea.projectName}}</h1>
-				<h4 ng-if="idea.author.name || idea.author.surname"><small>by <a href="#/profile/{{idea.author.uuid}}">{{idea.author.name}} {{idea.author.surname}}</a> {{idea.created_on|date}}</small></h4>
-				<p class="collumnsx2">{{idea.projectDesc}}</p>
-				<div class="form-group" ng-show="idea.fileNames.length>0" >
-					<label>Details</label>
-					<ul>
-						<li ng-repeat="file in idea.fileNames |orderBy:'file' "><a href="{{me+'/files/'+idea.uuid+'/'+encode(file.substring(0,file.indexOf('.')))+'/'+file.substring(file.indexOf('.')+1)}}" target="_blank">{{file}}</a></li>
-					</ul> 
+		<div class="row idea">
+			<div class="clearfix">
+				<h1 class="pull-left">{{idea.projectName}}</h1>
+				<div class="pull-right" style="margin-top: 20px"
+					ng-init="getUser();">
+					<a ng-show="isAdmin || isOwner" class="btn btn-primary"
+						href="#/ideas/{{idea.uuid}}">Edit</a>
+					<button ng-show="!follows" class="btn btn-primary"
+						ng-click="follow()">
+						<span class="glyphicon glyphicon-star-empty"></span> <span>Follow</span>
+					</button>
+					<button ng-show="follows" class="btn btn-primary"
+						ng-click="unfollow()">
+						<span class="glyphicon glyphicon-star"></span> <span>Unfollow</span>
+					</button>
 				</div>
 			</div>
-		<div class="topics form-group">
+			<h4 ng-if="idea.author.name || idea.author.surname">
+				<small>by <a href="#/profile/{{idea.author.uuid}}">{{idea.author.name}}
+						{{idea.author.surname}}</a> {{idea.created_on|date}}
+				</small>
+			</h4>
+			<p class="collumnsx2">{{idea.projectDesc}}</p>
+			<div class="attachements form-group"
+				ng-show="idea.fileNames.length>0">
+				<a class="btn btn-default glyphicon glyphicon-download-alt"
+					ng-repeat="file in idea.fileNames |orderBy:'file' "
+					href="{{me+'/files/'+idea.uuid+'/'+encode(file.substring(0,file.indexOf('.')))+'/'+file.substring(file.indexOf('.')+1)}}"
+					target="_blank">&nbsp;{{file}} </a>
+			</div>
+			<div class="form-group">
+				<ul class="progressbarheader" ng-init="getStatuses()">
+					<li ng-repeat="status in statuses">{{status}}<br> <img
+						alt="branch" src="images/branch.svg" width="100%"></li>
+				</ul>
+				<div class="myprogressbar">
+					<div class="currentProgress" ng-style="progress"></div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="fundings col-md-7 left-column" ng-if="idea.fundings.length>0">
+			<h3>Possible funding programs</h3>
+				<div ng-repeat="funding in idea.fundings">
+					<h4>
+						<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
+					</h4>
+					<p>{{funding.description|limitText:250:'...'}}</p>
+				</div>
+			</div>
+			<div class="col-md-5 organisazion" ng-class="idea.fundings.length>0?'':'col-md-offset-7'" ng-show="idea.interestedOrganisazions.length>0">
+  	  		  <h3>Interested Organisations</h3>
+			  <div ng-repeat="org in idea.interestedOrganisazions|orderBy:'name'" class="row">
+			      <img src="images/{{org.pic}}" alt="{{org.name}}" class="col-md-2">
+			      <div class="col-md-10">
+			      <h4>{{org.name}}</h4>
+			        <ul>
+						<li ng-repeat="follower in idea.followers|orgFilter:org|orderBy:'name'">
+							<a href="#/profile/{{follower.uuid}}">{{follower.name}} {{follower.surname}}</a>
+						</li>
+			        </ul>
+			      </div>
+			  </div>
+			</div>
+		</div>
+		<div class="topics row">
+		 	<h3>Related topics</h3>
 			<button type="button" ng-repeat="topic in idea.topics|orderBy:'name'" class="btn"
 				style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
 		</div>
-		<h3 ng-if="idea.fundings.length>0">Possible funding programs</h3>
-		<div class="list-group-item" ng-repeat="funding in idea.fundings">
-			<h4>
-				<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
-			</h4>
-			<p>{{funding.description}}</p>
-		</div>
-		<div class="form-group" ng-show="idea.interestedOrganisazions.length>0">
-			<h3>Interested organisations</h3>
-			<ul>
-				<li ng-repeat="org in idea.interestedOrganisazions" >
-					{{org.name}}
-					(
-					<span ng-repeat="follower in idea.followers|orgFilter:org|orderBy:'name'"><span ng-show="$index!=0">, </span><a href="#/profile/{{follower.uuid}}">{{follower.name}} {{follower.surname}}</a></span>
-					)
-				</li>
-			</ul>
-		</div>
-		<div class="pull-right" style="margin-top:20px"  ng-init="getUser();">
-			<a ng-show="isAdmin || isOwner" class="btn btn-primary" href="#/ideas/{{idea.uuid}}">Edit</a>
-			<button ng-show="!follows" class="btn btn-primary" ng-click="follow()">
-				<span >Follow</span>
-			</button>
-			<button ng-show="follows" class="btn btn-primary" ng-click="unfollow()">
-				<span >Unfollow</span>
-			</button>
-		</div>
-	</div>
-	<div class="modal-footer">
+<div>			
+<hr/>
+	
 			<div class="form-group row">
 				<div class="col-md-1 col-xs-3">
-					<img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" />
+					<a href="#/profile/{{idea.author.uuid}}"><img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" /></a>
 				</div>
 				<div class="col-md-11 col-xs-9">
 					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
 				</div> 
 			</div>
-			<div class="form-group">
-				<button type="button" ng-click="comment()" class="btn btn-default">Comment</button>
+			<div class="form-group clearfix">
+				<button type="button" ng-click="comment()" class="btn btn-default pull-right">Comment</button>
 			</div>
 		</div>
 	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
 		<div class="row">
 			<div class="col-md-1 col-xs-3">
-				<img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" />
+				<a href="#/profile/{{idea.author.uuid}}"><img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" /></a>
 			</div>
 			<div class="col-md-11 col-xs-9"> 
 				<h5>
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
 					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
 				</h5>
-				<a ng-show="isAdmin && !comment.banned" type="button" class="close" confirmed-click="blockComment(comment)" ng-confirm-click="Should this comment really be blocked?"><span class="glyphicon glyphicon-ban-circle"></span></a>
+				<a ng-show="isAdmin" title="Delete comment" class="glyphicon glyphicon-remove close"  confirmed-click="deleteComment(comment.uuid,$index)" ng-confirm-click="Are you sure you want to delete this comment?" ></a>
+				<a ng-show="isAdmin && !comment.banned" type="button" class="close" title="Block comment" ng-click="blockComment(comment)"><span class="glyphicon glyphicon-ban-circle"></span></a>
 				<p ng-if="!comment.banned">{{comment.text}}</p>
 				<p ng-if="comment.banned" class="alert alert-warning">This comment was removed, due it's content not being retained adequate
-				<a ng-show="isAdmin && comment.banned"type="button"class="close" confirmed-click="unblockComment(comment)" ng-confirm-click="Do you realy want to unblock this comment?"><span class="glyphicon glyphicon-leaf"></span></a>
-				
+					<a ng-show="isAdmin && comment.banned" title="Unblock comment" type="button" class="close" ng-click="unblockComment(comment)"><span class="glyphicon glyphicon-leaf"></span></a>
 				</p>
+				
 			</div>
 		</div>
 		

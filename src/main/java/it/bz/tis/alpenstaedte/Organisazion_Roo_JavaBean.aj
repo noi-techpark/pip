@@ -15,4 +15,12 @@ privileged aspect Organisazion_Roo_JavaBean {
         this.name = name;
     }
     
+    public String Organisazion.getPic() {
+        return this.pic;
+    }
+    
+    public void Organisazion.setPic(String pic) {
+        this.pic = pic;
+    }
+    
 }

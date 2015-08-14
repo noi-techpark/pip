@@ -6,10 +6,12 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 public class OrganisazionDto {
 	public OrganisazionDto() {
 	}
-	public OrganisazionDto(String name) {
+	public OrganisazionDto(String name,String pic) {
 		this.name = name;
+		this.pic = pic;
 	}
 
 	private String name;
+	private String pic;
 
 }

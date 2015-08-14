@@ -42,9 +42,6 @@
   -moz-column-gap: 40px;
   column-gap: 40px;
 }
-.idea{
-	margin:30px 0;
-}
 .profile-pic{
 	max-width: 150px;
 	max-height: 200px;
@@ -64,4 +61,68 @@
 	.btn-group-justified button{
 		font-size:11px;
 	}
+}
+.status img{
+	display: block;
+    padding: 20px;
+    margin: auto;
+}
+
+.status li.active{
+	border:3px #337ab7;
+	border-style:dotted;
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	border-radius: 9px;
+}
+.myprogressbar {
+    height: 20px;
+    width: 100%;
+    background-color: whitesmoke;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.currentProgress {
+    background-color: #337ab7;
+    height: 100%;
+    -webkit-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border-radius: 5px;
+}
+.progressbarheader{
+	padding:0;
+}
+.progressbarheader li {
+    display: inline-block;
+    list-style: none;
+    vertical-align: top;
+    text-align: center;
+    margin: 8px 0;
+    width: 25%;
+}
+.attachements a{
+	margin:3px 15px 3px 0; 
+}
+.organisazion img{
+	display: block;
+	margin:auto;
+}
+.idea,.left-column,.organisazion,.topics{
+	padding:12px;
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	-moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	margin-top: 10px;
+}
+.idea{
+	-webkit-box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
+	-moz-box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
+	box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
+}
+.organisazion>div{
+	margin:15px 0;
 }

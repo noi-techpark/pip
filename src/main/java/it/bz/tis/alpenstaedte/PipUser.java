@@ -92,9 +92,6 @@ public class PipUser {
 		users.add(idea.getOwner());
 		for (Comment comment:idea.getComments())
 			users.add(comment.getOwner());
-//		for (Organisazion org: idea.getInterestedOrganisations())
-//			for (PipUser user: PipUser.findPipUserByOrganisazion(org))
-//				users.add(user);
 		for (PipUser user: idea.getFollower())
 			users.add(user);
 		return users;

@@ -1,12 +1,14 @@
 package it.bz.tis.alpenstaedte.util;
 
 import it.bz.tis.alpenstaedte.Funding;
+import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.Organisazion;
 import it.bz.tis.alpenstaedte.PipUser;
 import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Topic;
 import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
+import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
@@ -84,7 +86,7 @@ public class DtoCastUtil {
 	}
 
 	public static OrganisazionDto cast(Organisazion org) {
-		return new OrganisazionDto(org.getName());
+		return new OrganisazionDto(org.getName(),org.getPic());
 	}
 
 	public static List<FundingDto> castFundings(List<Funding> possibleFundings) {
@@ -107,6 +109,24 @@ public class DtoCastUtil {
 			dtos.add(userDto);
 		}
 		return dtos;
+	}
+
+	public static List<NewIdeaDto> castIdeaList(List<Idea> ideas) {
+		List<NewIdeaDto> dtos = new ArrayList<NewIdeaDto>();
+		for (Idea idea: ideas){
+			NewIdeaDto dto = castReduced(idea);
+			dtos.add(dto);
+		}
+		return dtos;
+	}
+
+	public static NewIdeaDto castReduced(Idea idea) {
+		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
+		dto.setUuid(idea.getUuid());
+		dto.setNumberOfOrganisazions(idea.getFollower().size());
+		dto.setUpdated_on(idea.getUpdated_on());
+		dto.setTopics(DtoCastUtil.cast(idea.getTopics()));
+		return dto;
 	}
 
 }
