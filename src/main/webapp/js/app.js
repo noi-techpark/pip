@@ -105,7 +105,7 @@ alps.config(['$routeProvider',function($routeProvider) {
 
 alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies) {
 	var self = $scope;
-	if($cookies.redirect.length>0){
+	if($cookies.redirect && $cookies.redirect.length>0){
 		$location.path($cookies.redirect);
 		$cookies.redirect='';
 	}
