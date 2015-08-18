@@ -9,4 +9,5 @@ import org.springframework.roo.addon.tostring.RooToString;
 public class ProjectStatus {
 
     private String name;
+    private Integer position;
 }

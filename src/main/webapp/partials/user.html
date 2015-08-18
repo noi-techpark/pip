@@ -4,7 +4,7 @@
 			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
 		</div>
 		<div class="clearfix" >
-			<form class="form-inline pull-left" ng-init="user = {organizations:[],name:''}" ng-submit="createUser()">
+			<form class="form-inline pull-left" ng-init="user = {organizations:[]}" ng-submit="createUser()">
 				<div class="form-group">
 					<label class="sr-only">Name</label> 
 					<input ng-model="user.email" type="email" class="form-control" placeholder="Email" required="required">
@@ -12,7 +12,7 @@
 				<div ng-if="isAdmin" class="form-group" ng-init="getOrganisations()">
 					<label class="sr-only">Organisation</label>
 					 
-					<select ng-model="user.organizations[0]" class="form-control" required="required">
+					<select ng-model="user.organizations[0].name" class="form-control" required="required">
 						<option  ng-repeat="org in organisations|orderBy:'name'">{{org.name}}</option>
 					</select>
 				</div>
@@ -20,7 +20,7 @@
 			</form>
 			<div class="input-group pull-right" style="max-width: 200px">
   				<span class="input-group-addon">Order</span>
-				<select  ng-init="usersorts =['email','organisazion','active','role'];usersort='email'" class="form-control" ng-model="usersort" ng-options="sort for sort in usersorts" style="width: auto;" ></select>
+				<select  ng-init="usersorts =['email','active','role'];usersort='email'" class="form-control" ng-model="usersort" ng-options="sort for sort in usersorts" style="width: auto;" ></select>
 				<span class="input-group-btn">
         			<button class="btn btn-default" type="button" ng-init="order=false" ng-click="order=!order">Reverse</button>
       			</span>

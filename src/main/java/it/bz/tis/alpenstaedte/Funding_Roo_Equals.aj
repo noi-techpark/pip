@@ -17,11 +17,11 @@ privileged aspect Funding_Roo_Equals {
             return true;
         }
         Funding rhs = (Funding) obj;
-        return new EqualsBuilder().append(uuid, rhs.uuid).isEquals();
+        return new EqualsBuilder().append(cofinance, rhs.cofinance).append(deadline, rhs.deadline).append(uuid, rhs.uuid).isEquals();
     }
     
     public int Funding.hashCode() {
-        return new HashCodeBuilder().append(uuid).toHashCode();
+        return new HashCodeBuilder().append(cofinance).append(deadline).append(uuid).toHashCode();
     }
     
 }

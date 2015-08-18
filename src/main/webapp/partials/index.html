@@ -4,19 +4,23 @@
 		<button class="btn" ng-class="menu=='my'?'btn-primary':'btn-default'" type="submit" ng-click="getMyIdeas();menu='my';list=true">My Projects</button>
 		<button class="btn" ng-class="menu=='fav'?'btn-primary':'btn-default'" type="submit" ng-click="getFavoriteIdeas();menu='fav';list=true">My Favorites</button>
 		<button class="btn hidden-xs" ng-class="menu=='topic'?'btn-primary':'btn-default'" type="submit" ng-click="menu='topic';list=false;drawTree('graph-data-topics')">By Topics</button>
-		<button class="btn hidden-xs" ng-class="menu=='state'?'btn-primary':'btn-default'" type="submit" ng-click="menu='state';list=false;drawTree('graph-data')">By Project State</button>
+		<button class="btn hidden-xs" ng-class="menu=='state'?'btn-primary':'btn-default'" type="submit" ng-click="menu='state';list=false;drawTree('graph-data')">By Project Status</button>
+		
 	</div>
 	<div ng-show="!list" id="display">
 	
 	</div>
 	<div ng-show="list"> 
-		<div class="pull-right">
-				<button class="btn btn-default" type="submit" ng-click="sort='projectName';order=false">By Name</button>
-				<button class="btn btn-default" type="submit" ng-click="sort='numberOfOrganisazions';order=true">By Followers</button>
-				<button class="btn btn-default" type="submit" ng-click="sort='updated_on';order=true">Most Recent</button>
+		<div class="input-group pull-right" style="max-width: 200px">
+			<span class="input-group-addon">Order</span> <select
+				ng-init="ideasorts =[{mod:'projectName',name:'Name'},{mod:'numberOfOrganisazions',name:'Followers'},{mod:'updated_on',name:'Most Recent'}];ideasort=ideasorts[0]" class="form-control" ng-model="ideasort" ng-options="sort.name for sort in ideasorts"  style="width: auto;"></select>
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="button" ng-init="order=false"
+					ng-click="order=!order">Reverse</button>
+			</span>
 		</div>
-		<div ng-init="sort='projectName';order=false" class="list-group" style="margin-top: 25px; width:100%;float:left">
-			<a ng-repeat="idea in ideas| orderBy:sort:order|filter:textFilter" class="list-group-item" href="#/idea/{{idea.uuid}}">
+		<div class="list-group" style="margin-top: 25px; width:100%;float:left">
+			<a ng-repeat="idea in ideas| orderBy:ideasort.mod:order|filter:textFilter" class="list-group-item" href="#/idea/{{idea.uuid}}">
 				<h4 class="list-group-item-heading">{{idea.projectName}} <small class="badge" style="background-color: #5bc0de">{{idea.numberOfOrganisazions}}</small></h4>
 				<p class="list-group-item-text">{{idea.projectDesc|limitText:500:'...'}}</p>
 			</a>

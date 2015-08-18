@@ -39,6 +39,38 @@ privileged aspect IdeaDto_Roo_JavaBean {
         this.projectDesc = projectDesc;
     }
     
+    public String IdeaDto.getObjectives() {
+        return this.objectives;
+    }
+    
+    public void IdeaDto.setObjectives(String objectives) {
+        this.objectives = objectives;
+    }
+    
+    public String IdeaDto.getOutputs() {
+        return this.outputs;
+    }
+    
+    public void IdeaDto.setOutputs(String outputs) {
+        this.outputs = outputs;
+    }
+    
+    public String IdeaDto.getMeasures() {
+        return this.measures;
+    }
+    
+    public void IdeaDto.setMeasures(String measures) {
+        this.measures = measures;
+    }
+    
+    public String IdeaDto.getTarget() {
+        return this.target;
+    }
+    
+    public void IdeaDto.setTarget(String target) {
+        this.target = target;
+    }
+    
     public Set<TopicDto> IdeaDto.getTopics() {
         return this.topics;
     }
@@ -109,6 +141,14 @@ privileged aspect IdeaDto_Roo_JavaBean {
     
     public void IdeaDto.setCreated_on(Date created_on) {
         this.created_on = created_on;
+    }
+    
+    public Integer IdeaDto.getBudget() {
+        return this.budget;
+    }
+    
+    public void IdeaDto.setBudget(Integer budget) {
+        this.budget = budget;
     }
     
 }

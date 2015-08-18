@@ -13,12 +13,16 @@ import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DtoCastUtil {
+
+	public static DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	public static Set<TopicDto> cast(Set<Topic> preferredTopics) {
 		Set<TopicDto> topics = new HashSet<TopicDto>();
@@ -89,9 +93,9 @@ public class DtoCastUtil {
 		return new OrganisazionDto(org.getName(),org.getPic());
 	}
 
-	public static List<FundingDto> castFundings(List<Funding> possibleFundings) {
+	public static List<FundingDto> castFundings(Set<Funding> set) {
 		List<FundingDto> fundings = new ArrayList<FundingDto>();
-		for (Funding funding : possibleFundings){
+		for (Funding funding : set){
 			FundingDto fundingDto = cast(funding);
 			fundings.add(fundingDto);
 		}
@@ -99,7 +103,7 @@ public class DtoCastUtil {
 	}
 
 	public static FundingDto cast(Funding funding) {
-		return new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription());
+		return new FundingDto(funding.getUuid(),funding.getUrl(), funding.getDescription(),funding.getDeadline(),funding.getCofinance());
 	}
 
 	public static List<UserDto> castUser(List<PipUser> users) {
@@ -121,7 +125,7 @@ public class DtoCastUtil {
 	}
 
 	public static NewIdeaDto castReduced(Idea idea) {
-		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null);
+		NewIdeaDto dto = new NewIdeaDto(idea.getName(), idea.getDescription(), null, null,null,null,null,null,null);
 		dto.setUuid(idea.getUuid());
 		dto.setNumberOfOrganisazions(idea.getFollower().size());
 		dto.setUpdated_on(idea.getUpdated_on());

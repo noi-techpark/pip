@@ -1,7 +1,15 @@
 <div ng-controller="IdeaListCtrl">
-	<div class="container" ng-init="getIdea()">
+	<div class="container" ng-init="getIdea()" ng-cloak>
 		<form ng-submit="updateIdea()" name="projectidea" novalidate>
-			<div class="modal-body">
+			<div class="clearfix">
+				<div class="pull-right">
+					<button type="button" class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					<a ng-click="updateIdea('move')" class="btn btn-primary">Save and Show</a>
+					<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+				</div>
+			</div>
+			<div class="modal-body" >
 				<div class="form-group">
 					<label for="project-name">Project name</label> 
 					<input type="text" class="form-control" name="name" ng-model="idea.projectName" id="project-name" placeholder="Name" required="required" ng-maxlength="200"/>
@@ -12,10 +20,59 @@
 				</div>
 				<div class="form-group">
 					<label for="project-desc">Project description</label> 
-					<textarea id ="project-desc" ng-model="idea.projectDesc" name="description" class="form-control" rows="3" placeholder="Description" required="required" ng-minlength="8"></textarea>
+					<textarea id ="project-desc" ng-model="idea.projectDesc" name="description" class="form-control" rows="8" placeholder="Description" required="required" ng-minlength="8" ng-maxlength="3750"></textarea>
 					<div ng-messages="projectidea.description.$error" multiple>
 						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
-						<div ng-message="minlength" class="alert alert-warning">Please describe your Project with at least a sentence</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe your project with at least a sentence</div>
+						<div ng-message="maxlength" class="alert alert-warning">Maximum character count of 3750 reached</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="objectives">Objectives and Aims</label> 
+					<textarea id ="objectives" ng-model="idea.objectives" name="objectives" class="form-control" rows="3" placeholder="Objectives and Aims" required="required" ng-minlength="8" ng-maxlength="1875"></textarea>
+					<div ng-messages="projectidea.objectives.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe the objective and aims of the project with at least a sentence</div>
+						<div ng-message="maxlength" class="alert alert-warning">Maximum character count of 1875 reached</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="measures">Activities and Measures</label> 
+					<textarea id ="measures" ng-model="idea.measures" name="measures" class="form-control" rows="3" placeholder="Activities and Measures" required="required" ng-minlength="8" ng-maxlength="1875"></textarea>
+					<div ng-messages="projectidea.measures.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe the activities and measures of the project with at least a sentence</div>
+						<div ng-message="maxlength" class="alert alert-warning">Maximum character count of 1875 reached</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="objectives">Outputs and Results</label> 
+					<textarea id ="project-desc" ng-model="idea.outputs" name="outputs" class="form-control" rows="3" placeholder="Outputs and Results" required="required" ng-minlength="8" ng-maxlength="1875"></textarea>
+					<div ng-messages="projectidea.outputs.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe the outputs and results of the project with at least a sentence</div>
+						<div ng-message="maxlength" class="alert alert-warning">Maximum character count of 1875 reached</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="target">Target Group</label> 
+					<textarea id ="target" ng-model="idea.target" name="target" class="form-control" rows="3" placeholder="Target Group" required="required" ng-minlength="8" ng-maxlength="1875"></textarea>
+					<div ng-messages="projectidea.target.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="minlength" class="alert alert-warning">Please describe the outputs and results of the project with at least a sentence</div>
+						<div ng-message="maxlength" class="alert alert-warning">Maximum character count of 1875 reached</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="budget">Total Project Budget</label>
+					<div class="input-group col-md-3">
+						<input type="number" ng-model="idea.budget" name="budget" class="form-control" placeholder="Total Project Budget" min="100"required="required">
+						<span class="input-group-addon">&euro;</span>
+					</div>
+					<div ng-messages="projectidea.budget.$error" multiple>
+						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
+						<div ng-message="min" class="alert alert-warning">Budget should be higher than 100 &euro;</div>
+						
 					</div>
 				</div>
 				<div class="form-group">
@@ -33,7 +90,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="project-fundings">Possible funding programs</label>
+					<label for="project-fundings">Possible funding programms</label>
 					<button type="button" class="btn" ng-click="idea.fundings.push({url:'http://',description:''})"><span class="glyphicon glyphicon-plus" ></span></button>
 				</div>
 				<div class="form-group">
@@ -44,8 +101,23 @@
 							<input type="url" class="form-control" ng-model="funding.url" required="required"/>
 						</div>
 						<div class="form-group">
-							<label for="project-desc">Call description</label> 
-							<textarea id ="project-desc" class="form-control" rows="3" placeholder="Description" ng-model="funding.description"></textarea>
+							<label for="call-desc">Call description</label> 
+							<textarea id ="call-desc" class="form-control" rows="3" placeholder="Description" ng-model="funding.description" required="required"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="deadline">Call deadline</label> 
+							<div class="input-group col-md-3">
+								<datepicker date-format="dd/MM/yyyy">
+									<input type="text" id ="deadline" class="form-control" placeholder="Deadline" ng-model="funding.deadline" required="required" ></input>
+								</datepicker>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="cofinance">Co-financing rate</label>
+							<div class="input-group col-md-3">
+								<input type="number" id ="cofinance" class="form-control" min="0" max="100" placeholder="Co-financing rate" ng-model="funding.cofinance"></input>
+								<span class="input-group-addon">%</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -62,12 +134,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
-				<button type="submit" class="btn btn-primary">Save changes</button>
-				<a ng-click="updateIdea('move')" class="btn btn-primary">Save and Show</a>
-			</div>
-			<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
 		</form>
 	</div>
 </div>

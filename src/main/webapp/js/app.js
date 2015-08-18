@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -178,7 +178,6 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
 	self.openModal=function(){
 		$('#idea-modal').modal('show');
 	};
-
 	self.drawTree = function(graph){
 		$("#display").empty();
 		if (graph==undefined)
@@ -472,11 +471,15 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 	self.getProgress = function(){
 		var width='0';
 		if(self.idea.status == 'idea')
-			width='25%';
+			width=16.666666667+'%';
+		else if(self.idea.status == 'drafting')
+			width=16.666666667*2+'%';
 		else if(self.idea.status == 'application done')
-			width='50%';
+			width=16.666666667*3+'%';
+		else if(self.idea.status == 'funding not granted')
+			width=16.666666667*4+'%';
 		else if(self.idea.status == 'funding granted')
-			width='75%';
+			width=16.666666667*5+'%';
 		else if(self.idea.status == 'concluded')
 			width='100%';
 		var style={'width':width};

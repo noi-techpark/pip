@@ -68,4 +68,44 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
         this.updated_on = updated_on;
     }
     
+    public String NewIdeaDto.getObjectives() {
+        return this.objectives;
+    }
+    
+    public void NewIdeaDto.setObjectives(String objectives) {
+        this.objectives = objectives;
+    }
+    
+    public String NewIdeaDto.getOutputs() {
+        return this.outputs;
+    }
+    
+    public void NewIdeaDto.setOutputs(String outputs) {
+        this.outputs = outputs;
+    }
+    
+    public String NewIdeaDto.getMeasures() {
+        return this.measures;
+    }
+    
+    public void NewIdeaDto.setMeasures(String measures) {
+        this.measures = measures;
+    }
+    
+    public String NewIdeaDto.getTarget() {
+        return this.target;
+    }
+    
+    public void NewIdeaDto.setTarget(String target) {
+        this.target = target;
+    }
+    
+    public Integer NewIdeaDto.getBudget() {
+        return this.budget;
+    }
+    
+    public void NewIdeaDto.setBudget(Integer budget) {
+        this.budget = budget;
+    }
+    
 }

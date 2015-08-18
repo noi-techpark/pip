@@ -4,6 +4,9 @@
 }
 .unrevealed{
 	opacity:0;
+	padding-top:0;
+	padding-bottom:0;
+	margin:0;
 }
 .node {
   cursor: pointer;
@@ -61,6 +64,11 @@
 	.btn-group-justified button{
 		font-size:11px;
 	}
+	.collumnsx2{
+  		 -webkit-column-count: 1;
+ 	 	 -moz-column-count: 1;
+ 		 column-count: 1;
+}
 }
 .status img{
 	display: block;
@@ -102,7 +110,8 @@
     vertical-align: top;
     text-align: center;
     margin: 8px 0;
-    width: 25%;
+    width: 16.66666666%;
+    vertical-align: bottom;
 }
 .attachements a{
 	margin:3px 15px 3px 0; 

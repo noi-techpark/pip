@@ -17,6 +17,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,7 +57,6 @@ public class RootController {
 	
 	@Autowired
 	private MailingUtil mailingUtil;
-	
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN","ROLE_MANAGER"})
 	@RequestMapping(value="principal")
 	public @ResponseBody ResponseEntity<Principal> getPrincipal(Principal principal){
@@ -86,8 +88,18 @@ public class RootController {
 			funding.setIdea(idea);
     		funding.setUrl(fundingDto.getUrl());
     		funding.setDescription(fundingDto.getDescription());
-    		funding.persist();
+    		funding.setCofinance(fundingDto.getCofinance());
+    		try {
+				funding.setDeadline(DtoCastUtil.formatter.parse(fundingDto.getDeadline()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
     	}
+		idea.setMeasures(dto.getMeasures());
+		idea.setObjectives(dto.getObjectives());
+		idea.setOutputs(dto.getOutputs());
+		idea.setTarget(dto.getTarget());
+		idea.setBudget(dto.getBudget());
     	idea.setFundings(fundings);
     	idea.setOwner(currentUser);
     	idea.getFollower().add(currentUser);
@@ -130,6 +142,11 @@ public class RootController {
 		if (idea.getOwner().equals(currentUser) || PipRole.ADMIN.getName().equals(currentUser.getRole())){
 			idea.setName(dto.getProjectName());
 			idea.setDescription(dto.getProjectDesc());
+			idea.setMeasures(dto.getMeasures());
+			idea.setObjectives(dto.getObjectives());
+			idea.setOutputs(dto.getOutputs());
+			idea.setTarget(dto.getTarget());
+			idea.setBudget(dto.getBudget());
 			idea.setStatus(status);
 			idea.setTopics(topics);
 			idea.setUpdated_on(new Date());
@@ -151,10 +168,16 @@ public class RootController {
 					f = Funding.findFundingsByUuid(fDto.getUuid()).getSingleResult();
 					f.setUrl(fDto.getUrl());
 					f.setDescription(fDto.getDescription());
+					f.setCofinance(fDto.getCofinance());
+					try {
+						f.setDeadline(DtoCastUtil.formatter.parse(fDto.getDeadline()));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 					f.merge();
 				}
 				else{
-					f = new Funding(fDto.getUrl(),fDto.getDescription(),idea);
+					f = new Funding(fDto.getUrl(),fDto.getDescription(),idea,fDto.getCofinance(),fDto.getDeadline());
 					f.persist();
 					idea.getFundings().add(f);
 				}
@@ -263,8 +286,7 @@ public class RootController {
     @RequestMapping(method = RequestMethod.GET, value = "idea")
     public @ResponseBody ResponseEntity<IdeaDto> getIdea(@RequestParam("uuid") String uuid) {
    		Idea idea = Idea.findIdeasByUuidEquals(uuid).getSingleResult();
-   		List<Funding> possibleFundings = Funding.findFundingsByIdea(idea).getResultList();
-   		List<FundingDto> fundingsDto = DtoCastUtil.castFundings(possibleFundings);
+   		List<FundingDto> fundingsDto = DtoCastUtil.castFundings(idea.getFundings());
    		Set<TopicDto> topics = DtoCastUtil.cast(idea.getTopics());
    		List<CommentDto> comments = DtoCastUtil.cast(idea.getComments());
    		IdeaDto dto = new IdeaDto();
@@ -280,6 +302,11 @@ public class RootController {
    		dto.setFollowers(DtoCastUtil.castUser(new ArrayList<PipUser>(idea.getFollower())));
    		dto.getFileNames().addAll(idea.getFileNames());
    		dto.setCreated_on(idea.getCreated_on());
+   		dto.setBudget(idea.getBudget());
+   		dto.setObjectives(idea.getObjectives());
+   		dto.setOutputs(idea.getOutputs());
+   		dto.setMeasures(idea.getMeasures());
+   		dto.setTarget(idea.getTarget());
     	return new ResponseEntity<IdeaDto>(dto,HttpStatus.OK);
     }
 
@@ -337,7 +364,7 @@ public class RootController {
 	@RequestMapping(method = RequestMethod.GET, value = "statuses")
     public @ResponseBody ResponseEntity<List<String>> getStatuses() {
     	List<String> list = new ArrayList<String>();
-    	for (ProjectStatus status: ProjectStatus.findAllProjectStatuses())
+    	for (ProjectStatus status: ProjectStatus.findAllProjectStatuses("position","asc"))
     		list.add(status.getName());
     	return new ResponseEntity<List<String>>(list,HttpStatus.OK);
     }
@@ -394,7 +421,7 @@ public class RootController {
 		Set<PipUser> users = PipUser.getUserByOwnerAndCommenterAndOrganisazion(idea);
 		users.remove(currentUser);
 		String[] mails = PipUser.getMailsFromUsers(users);
-		mailingUtil.sendUpdateMail(comment.getIdea(),mails);
+		mailingUtil.sendCommentMail(comment,mails);
 		return new ResponseEntity<CommentDto>(DtoCastUtil.cast(comment),HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN"})

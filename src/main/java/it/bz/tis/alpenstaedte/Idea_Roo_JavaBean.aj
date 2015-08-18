@@ -32,6 +32,46 @@ privileged aspect Idea_Roo_JavaBean {
         this.description = description;
     }
     
+    public String Idea.getObjectives() {
+        return this.objectives;
+    }
+    
+    public void Idea.setObjectives(String objectives) {
+        this.objectives = objectives;
+    }
+    
+    public String Idea.getOutputs() {
+        return this.outputs;
+    }
+    
+    public void Idea.setOutputs(String outputs) {
+        this.outputs = outputs;
+    }
+    
+    public String Idea.getMeasures() {
+        return this.measures;
+    }
+    
+    public void Idea.setMeasures(String measures) {
+        this.measures = measures;
+    }
+    
+    public String Idea.getTarget() {
+        return this.target;
+    }
+    
+    public void Idea.setTarget(String target) {
+        this.target = target;
+    }
+    
+    public Integer Idea.getBudget() {
+        return this.budget;
+    }
+    
+    public void Idea.setBudget(Integer budget) {
+        this.budget = budget;
+    }
+    
     public String Idea.getUuid() {
         return this.uuid;
     }

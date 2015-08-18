@@ -31,4 +31,20 @@ privileged aspect FundingDto_Roo_JavaBean {
         this.description = description;
     }
     
+    public String FundingDto.getDeadline() {
+        return this.deadline;
+    }
+    
+    public void FundingDto.setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+    
+    public Byte FundingDto.getCofinance() {
+        return this.cofinance;
+    }
+    
+    public void FundingDto.setCofinance(Byte cofinance) {
+        this.cofinance = cofinance;
+    }
+    
 }

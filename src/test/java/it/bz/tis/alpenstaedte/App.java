@@ -16,7 +16,17 @@ public class App extends AbstractJUnit4SpringContextTests{
 	
 	
 	String[] topics = new String[]{"Energy","Mobility","Environment"};
-	String[] status = new String[]{"idea","application done","funding granted","concluded"};
+	private static final Map<Integer, String> status;
+    static {
+        Map<Integer, String> aMap = new HashMap<Integer, String>();
+        aMap.put(1, "idea");
+        aMap.put(2, "drafting");
+        aMap.put(3, "application done");
+        aMap.put(4, "funding not granted");
+        aMap.put(5, "funding granted");
+        aMap.put(6, "concluded");
+        status = Collections.unmodifiableMap(aMap);
+    }
 	private static final Map<String, String> orgs;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
@@ -28,32 +38,31 @@ public class App extends AbstractJUnit4SpringContextTests{
         aMap.put("Bad Aussee", "Badaussee.jpg");
         aMap.put("Bolzano", "Bolzano.png");
         aMap.put("Brig-Glis", "Brig-Glis.gif");
-        aMap.put("Sondrio", "Sondrio.png");
         aMap.put("Chambéry", "Chambéry.png");
         aMap.put("Sonthofen", "Sonthofen.png");
         aMap.put("Herisau", "Herisau.jpg");
         aMap.put("Gap", "Gap.png");
         aMap.put("Bad Reichenhall", "Bad_Reichenhall.png");
-        aMap.put("Maribor", "Maribor.gif");
         aMap.put("Belluno", "Belluno.gif");
         aMap.put("Villach", "Villach.png");
         aMap.put("TIS innovation park South Tyrol", "tis.png");
+        aMap.put("Tolmin", "Tolmin.gif");
+        aMap.put("Trento", "Trient.jpg");
+
         orgs = Collections.unmodifiableMap(aMap);
     }
-	/*@Test
-	public void createTopics(){
-		for (String stringtopic : topics){
-			Topic topic = new Topic();
-			topic.setName(stringtopic);
-			topic.persist();
-		}q
-	}*/
 	@Test
-	public void createStatus(){
-		for (String currentStatus : status){
-			ProjectStatus status= new ProjectStatus();
-			status.setName(currentStatus);
-			status.persist();
+	public void updateStatus(){
+		for (Map.Entry<Integer, String> entry: status.entrySet()){
+			List<ProjectStatus> statuse = ProjectStatus.findProjectStatusesByNameEquals(entry.getValue()).getResultList();
+			ProjectStatus p;
+			if (statuse.isEmpty())
+				p = new ProjectStatus();
+			else
+				p = statuse.get(0);
+			p.setName(entry.getValue());
+			p.setPosition(entry.getKey());
+			p.merge();
 		}
 	}
 	@Test

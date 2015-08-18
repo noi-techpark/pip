@@ -5,6 +5,7 @@ package it.bz.tis.alpenstaedte;
 
 import it.bz.tis.alpenstaedte.Funding;
 import it.bz.tis.alpenstaedte.Idea;
+import java.util.Date;
 
 privileged aspect Funding_Roo_JavaBean {
     
@@ -38,6 +39,22 @@ privileged aspect Funding_Roo_JavaBean {
     
     public void Funding.setIdea(Idea idea) {
         this.idea = idea;
+    }
+    
+    public Date Funding.getDeadline() {
+        return this.deadline;
+    }
+    
+    public void Funding.setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+    
+    public Byte Funding.getCofinance() {
+        return this.cofinance;
+    }
+    
+    public void Funding.setCofinance(Byte cofinance) {
+        this.cofinance = cofinance;
     }
     
 }

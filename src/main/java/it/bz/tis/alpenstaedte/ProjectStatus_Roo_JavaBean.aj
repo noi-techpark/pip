@@ -15,4 +15,12 @@ privileged aspect ProjectStatus_Roo_JavaBean {
         this.name = name;
     }
     
+    public Integer ProjectStatus.getPosition() {
+        return this.position;
+    }
+    
+    public void ProjectStatus.setPosition(Integer position) {
+        this.position = position;
+    }
+    
 }

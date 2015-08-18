@@ -25,9 +25,23 @@ public class Idea {
 
     private String name;
 
-    @Size(max = 50000)
+    @Size(max = 5000)
     private String description;
-
+    
+    @Size(max = 3000)
+	private String objectives;
+    
+    @Size(max = 3000)
+    private String outputs;
+    
+    @Size(max = 3000)
+	private String measures;
+    
+    @Size(max = 3000)
+	private String target;
+    
+    private Integer budget;
+    
     private String uuid;
 
     @ManyToMany

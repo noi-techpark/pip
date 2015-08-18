@@ -1,5 +1,6 @@
 package it.bz.tis.alpenstaedte.util;
 
+import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.PipUser;
 
@@ -30,6 +31,20 @@ public class MailingUtil {
 			message.setFrom(PIP);
 			message.setSubject("The project ["+idea.getName()+"] has been changed");
 			message.setText(idea.getName()+" has been updated. To find out more about it visit: http://projectideas.tis.bz.it/");
+			mailSender.send(message);
+		}
+	}
+	public void sendCommentMail(Comment comment, String[] toMails) {
+		if (comment!=null && toMails.length!=0){
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(toMails);
+			message.setFrom(PIP);
+			message.setSubject("["+comment.getIdea().getName()+"] New comment by "+comment.getOwner().getName());
+			message.setText("The project idea \"" + comment.getIdea().getName()
+					+ "\" has been modified.\r\n"
+					+ comment.getOwner().getName()+" "+comment.getOwner().getSurname() 
+					+ " has created a new comment:\r\n\""+comment.getText()+"\"\r\n"
+					+"To see the complete project idea visit: http://projectideas.tis.bz.it/#/idea/"+comment.getIdea().getUuid());
 			mailSender.send(message);
 		}
 	}
