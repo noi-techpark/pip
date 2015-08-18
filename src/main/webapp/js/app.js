@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -103,8 +103,12 @@ alps.config(['$routeProvider',function($routeProvider) {
 	});
 }]);
 
-alps.controller('RootCtrl', function ($scope,$http,Upload,$location) {
+alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies) {
 	var self = $scope;
+	if($cookies.redirect.length>0){
+		$location.path($cookies.redirect);
+		$cookies.redirect='';
+	}
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
 	self.me = "http://localhost:8080/alpenstaedte";
 	self.isHidden = function(object){

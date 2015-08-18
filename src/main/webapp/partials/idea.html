@@ -3,10 +3,11 @@
 		<form ng-submit="updateIdea()" name="projectidea" novalidate>
 			<div class="clearfix">
 				<div class="pull-right">
-					<button type="button" class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
-					<button type="submit" class="btn btn-primary">Save changes</button>
-					<a ng-click="updateIdea('move')" class="btn btn-primary">Save and Show</a>
+					<button type="button"  class="btn btn-danger" confirmed-click="deleteIdea()" ng-confirm-click="Are you sure you want to delete this project?">Delete project</button>
+					<button type="submit" ng-disabled="!projectidea.$valid" class="btn btn-primary">Save changes</button>
+					<a ng-click="updateIdea('move')" ng-disabled="!projectidea.$valid" class="btn btn-primary">Save and Show</a>
 					<div ng-class="ideaSaved?'alert alert-success simple-animation':'unrevealed alert alert-success simple-animation'" role="alert">Success! Project idea was successfully saved</div>
+					<div ng-class="!projectidea.$valid?'alert alert-warning simple-animation':'unrevealed alert alert-warning'" role="alert">The project idea contains errors and can not be saved </div>
 				</div>
 			</div>
 			<div class="modal-body" >
@@ -66,13 +67,13 @@
 				<div class="form-group">
 					<label for="budget">Total Project Budget</label>
 					<div class="input-group col-md-3">
-						<input type="number" ng-model="idea.budget" name="budget" class="form-control" placeholder="Total Project Budget" min="100"required="required">
+						<input type="number" ng-model="idea.budget" name="budget" class="form-control" placeholder="Total Project Budget" min="0"required="required">
 						<span class="input-group-addon">&euro;</span>
 					</div>
 					<div ng-messages="projectidea.budget.$error" multiple>
 						<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
-						<div ng-message="min" class="alert alert-warning">Budget should be higher than 100 &euro;</div>
-						
+						<div ng-message="min" class="alert alert-warning">Budget can not be negative</div>
+						<div ng-message="number" class="alert alert-warning">Budget must be a number</div>
 					</div>
 				</div>
 				<div class="form-group">

@@ -9,6 +9,7 @@
 <script src="js/angular.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/angular-route.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/angular-messages.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
+<script src="js/angular-cookies.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/app.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/bootstrap.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
 <script src="js/d3.min.js" type="text/javascript"><!-- required for FF3 and Opera --></script>
@@ -128,13 +129,13 @@
 							<div class="form-group">
 								<label for="budget">Total Project Budget</label>
 								<div class="input-group col-md-3">
-									<input type="number" ng-model="idea.budget" name="budget" class="form-control" placeholder="Total Project Budget" min="100"required="required">
+									<input type="number" ng-model="idea.budget" name="budget" class="form-control" placeholder="Total Project Budget" min="0"required="required">
 									<span class="input-group-addon">&euro;</span>
 								</div>
 								<div ng-messages="projectidea.budget.$error" multiple>
 									<div ng-message="required" class="alert alert-warning">This field is required. Please fill it out</div>
-									<div ng-message="min" class="alert alert-warning">Budget should be higher than 100 &euro;</div>
-									
+									<div ng-message="min" class="alert alert-warning">Budget can not be negative</div>
+									<div ng-message="number" class="alert alert-warning">Budget must be a number</div>
 								</div>
 							</div>
 							<div class="form-group clearfix" ng-init="getTopics()">
@@ -174,7 +175,7 @@
 									<div class="form-group">
 										<label for="cofinance">Co-financing rate</label>
 										<div class="input-group col-md-3">
-											<input type="number" id ="cofinance" class="form-control" min="0" max="100" placeholder="Co-financing rate" ng-model="funding.cofinance"></input>
+											<input type="number" id ="cofinance" ng-init="funding.cofinance=100" class="form-control" min="0" max="100" placeholder="Co-financing rate" ng-model="funding.cofinance"></input>
 											<span class="input-group-addon">%</span>
 										</div>
 									</div>
