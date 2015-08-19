@@ -265,8 +265,7 @@ public class UserController {
 			user.setPassword(encoder.encode(randomPassword));
 			user.merge();
 			mailingUtil.sendCreationMail(user, randomPassword);
-			model.addAttribute("success", "Password was send to your email-address.\nDon't forget to reset it after you logged in.\nGood luck!!");
 		}
-		return "redirect:login";
+		return "redirect:/";
     }
 }

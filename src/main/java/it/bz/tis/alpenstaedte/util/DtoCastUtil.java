@@ -1,6 +1,7 @@
 package it.bz.tis.alpenstaedte.util;
 
 import it.bz.tis.alpenstaedte.Funding;
+import it.bz.tis.alpenstaedte.Help;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.Organisazion;
 import it.bz.tis.alpenstaedte.PipUser;
@@ -8,6 +9,7 @@ import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Topic;
 import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
+import it.bz.tis.alpenstaedte.dto.HelpDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
@@ -130,6 +132,23 @@ public class DtoCastUtil {
 		dto.setNumberOfOrganisazions(idea.getFollower().size());
 		dto.setUpdated_on(idea.getUpdated_on());
 		dto.setTopics(DtoCastUtil.cast(idea.getTopics()));
+		return dto;
+	}
+
+	public static List<HelpDto> castHelps(List<Help> helps) {
+		List<HelpDto> list = new ArrayList<HelpDto>();
+		for (Help help : helps){
+			HelpDto dto = cast(help);
+			list.add(dto);
+		}
+		return list;
+	}
+
+	private static HelpDto cast(Help help) {
+		HelpDto dto = new HelpDto();
+		dto.setName(help.getName());
+		dto.setCreated_on(help.getCreated_on());
+		dto.setUuid(help.getUuid());
 		return dto;
 	}
 

@@ -1,0 +1,17 @@
+<div class="container" ng-init="getHelps()">
+	<div class="form-group" ng-show="isAdmin">
+		<button ngf-select="true" ng-model="files" type="button"
+			ngf-multiple="false">Upload new help</button>
+		<div ng-if="files.length>0">
+			<label> Is this the file you want to upload? </label> <div><span ng-repeat="file in files">{{file.name}}</span></div>
+		</div>
+	</div>
+	<button ng-show="files.length>0" class="btn btn-primary" ng-click="addHelp()">Upload it!</button>
+	<div class="list-group"  ng-repeat="help in helps">
+		<a href="help/{{encode(help.name.substring(0,help.name.indexOf('.')))+'/'+help.name.substring(help.name.indexOf('.')+1)}}" class="list-group-item"><span class="glyphicon glyphicon-download-alt"></span> {{help.name}}</a>
+		<!-- <video src="{{help.name}}" controls>
+  			Your browser does not support the <code>video</code> element.
+		</video>-->
+		<a ng-show="isAdmin" class="btn" confirmed-click="deleteHelp(help.uuid)" ng-confirm-click="Are you sure you want to delete this file?"><span class="glyphicon glyphicon-remove"></span></a>
+	</div>
+</div>

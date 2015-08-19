@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies','ngSanitize']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -94,6 +94,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 		controller: 'UserCtrl'
 	}).when('/contact', {
 		templateUrl: 'partials/contact.html',
+		controller: 'UserCtrl'
+	}).when('/help', {
+		templateUrl: 'partials/help.html',
 		controller: 'UserCtrl'
 	}).when('/pw-reset', {
 		templateUrl: 'partials/password.html',
@@ -684,6 +687,41 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 				self.warning="Your current password was incorrect. Pls retry";
 			
 			}
+		});
+	}
+	self.getHelps = function(){
+		$http.get("helps").success(function(response,status,headers,config){
+			self.helps = response;
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.addHelp = function(){
+		var help = {
+				name:self.files[0].name
+		}
+		$http.post("help",help).success(function(response,status,headers,config){
+			self.uploadHelp();
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
+	self.uploadHelp = function(){
+		Upload.upload({	
+			url:self.me + '/help/upload',
+			file:self.files,
+		}).progress(function(evt){
+			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
+		}).success(function(data, status, headers, config){
+			self.getHelps();
+		});
+	}
+	self.deleteHelp = function(name){
+		$http.delete("help/"+name).success(function(response,status,headers,config){
+			self.getHelps();
+		}).error(function(data, status, headers, config) {
+			if (status == 409)
+				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
 		});
 	}
 });

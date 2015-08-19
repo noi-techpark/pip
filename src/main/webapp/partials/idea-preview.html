@@ -33,7 +33,7 @@
 			</div>
 			<div>
 				<h3>Objectives and Aims</h3>
-				<p>{{idea.objectives}}</p>
+				<p ng-bind-html="idea.objectives"></p>
 			</div>
 			<div>
 				<h3>Activities and Measures</h3>
@@ -83,7 +83,7 @@
 				<h3>Possible funding programs</h3>
 				<div ng-repeat="funding in idea.fundings" class="well">
 					<h4>
-						<a href="{{funding.url}}" target="_blank">{{funding.url}}</a>
+						<a href="{{funding.url}}" title="{{funding.url}}" target="_blank">{{funding.url|limitText:60:'...'}}</a>
 					</h4>
 					<p>{{funding.description|limitText:250:'...'}}</p>
 					<div>

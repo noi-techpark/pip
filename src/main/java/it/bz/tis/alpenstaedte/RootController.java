@@ -3,6 +3,7 @@ import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.FundingDto;
 import it.bz.tis.alpenstaedte.dto.GraphTopicDto;
 import it.bz.tis.alpenstaedte.dto.GraphTopicRootDto;
+import it.bz.tis.alpenstaedte.dto.HelpDto;
 import it.bz.tis.alpenstaedte.dto.IdeaDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import it.bz.tis.alpenstaedte.dto.ProjectStatusDto;
@@ -442,6 +443,58 @@ public class RootController {
 		Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
 		comment.remove();
     }
-	
-	
+	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
+    @RequestMapping(method = RequestMethod.GET, value = "helps")
+    public @ResponseBody List<HelpDto> getHelps() {
+		return DtoCastUtil.castHelps(Help.findAllHelps());
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.POST, value = "help")
+    public @ResponseBody ResponseEntity<Object> createHelp(@RequestBody HelpDto dto) {
+		Help help = new Help();
+		help.setName(dto.getName());
+		help.persist();
+		return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.DELETE, value = "help/{uuid}")
+    public @ResponseBody ResponseEntity<Object> delteHelp(@PathVariable("uuid")String uuid) {
+		if (documentFolder.exists()){
+			Help help = Help.findHelpsByUuid(uuid).getSingleResult();
+			File file = new File(documentFolder.getFile(),"helps/"+help.getName());
+			file.delete();
+			help.remove();
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
+    }
+	@Secured(value={"ROLE_ADMIN"})
+    @RequestMapping(method = RequestMethod.POST, value = "help/upload")
+    public @ResponseBody ResponseEntity<Object> uploadHelps(@RequestParam("file")List<MultipartFile> files) {
+		if (documentFolder.exists()){
+			File directory = new File(documentFolder.getPath()+"/helps/");
+			directory.mkdirs();
+			for (MultipartFile multiPartfile : files){
+				File file = new File(directory,multiPartfile.getOriginalFilename());
+				try {
+					multiPartfile.transferTo(file);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+			    	return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+				} catch (IOException e) {
+					e.printStackTrace();
+			    	return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+		}
+    	return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
+	@RequestMapping(method = RequestMethod.GET, value = "help/{file}/{format}")
+    public  void getHelpFile(@PathVariable("file") String fileString,@PathVariable("format") String format,HttpServletResponse response) throws IOException{
+		if(documentFolder.exists()){
+			File file = new File(documentFolder.getFile(),"helps/"+fileString+"."+format);
+			response.setHeader("Content-Disposition", "attachment; filename=" + "\"" + file.getName()+ "\"");
+			IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+		}
+	}
 }
