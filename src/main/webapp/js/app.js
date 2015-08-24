@@ -13,6 +13,14 @@ function(){
           }
       };
 }]);
+alps.directive('ngGauge', [
+function(){
+      return {
+          link: function (scope, element, attr) {
+        	  loadLiquidFillGauge(element[0],scope.funding.uuid,scope.funding.cofinance);
+          }
+      };
+}]);
 alps.filter('limitText', function() {
     return function(text, limit, tail) {
 
@@ -74,6 +82,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 	when('/', {
 		templateUrl: 'partials/index.html',
 		controller: 'RootCtrl'
+	}).when('/tree/:topic', {
+		templateUrl: 'partials/index.html',
+		controller: 'RootCtrl'
 	}).when('/ideas/:uuid', {
 		templateUrl: 'partials/idea.html',
 		controller: 'IdeaListCtrl'
@@ -106,11 +117,19 @@ alps.config(['$routeProvider',function($routeProvider) {
 	});
 }]);
 
-alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies) {
+alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$routeParams) {
 	var self = $scope;
 	if($cookies.redirect && $cookies.redirect.length>0){
 		$location.path($cookies.redirect);
 		$cookies.redirect='';
+	}
+	if ($routeParams.topic){
+		self.list=false;
+		self.menu='topic';
+		self.drawTree('graph-data-topics?topic='+$routeParams.topic);
+	}else{
+		self.list=true;
+		self.menu='all';
 	}
 	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
 	self.me = "http://localhost:8080/alpenstaedte";
@@ -347,6 +366,7 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			self.isOwner = false;
 		});
 	}
+
 	self.getIdea = function(){
 		var params={uuid:$routeParams.uuid};
 		$http.get("idea?"+$.param(params)).success(function(response,status,headers,config){

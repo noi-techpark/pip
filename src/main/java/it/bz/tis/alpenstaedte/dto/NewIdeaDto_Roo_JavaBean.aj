@@ -108,4 +108,12 @@ privileged aspect NewIdeaDto_Roo_JavaBean {
         this.budget = budget;
     }
     
+    public String NewIdeaDto.getStatus() {
+        return this.status;
+    }
+    
+    public void NewIdeaDto.setStatus(String status) {
+        this.status = status;
+    }
+    
 }

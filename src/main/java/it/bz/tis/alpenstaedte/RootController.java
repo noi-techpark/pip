@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
@@ -263,8 +264,13 @@ public class RootController {
     }
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.GET, value = "graph-data-topics")
-    public @ResponseBody ResponseEntity <StatusIdeasDto> getGraphDataByTopics() {
-    	List<Topic> topics = Topic.findAllTopics();
+    public @ResponseBody ResponseEntity <StatusIdeasDto> getGraphDataByTopics(@RequestParam(value="topic",required=false)String topicString) {
+		List<Topic> topics = new ArrayList<Topic>();
+		if (topicString!=null){
+			Topic topic = Topic.findTopicsByNameEquals(topicString).getSingleResult();
+			topics.add(topic);
+		}else
+			topics  = Topic.findAllTopics();
     	StatusIdeasDto graph = new StatusIdeasDto();
     	for (Topic topic:topics){
     		GraphTopicDto topicDto = new GraphTopicDto();

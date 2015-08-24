@@ -49,7 +49,7 @@
 			</div>
 			<div>
 				<h3>Total Project Budget</h3>
-				<p>{{idea.budget|currency:'&euro;'}}</p>
+				<p>{{idea.budget|currency:'&euro; '}}</p>
 			</div>
 			<div class="attachements form-group"
 				ng-show="idea.fileNames.length>0">
@@ -61,8 +61,8 @@
 		</div>
 		<div class="topics row">
 		 	<h3>Related topics</h3>
-			<button type="button" ng-repeat="topic in idea.topics|orderBy:'name'" class="btn"
-				style="margin-right: 5px; background-color: {{topic.color}}">{{topic.name}}</button>
+			<a ng-repeat="topic in idea.topics|orderBy:'name'" title="Show all projects" href="#/tree/{{topic.name}}" class="btn"
+				style="margin-right: 5px;color:#fff; background-color: {{topic.color}};">{{topic.name}}</a>
 		</div>
 		<div class="row">
 			<div class="col-md-5 organisazion" ng-show="idea.interestedOrganisazions.length>0">
@@ -81,18 +81,23 @@
 			</div>
 			<div class="fundings col-md-7 left-column" ng-class="idea.interestedOrganisazions.length>0?'':'col-md-offset-5'"ng-if="idea.fundings.length>0">
 				<h3>Possible funding programs</h3>
-				<div ng-repeat="funding in idea.fundings" class="well">
+				<div ng-repeat="funding in idea.fundings" class="well" >
 					<h4>
 						<a href="{{funding.url}}" title="{{funding.url}}" target="_blank">{{funding.url|limitText:60:'...'}}</a>
 					</h4>
-					<p>{{funding.description|limitText:250:'...'}}</p>
-					<div>
-						<label>Co-financing rate</label>
-						<p>{{funding.cofinance}}%</p>
-					</div>
-					<div>
-						<label>Deadline</label>
-						<p>{{funding.deadline}} </p>
+					<div class="row">
+						<div class="col-md-7">	
+							<p >{{funding.description|limitText:250:'...'}}</p>
+							<div>
+								<label>Deadline</label>
+								<p>{{funding.deadline}} </p>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<!--  -->
+							<svg ng-gauge width="97%" height="250"></svg>
+							<p style="color:#337ab7;text-align: center;">Co-financing rate</p>
+						</div>
 					</div>
 				</div>
 			</div>

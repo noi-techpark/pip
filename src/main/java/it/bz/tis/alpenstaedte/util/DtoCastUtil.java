@@ -132,6 +132,7 @@ public class DtoCastUtil {
 		dto.setNumberOfOrganisazions(idea.getFollower().size());
 		dto.setUpdated_on(idea.getUpdated_on());
 		dto.setTopics(DtoCastUtil.cast(idea.getTopics()));
+		dto.setStatus(idea.getStatus().getName());
 		return dto;
 	}
 

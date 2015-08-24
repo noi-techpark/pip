@@ -48,5 +48,6 @@ public class NewIdeaDto {
 	private String measures;
 	private String target;
 	private Integer budget;
+	private String status;
 
 }
