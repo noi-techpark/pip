@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies','ngSanitize']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies','ngSanitize','ngAnimate']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -41,6 +41,7 @@ alps.filter('orgFilter', function() {
         return finalArray;
     }
 });
+
 alps.run(function($rootScope,$http) {
 	var self= $rootScope;
 	self.getPrincipal = function(){
@@ -366,7 +367,6 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 			self.isOwner = false;
 		});
 	}
-
 	self.getIdea = function(){
 		var params={uuid:$routeParams.uuid};
 		$http.get("idea?"+$.param(params)).success(function(response,status,headers,config){
@@ -548,6 +548,26 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			console.log(status);
 		});
 	}
+	self.knowsLang = function(user, index, array){
+		var contained = true;
+		$.each(self.langs,function(key,value){
+			if (value)
+				if(user.languageSkills.indexOf(key)==-1)
+					contained=false;
+		});
+		return contained;
+	};
+	self.containsTopic = function(user, index, array){
+		var contained = false;
+		if (!self.topic)return true;
+		$.each(user.topics,function(index,value){
+			if (value.name != self.topic.name){
+				return;
+			}
+			contained = true;
+		});
+		return contained;
+	};
 	self.createUser = function(){
 		$http.post("user",self.user).success(function(response,status,headers,config){
 			self.getUser();
