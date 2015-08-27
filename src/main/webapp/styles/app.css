@@ -48,11 +48,15 @@ body { padding-top: 70px; }
   -moz-column-gap: 40px;
   column-gap: 40px;
 }
-.profile-pic{
+div[class*="profile-pic"]{
 	width: 150px;
 	max-height: 150px;
 	overflow: hidden;
 	
+}
+.profile-pic-large{
+	width:100% !important;
+	max-height: 250px !important;
 }
 .profile-thumb{
 	width: 150px;

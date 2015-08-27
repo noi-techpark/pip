@@ -202,9 +202,6 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 			if (!isContained)
 				self.idea.topics.push(topic);
 	}
-	self.openModal=function(){
-		$('#idea-modal').modal('show');
-	};
 	self.drawTree = function(graph){
 		$("#display").empty();
 		if (graph==undefined)
@@ -548,6 +545,11 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			console.log(status);
 		});
 	}
+	self.openModal=function(which,user){
+		$(which).modal('show');
+		self.selectedUser=user;
+		console.log(user);
+	};
 	self.knowsLang = function(user, index, array){
 		var contained = true;
 		$.each(self.langs,function(key,value){
