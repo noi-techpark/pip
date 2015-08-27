@@ -233,15 +233,10 @@ public class UserController {
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
     @RequestMapping(method = RequestMethod.GET,value="user-by-topics")
-    public @ResponseBody ResponseEntity<Map<String,List<UserDto>>> getUserByTopics() {
-		Map<String,List<UserDto>> userByTopics = new HashMap<String, List<UserDto>>();
-		for (Topic topic: Topic.findAllTopics()){
-			List<PipUser> userByInterestedTopic = PipUser.findPipUserByInterestedTopic(topic);
-			TopicDto topicDto = DtoCastUtil.cast(topic);
-			List<UserDto> userDto = DtoCastUtil.castUser(userByInterestedTopic);
-			userByTopics.put(topicDto.getName(), userDto);
-		}
-    	return new ResponseEntity<Map<String,List<UserDto>>>(userByTopics,HttpStatus.OK);
+    public @ResponseBody ResponseEntity<List<UserDto>> getUserByTopics() {
+			List<PipUser> user = PipUser.findAllPipUsers();
+			List<UserDto> userDtos = DtoCastUtil.castUser(user);
+    	return new ResponseEntity<List<UserDto>>(userDtos,HttpStatus.OK);
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
     @RequestMapping(method = RequestMethod.GET,value="reset-password")

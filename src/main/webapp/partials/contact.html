@@ -1,5 +1,5 @@
 <div>
-	<div ng-init="getUserByTopics()" class="container">
+	<div ng-init="getUserByTopics();getTopics()" class="container">
 		<div ng-show="warning!=undefined" class="alert alert-warning">{{warning}}
 			<button type="button" class="close" ng-click="warning=undefined"><span aria-hidden="true">&times;</span></button>
 		</div>
@@ -7,15 +7,33 @@
 		<p>This platform was created to encourage <strong>collaboration and sharing of information</strong> between like-minded people of different organisations, with different skillsets but common interests.
 		Share your interests and you will see a lot more people in this section. To find specific people you can also user the filter function in the navigation bar.
 		</p>
-		<div>
-			<div ng-repeat="(topic,tusers) in userByTopics" class="clearfix" ng-show="tusers.length>0">
-				<h2><small>{{topic}}</small></h2>
-				<a  ng-repeat="user in tusers|filter:textFilter|orderBy:'name'" href="#/profile/{{user.uuid}}" class="pull-left profile-thumb">
-						<div>
-							<img class="img-rounded profile-pic" ng-src="{{'user/profile-pic?user='+user.uuid}}" />
-						</div>
-						<p>{{user.name}} {{user.surname}}<br/>
-						<span class="label label-primary">{{user.organizations[0].name|limitText:25:'...'}}</span></p>
+		<form class="well clearfix">
+			<div class="form-group pull-left">
+				<label>Filter topic</label>
+				<select	class="form-control" ng-model="topic" ng-options="topic.name for topic in availableTopics"  style="width: auto;">
+					<option value="">All topics</option>	
+				</select>
+			</div>
+			<div class="form-group pull-right" ng-init="langs = {'EN':false,'DE':false,'IT':false,'FR':false,'SL':false}">
+				<label>Should speak</label>
+				<div>
+				<label class="checkbox-inline" ng-repeat="(lang,value) in langs">
+					<input type="checkbox" value="{{lang}}" ng-checked="value" 
+					ng-checked="selection.indexOf(fruitName) > -1" ng-click="langs[lang]=!langs[lang]">{{lang|lowercase}}
+				</label>
+				</div>
+			</div>
+		</form>
+		<div style="margin-top: 25px">
+			<div ng-repeat="user in userByTopics|filter:containsTopic|filter:knowsLang|orderBy:'surname'|filter:textFilter" class="pull-left profile simple-animation">
+				<a href="#/profile/{{user.uuid}}">
+							<div class="profile-pic img-circle">
+								<img ng-src="{{'user/profile-pic?user='+user.uuid}}" width="150px" />
+							</div>
+							<p style="text-align: center;">
+								<span class="label label-default">{{user.name}} {{user.surname}}</span><br/>
+								<span class="label label-primary">{{user.organizations[0].name|limitText:25:'...'}}</span>
+							</p>
 				</a>
 			</div>
 			<div ng-show="objectIsEmpty(userByTopics)" class="alert alert-info" role="alert">

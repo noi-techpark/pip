@@ -1,3 +1,5 @@
+body { padding-top: 70px; }
+
 .simple-animation {
   -webkit-transition:all linear 0.5s;
   transition:all linear 0.5s;
@@ -47,8 +49,10 @@
   column-gap: 40px;
 }
 .profile-pic{
-	max-width: 150px;
-	max-height: 200px;
+	width: 150px;
+	max-height: 150px;
+	overflow: hidden;
+	
 }
 .profile-thumb{
 	width: 150px;
@@ -135,4 +139,24 @@
 }
 .organisazion>div{
 	margin:15px 0;
+}
+.profile{
+	margin-right:40px;
+	margin-bottom:25px;
+}
+.profile.ng-enter,.profile.ng-leave-active{
+    opacity: 0;
+}
+
+.profile .profile-pic{
+	opacity:0.85;
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	-moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+}
+.profile:hover .profile-pic{
+	opacity:1;
+	-webkit-box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
+	-moz-box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
+	box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.19);
 }
