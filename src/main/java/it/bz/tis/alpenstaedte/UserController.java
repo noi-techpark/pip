@@ -1,7 +1,6 @@
 package it.bz.tis.alpenstaedte;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.ResponseObject;
-import it.bz.tis.alpenstaedte.dto.TopicDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 import it.bz.tis.alpenstaedte.util.DALCastUtil;
 import it.bz.tis.alpenstaedte.util.DtoCastUtil;
@@ -11,9 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
