@@ -2,8 +2,7 @@
 		<div class="row idea">
 			<div class="clearfix">
 				<h1 class="pull-left">{{idea.projectName}}</h1>
-				<div class="pull-right" style="margin-top: 20px"
-					ng-init="getUser();">
+				<div class="pull-right" style="margin-top: 20px"">
 					<a ng-show="isAdmin || isOwner" class="btn btn-primary"
 						href="#/ideas/{{idea.uuid}}">Edit</a>
 					<button ng-show="!follows" class="btn btn-primary"
@@ -17,7 +16,7 @@
 				</div>
 			</div>
 			<h4 ng-if="idea.author.name || idea.author.surname">
-				<small>by <a href="#/profile/{{idea.author.uuid}}">{{idea.author.name}}
+				<small>by <a ng-click="openModal('#contact-modal',idea.author)" href="javascript:void(0)">{{idea.author.name}}
 						{{idea.author.surname}}</a> {{idea.created_on|date}}
 				</small>
 			</h4>
@@ -73,7 +72,7 @@
 			      <h4 class="label label-primary">{{org.name}}</h4>
 			        <ul>
 						<li ng-repeat="follower in idea.followers|orgFilter:org|orderBy:'name'">
-							<a href="#/profile/{{follower.uuid}}">{{follower.name}} {{follower.surname}}</a>
+							<a ng-click="openModal('#contact-modal',follower)" href="javascript:void(0)">{{follower.name}} {{follower.surname}}</a>
 						</li>
 			        </ul>
 			      </div>
@@ -107,7 +106,7 @@
 	
 			<div class="form-group row">
 				<div class="col-md-1 col-xs-3">
-					<a href="#/profile/{{comment.author.uuid}}"><img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" /></a>
+					<a ng-click="openModal('#contact-modal',myUser)" href="javascript:void(0)"><img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" /></a>
 				</div>
 				<div class="col-md-11 col-xs-9">
 					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
@@ -120,7 +119,7 @@
 	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
 		<div class="row">
 			<div class="col-md-1 col-xs-3">
-				<a href="#/profile/{{comment.author.uuid}}"><img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" /></a>
+				<a ng-click="openModal('#contact-modal',comment.author)" href="javascript:void(0)"><img class="profile-pic img-rounded"  style="max-width: 100%" ng-src="{{'user/profile-pic?user='+comment.author.uuid}}" /></a>
 			</div>
 			<div class="col-md-11 col-xs-9"> 
 				<h5>

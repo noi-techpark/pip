@@ -204,6 +204,40 @@
 				</div>
 			</div>
 		</div>
+		<div id="contact-modal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content clearfix">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">{{selectedUser.name}} {{selectedUser.surname}}</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-5">
+								<div class="profile-pic-large img-rounded">
+									<img ng-src="{{'user/profile-pic?user='+ selectedUser.uuid}}" width="100%"/>
+								</div>
+							</div>
+							<div class="col-md-7">
+								<p>
+									{{selectedUser.organizations[0].name}}<br /> {{selectedUser.phone}}<br /> <a
+										href="mailto:{{selectedUser.email}}">{{selectedUser.email}}</a>
+								</p>
+								<div class="clearfix">
+									<div ng-repeat="topic in selectedUser.topics| orderBy:'name'"class="label pull-left"
+										style="margin-bottom:5px;margin-right:5px; background-color: {{topic.color}}">{{topic.name}}</div>
+								</div>
+								<p>
+									<span ng-repeat="lang in selectedUser.languageSkills"
+										class="label label-default" style="margin-right: 5px;">{{lang}}</span>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
 	</div>
 </body>
 
