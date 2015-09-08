@@ -13,6 +13,9 @@
 				<input ng-model="newTopic.color" type="text" class="form-control" placeholder="Color" required="required">
 			</div>
 			<button type="submit" class="btn btn-default" style="background-color:{{newTopic.color}}">Create new topic</button>
+			<div class="pull-right">
+				<input type="text" class="form-control" placeholder="Find all matching topics" ng-model="textFilter">
+			</div>
 			<span  class="help-block">Try to avoid using bright colors and do not use the color white at all</span>
 		</form>
 		<div class="table-responsive">

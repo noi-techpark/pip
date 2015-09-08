@@ -98,7 +98,7 @@ public class Idea {
 	}
 
 	public static List<Idea> findIdeasFollowed(PipUser currentUser) {
-		TypedQuery<Idea> query = entityManager().createQuery("select idea from Idea idea where :user in elements(idea.follower)",Idea.class);
+		TypedQuery<Idea> query = entityManager().createQuery("select idea from Idea idea where :user in elements(idea.follower) and idea.owner != :user",Idea.class);
 		query.setParameter("user",currentUser);
 		return query.getResultList();
 	}

@@ -94,13 +94,13 @@ public class RootController {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+    		idea.getFundings().add(funding);
     	}
 		idea.setMeasures(dto.getMeasures());
 		idea.setObjectives(dto.getObjectives());
 		idea.setOutputs(dto.getOutputs());
 		idea.setTarget(dto.getTarget());
 		idea.setBudget(dto.getBudget());
-    	idea.setFundings(fundings);
     	idea.setOwner(currentUser);
     	idea.getFollower().add(currentUser);
     	idea.getInterestedOrganisations().add(currentUser.getOrganisazions().get(0));

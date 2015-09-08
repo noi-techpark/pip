@@ -54,7 +54,7 @@ public class MailingUtil {
 			message.setTo(user.getEmail());
 			message.setFrom(PIP);
 			message.setSubject("[Project ideas] Account");
-			String body = "Welcome to PIP.\r\nYou can login with your email and this password: "+randomPassword+"\r\nDon't forget to reset your password once you visit\r\nhttp://projectideas.tis.bz.it/";
+			String body = "Welcome to PIP(Project idea platform).\r\nYou can login with your email and this password: "+randomPassword+"\r\nDon't forget to reset your password once you visit\r\nhttp://projectideas.tis.bz.it/";
 			message.setText(body);
 			mailSender.send(message);
 		}

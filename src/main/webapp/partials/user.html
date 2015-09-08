@@ -22,7 +22,10 @@
   				<span class="input-group-addon">Order</span>
 				<select  ng-init="usersorts =['email','active','role'];usersort='email'" class="form-control" ng-model="usersort" ng-options="sort for sort in usersorts" style="width: auto;" ></select>
 				<span class="input-group-btn">
-        			<button class="btn btn-default" type="button" ng-init="order=false" ng-click="order=!order">Reverse</button>
+        			<button class="btn btn-default" type="button" ng-init="order=false" ng-click="order=!order">
+        				<span ng-show="order" class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+						<span ng-show="!order" class="glyphicon glyphicon-sort-by-attributes"></span>
+        			</button>
       			</span>
 			</div>
 		</div>

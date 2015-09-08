@@ -278,7 +278,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 			.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 			
 			var link = nodeEnter.append("a")
-			.attr("xlink:href",function(d,i) {if (d.uuid)return self.me+"/#/idea/" + d.uuid; else return "javascript:void(0)";});
+			.attr("xlink:href",function(d,i) {if (d.uuid)return self.me+"/#/idea/" + d.uuid; else return "javascript:void(0)";}).attr("class", "badge");
 
 			link.append("text")
 			.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -636,9 +636,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 		}).progress(function(evt){
 			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
 		}).success(function(data, status, headers, config){
-			  self.profilepic = undefined;
 			self.getUser();
-			self.ideaSaved=true;
 		});
 	}
 	self.getProfile = function(){
