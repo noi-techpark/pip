@@ -151,6 +151,13 @@ div[class*="profile-pic"]{
 .profile.ng-enter,.profile.ng-leave-active{
     opacity: 0;
 }
+.list-group-item.ng-enter,.list-group-item.ng-leave-active{
+	max-height: 0;
+	overflow: hidden;
+	margin:0;
+	padding:0;
+	
+}
 
 .profile .profile-pic{
 	opacity:0.85;
