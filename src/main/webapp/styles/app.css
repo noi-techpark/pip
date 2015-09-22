@@ -145,7 +145,8 @@ div[class*="profile-pic"]{
 	margin:15px 0;
 }
 .profile{
-	margin-right:40px;
+	margin-right:18px;
+	margin-left:18px;
 	margin-bottom:25px;
 }
 .profile.ng-enter,.profile.ng-leave-active{
@@ -193,3 +194,7 @@ div[class*="profile-pic"]{
 	max-width: 200px;
 	margin:5px;
 }
+.marked-help{
+	color: #333;
+}
+	

@@ -101,21 +101,20 @@
 				</div>
 			</div>
 		</div>
-<div>			
-<hr/>
-	
-			<div class="form-group row">
-				<div class="col-md-1 col-xs-3">
-					<a ng-click="openModal('#contact-modal',myUser)" href="javascript:void(0)"><img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" /></a>
-				</div>
-				<div class="col-md-11 col-xs-9">
-					<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
-				</div> 
+	<div>			
+		<hr/>
+		<div class="form-group row">
+			<div class="col-md-1 col-xs-3">
+				<a ng-click="openModal('#contact-modal',myUser)" href="javascript:void(0)"><img class="profile-pic img-rounded" src="user/profile-pic" style="max-width: 100%" /></a>
 			</div>
-			<div class="form-group clearfix">
-				<button type="button" ng-click="comment()" class="btn btn-default pull-right">Comment</button>
+			<div class="col-md-11 col-xs-9">
+				<textarea ng-model="commentText"  class=" form-control" rows="3" required="required" />
 			</div>
 		</div>
+		<div class="form-group clearfix">
+			<button type="button" ng-click="comment()" class="btn btn-default pull-right">Comment</button>
+		</div>
+	</div>
 	<div ng-repeat="comment in idea.comments | orderBy:'created_on':true" class="simple-animation">
 		<div class="row">
 			<div class="col-md-1 col-xs-3">
