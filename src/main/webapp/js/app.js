@@ -1,4 +1,4 @@
-var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies','ngSanitize','ngAnimate']);
+var alps=angular.module('alps', ['ngRoute','ngFileUpload','ngMessages','720kb.datepicker','ngCookies','ngSanitize','ngAnimate','hc.marked']);
 alps.directive('ngConfirmClick', [
 function(){
       return {
@@ -99,6 +99,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 		templateUrl: 'partials/user.html',
 		controller: 'UserCtrl'
 	}).when('/profile', {
+		templateUrl: 'partials/profile.html',
+		controller: 'UserCtrl'
+	}).when('/profile/:uuid/edit', {
 		templateUrl: 'partials/profile.html',
 		controller: 'UserCtrl'
 	}).when('/profile/:uuid', {
@@ -608,7 +611,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 
 	self.updateProfile = function(){
 		if (self.profile.$valid){
-			$http.put("user",self.user).success(function(response,status,headers,config){
+			$http.put("user"+"?user-id="+self.user.uuid,self.user).success(function(response,status,headers,config){
 				if (self.profilepic)
 					self.uploadProfilePic();
 				self.ideaSaved = true;
@@ -645,6 +648,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			url+='?uuid='+$routeParams.uuid;
 		$http.get(url).success(function(response,status,headers,config){
 			self.user = response;
+			self.getCurrentProfilePic();
 		}).error(function(data, status, headers, config) {
 			console.log(status);
 		});
@@ -762,5 +766,21 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			if (status == 409)
 				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
 		});
+	}
+	self.$watch('profilepic',function(){
+		self.getCurrentProfilePic();
+	});
+	self.getCurrentProfilePic = function(){
+		if (self.profilepic && self.profilepic.length>0){
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				console.log(event.target.result);
+				self.currentProfilePic = event.target.result;
+			}
+			reader.readAsDataURL(self.profilepic[0]);
+		}else if(self.user.uuid)
+			self.currentProfilePic = 'user/profile-pic?user='+ self.user.uuid;
+		else
+			self.currentProfilePic = 'user/profile-pic';
 	}
 });

@@ -39,13 +39,13 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Profile pic</label>
 					<div class="col-sm-4">
-						<button ngf-select="true" ng-model="profilepic" type="button" ngf-accept="'.png,.jpg'"  ngf-multiple="false" ngf-max-size='1048576'>Upload profile image</button>
+						<button ngf-select ng-model="profilepic" type="button" ngf-accept="'.png,.jpg'" ngf-max-size='1048576'>Upload profile image</button>
 						<p class="help-block">Only png and jpg files &lt;1MB  are supported</p>
 						<p>{{profilepic[0].name}}</p>
 					</div>
 					<div class="col-sm-2">
 						<div class="profile-pic-large img-rounded">
-							<img class="profile-pic" ngf-src="profilepic[0]"  ngf-default-src="user/profile-pic" ngf-accept="'.png,.jpg'" width="100%" />
+							<img class="profile-pic" ng-src="{{currentProfilePic}}"   width="100%" />
 						</div> 
 					</div>
 				</div>

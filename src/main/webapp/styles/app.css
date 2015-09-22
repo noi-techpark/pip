@@ -1,4 +1,4 @@
-body { padding-top: 70px; }
+body { padding-top: 70px; background-color: #fefefe;}
 
 .simple-animation {
   -webkit-transition:all linear 0.5s;
@@ -156,7 +156,6 @@ div[class*="profile-pic"]{
 	overflow: hidden;
 	margin:0;
 	padding:0;
-	
 }
 
 .profile .profile-pic{
@@ -177,7 +176,20 @@ div[class*="profile-pic"]{
 }
 .warning-absolute{
 	position: fixed;
-	top: 40%;
+	top: 0;
+	z-index:2000;
 	text-align: center;
 	width: 100%;
+}
+.project-list{
+	margin-top: 25px;
+	width:100%;
+	float:left;
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	-moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+	box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.26);
+}
+.searchbar{
+	max-width: 200px;
+	margin:5px;
 }

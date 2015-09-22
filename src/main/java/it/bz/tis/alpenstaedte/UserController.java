@@ -73,17 +73,21 @@ public class UserController {
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_USER", "ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.PUT)
-    public @ResponseBody ResponseEntity<UserDto> updateUser(@RequestBody UserDto dto, Principal principal) {
-    	PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
-    	if (!user.getEmail().equals(principal.getName()))
-    		return new ResponseEntity<UserDto>(HttpStatus.FORBIDDEN);
-    	user.setName(dto.getName());
-    	user.setSurname(dto.getSurname());
-    	user.setPreferredTopics(DALCastUtil.cast(dto.getTopics()));
-    	user.setPhone(dto.getPhone());
-    	user.setLanguageSkills(dto.getLanguageSkills());
-    	user.merge();
-    	return new ResponseEntity<UserDto>(HttpStatus.OK);
+    public @ResponseBody ResponseEntity<UserDto> updateUser(@RequestBody UserDto dto, Principal principal,@RequestParam(value="user-id",required=false)String uuid) {
+		PipUser user = PipUser.findPipUsersByUuidEquals(uuid).getSingleResult();
+		PipUser principalUser = PipUser.findPipUsersByEmailEquals(
+				principal.getName()).getSingleResult();
+		if (user.getEmail().equals(principal.getName())	|| PipRole.ADMIN.getName().equals(principalUser.getRole())) {
+			user.setName(dto.getName());
+			user.setSurname(dto.getSurname());
+			user.setPreferredTopics(DALCastUtil.cast(dto.getTopics()));
+			user.setPhone(dto.getPhone());
+			user.setLanguageSkills(dto.getLanguageSkills());
+			user.merge();
+			return new ResponseEntity<UserDto>(HttpStatus.OK);
+		} else
+			return new ResponseEntity<UserDto>(HttpStatus.FORBIDDEN);
+
     }
 	@Secured(value={"ROLE_ADMIN","ROLE_MANAGER"})
     @RequestMapping(method = RequestMethod.DELETE)
@@ -158,10 +162,9 @@ public class UserController {
 				uuid = user.getUuid();
 			}
 			File folder = new File(documentFolder.getFile(),"user-data/"+uuid);
-			File[] listFiles = folder.listFiles();
 			File file;
-			if (listFiles != null && listFiles.length > 0)
-				file = listFiles[0];
+			if (!uuid.isEmpty() && folder.exists() && folder.listFiles().length > 0)
+				file = folder.listFiles()[0];
 			else{
 				file = new ServletContextResource(session.getServletContext(),"/images/profile.jpg").getFile();
 			}
