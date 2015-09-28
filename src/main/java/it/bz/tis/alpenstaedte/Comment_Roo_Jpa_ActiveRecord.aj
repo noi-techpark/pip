@@ -14,7 +14,7 @@ privileged aspect Comment_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager Comment.entityManager;
     
-    public static final List<String> Comment.fieldNames4OrderClauseFilter = java.util.Arrays.asList("text", "owner", "idea", "created_on", "updated_on", "banned", "uuid");
+    public static final List<String> Comment.fieldNames4OrderClauseFilter = java.util.Arrays.asList("text", "owner", "idea", "created_on", "updated_on", "banned", "liker", "uuid");
     
     public static final EntityManager Comment.entityManager() {
         EntityManager em = new Comment().entityManager;

@@ -1,0 +1,32 @@
+<div class="container">
+	<h1>Markdown <small>Text formatting made easy</small></h1>
+	<div class="row">
+		<div class="col-md-6">
+			<p style="text-align: justify;">
+				Markdown is a simple way to highlight and format text. It provides a
+				minimalistic set of rules that makes it easy to have
+				nicely formatted text.
+				</p><p> A lot of content-management-systems provide extensive rich
+				text editors that give a lot of possibilities, but on the other hand
+				cause disambiguity with the rest of the website, resulting in ugly
+				and bad formatted websites.<br /> John Gruber of <a
+					href="http://daringfireball.net/">Daring Fireball</a> created
+				a solution called "Markdown".
+			</p>
+			<p> To get a better	insight and to learn how to use "Markdown", visit this nice tutorial by Graham Ashton:<br/>
+				<a target="_blank" title="Markdown" href="http://nestacms.com/docs/creating-content/markdown-cheat-sheet">http://nestacms.com/docs/creating-content/markdown-cheat-sheet</a>
+			</p>
+		</div>
+	</div>
+	<div class="row" ng-init="resetText()">
+		<div class="col-md-6">
+			<h3>Example<br/><small>Change the text to see how it works </small></h3>
+			<textarea rows="20"  class="form-control" ng-model="text"></textarea>
+			<button class="btn btn-primary" style="margin-top:15px" ng-click="resetText()">Reset text box</button>
+		</div>
+		<div class="col-md-6">
+			<h3>Output<br/><small>Watch as it changes when you modify the text box </small></h3>
+			<p marked="text"></p>
+		</div>
+	</div>
+</div>

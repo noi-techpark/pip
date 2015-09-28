@@ -67,7 +67,7 @@
 			<div class="col-md-5 organisazion" ng-show="idea.interestedOrganisazions.length>0">
   	  		  <h3>Interested Organisations</h3>
 			  <div ng-repeat="org in idea.interestedOrganisazions|orderBy:'name'" class="row">
-			      <img src="images/{{org.pic}}" alt="{{org.name}}" class="col-md-2 col-xs-3">
+			      <img ng-src="{{'images/' + org.pic}}" alt="{{org.name}}" class="col-md-2 col-xs-3">
 			      <div class="col-md-10 col-xs-9">
 			      <h4 class="label label-primary">{{org.name}}</h4>
 			        <ul>
@@ -125,12 +125,14 @@
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
 					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
 				</h5>
+				<a ng-click="toggleLike(comment)" class="close"> <span ng-class="comment.liker.indexOf(myUser.uuid)>=0?'glyphicon-thumbs-down':'glyphicon-thumbs-up'"class="glyphicon"></span> <span ng-show="comment.liker.length>0" style="vertical-align: top;">{{comment.liker.length}}</span></a>
 				<a ng-show="isAdmin" title="Delete comment" class="glyphicon glyphicon-remove close"  confirmed-click="deleteComment(comment.uuid,$index)" ng-confirm-click="Are you sure you want to delete this comment?" ></a>
-				<a ng-show="isAdmin && !comment.banned" type="button" class="close" title="Block comment" ng-click="blockComment(comment)"><span class="glyphicon glyphicon-ban-circle"></span></a>
+				<a ng-show="isAdmin && !comment.banned" class="close" title="Block comment" ng-click="blockComment(comment)"><span class="glyphicon glyphicon-ban-circle"></span></a>
+				<a ng-show="isAdmin && comment.banned" title="Unblock comment" type="button" class="close" ng-click="unblockComment(comment)"><span class="glyphicon glyphicon-leaf"></span></a>
 				<p ng-if="!comment.banned" marked="comment.text"></p>
 				<p ng-if="comment.banned" class="alert alert-warning">This comment was removed, due it's content not being retained adequate
-					<a ng-show="isAdmin && comment.banned" title="Unblock comment" type="button" class="close" ng-click="unblockComment(comment)"><span class="glyphicon glyphicon-leaf"></span></a>
 				</p>
+				
 				
 			</div>
 		</div>

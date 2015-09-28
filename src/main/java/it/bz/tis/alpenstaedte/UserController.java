@@ -174,9 +174,17 @@ public class UserController {
 	}
 	@Secured(value={"ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER"})
 	@RequestMapping(method = RequestMethod.POST, value = "upload-profile-pic")
-    public @ResponseBody ResponseEntity<ResponseObject> uploadProfilePic(@RequestParam("file")List<MultipartFile> files,Principal principal) {
+    public @ResponseBody ResponseEntity<ResponseObject> uploadProfilePic(@RequestParam("file")List<MultipartFile> files,Principal principal,@RequestParam(value = "userid",required=false) String userid) {
 		if (documentFolder.exists()){
-			PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+			PipUser user;
+			PipUser principalUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+			if (userid != null){
+				user = PipUser.findPipUsersByUuidEquals(userid).getSingleResult();
+				if (! PipRole.ADMIN.getName().equals(principalUser.getRole()))
+					return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
+			}
+			else
+				user = principalUser;
 			File directory = new File(documentFolder.getPath()+"/user-data/"+user.getUuid());
 			directory.mkdirs();
 			for (File file : directory.listFiles()){
@@ -263,4 +271,16 @@ public class UserController {
 		}
 		return "redirect:/";
     }
+    @Secured(value={"ROLE_ADMIN","ROLE_MANAGER","ROLE_USER"})
+    @RequestMapping(method = RequestMethod.GET,value="like")
+    public @ResponseBody void toggleLike(Principal principal, @RequestParam("comment") String uuid){
+    	Comment comment = Comment.findCommentsByUuid(uuid).getSingleResult();
+		PipUser user = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
+    	if (comment.getLiker().contains(user))
+    			comment.getLiker().remove(user);
+    	else
+    		comment.getLiker().add(user);
+    	comment.merge();
+    }
+    
 }

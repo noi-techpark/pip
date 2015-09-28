@@ -13,6 +13,7 @@ import it.bz.tis.alpenstaedte.dto.HelpDto;
 import it.bz.tis.alpenstaedte.dto.NewIdeaDto;
 import it.bz.tis.alpenstaedte.dto.OrganisazionDto;
 import it.bz.tis.alpenstaedte.dto.TopicDto;
+import it.bz.tis.alpenstaedte.dto.UniqueIdentifierDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 
 import java.text.DateFormat;
@@ -60,7 +61,16 @@ public class DtoCastUtil {
 		dto.setAuthor(userDto);
 		dto.setBanned(comment.isBanned());
 		dto.setUuid(comment.getUuid());
+		for (PipUser user: comment.getLiker()){
+			dto.getLiker().add(user.getUuid());
+		}
 		return dto;
+	}
+
+	public static UniqueIdentifierDto cast(String uuid) {
+		UniqueIdentifierDto d = new UniqueIdentifierDto();
+		d.setUuid(uuid);
+		return d;
 	}
 
 	public static UserDto cast(PipUser user) {

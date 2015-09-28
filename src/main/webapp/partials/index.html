@@ -6,7 +6,7 @@
 
 		<button class="btn hidden-xs" ng-class="menu=='topic'?'btn-primary':'btn-default'" type="submit" ng-click="menu='topic';list=false;drawTree('graph-data-topics')">By Topics</button>
 		<button class="btn hidden-xs" ng-class="menu=='state'?'btn-primary':'btn-default'" type="submit" ng-click="menu='state';list=false;drawTree('graph-data')">By Project Status</button>
-		<div class="pull-right hidden-xs"  style="margin-left: 20px;">
+		<div ng-show="list"class="pull-right hidden-xs"  style="margin-left: 20px;">
 			<input type="text" class="form-control" placeholder="Find all matching projects" ng-model="textFilter">
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 				<div class="row">
 					<div class="col-md-5">
 						<h4 class="list-group-item-heading" >{{idea.projectName}} <small class="badge" style="background-color: #5bc0de">{{idea.numberOfOrganisazions}}</small></h4>
-						<div class="label label-default">{{idea.status}}</div>
+						<p><span class="label label-default">{{idea.status}}</span></p>
 					</div>
 					<div class="col-md-7">
 						<div ng-repeat="topic in idea.topics|orderBy:'name':true" class="label label-default pull-right" style="margin-right:5px;background-color: {{topic.color}}">{{topic.name}}</div>

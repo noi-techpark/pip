@@ -116,6 +116,9 @@ alps.config(['$routeProvider',function($routeProvider) {
 	}).when('/pw-reset', {
 		templateUrl: 'partials/password.html',
 		controller: 'UserCtrl'
+	}).when('/markdown', {
+		templateUrl: 'partials/markdown.html',
+		controller: 'MarkdownCtrl'
 	}).otherwise({
 		redirectTo: '/'
 	});
@@ -517,6 +520,17 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 		
 		self.progress=style;
 	}
+	self.toggleLike = function(comment){
+		$http.get("user/like?comment=" + comment.uuid).success(function(response,status,headers,config){
+			var index = comment.liker.indexOf(self.myUser.uuid);
+			if (index == -1)
+				comment.liker.push(self.myUser.uuid);
+			else
+				comment.liker.splice(index,1);
+		}).error(function(data, status, headers, config) {
+			console.log(status);
+		});
+	}
 });
 alps.controller('TopicCtrl', function ($scope,$http) {
 	var self = $scope;
@@ -613,7 +627,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 		if (self.profile.$valid){
 			$http.put("user"+"?user-id="+self.user.uuid,self.user).success(function(response,status,headers,config){
 				if (self.profilepic)
-					self.uploadProfilePic();
+					self.uploadProfilePic(self.user.uuid);
 				self.ideaSaved = true;
 				$timeout(function(){self.ideaSaved=false},2000);
 			}).error(function(data, status, headers, config) {
@@ -624,7 +638,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 	self.updateOrganisazion= function(user){
 		$http.put("user/organization",user).success(function(response,status,headers,config){
 			if (self.profilepic)
-				self.uploadProfilePic();
+				self.uploadProfilePic(user.uuid);
 			self.ideaSaved = true;
 			$timeout(function(){self.ideaSaved=false},2000);
 		}).error(function(data, status, headers, config) {
@@ -632,10 +646,14 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 		});
 	}
 	self.uploadProfilePic = function(){
+		var fields = {
+				userid:self.user.uuid
+		};
 		Upload.upload({	
 			url:self.me + '/user/upload-profile-pic',
 			file:self.profilepic,
-			sendFieldsAs:'blob-json'
+			sendFieldsAs:'blob-json',
+			fields:fields
 		}).progress(function(evt){
 			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
 		}).success(function(data, status, headers, config){
@@ -764,7 +782,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			self.getHelps();
 		}).error(function(data, status, headers, config) {
 			if (status == 409)
-				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted"
+				self.warning = "This topic is already asociated with ideas and therefore it can not be deleted";
 		});
 	}
 	self.$watch('profilepic',function(){
@@ -774,7 +792,6 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 		if (self.profilepic && self.profilepic.length>0){
 			var reader = new FileReader();
 			reader.onload = function(event) {
-				console.log(event.target.result);
 				self.currentProfilePic = event.target.result;
 			}
 			reader.readAsDataURL(self.profilepic[0]);
@@ -783,4 +800,16 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 		else
 			self.currentProfilePic = 'user/profile-pic';
 	}
+
 });
+
+alps.controller('MarkdownCtrl', function ($scope) {
+	var self = $scope;
+	
+	var text = "# Header\n## Subheader\nThis is simple text that can be higlited with *italic*, **bold** and a ***combined Version*** of the two.\n\nYou can also create list by using\n" +
+			"+ Plus\n- Minus\n* Asterisk\n\nIf you need to quote something just do it like this\n> This is a quote\n\nYou can simply create links like this:\n\nhttp://nestacms.com/docs/creating-content/markdown-cheat-sheet\n\n" +
+			"and if you want to know more about it check out this [cheat-sheet](http://nestacms.com/docs/creating-content/markdown-cheat-sheet).";
+	self.resetText = function(){
+		self.text = text;
+	}
+});			

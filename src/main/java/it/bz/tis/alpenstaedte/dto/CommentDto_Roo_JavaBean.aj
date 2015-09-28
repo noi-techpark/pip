@@ -6,6 +6,7 @@ package it.bz.tis.alpenstaedte.dto;
 import it.bz.tis.alpenstaedte.dto.CommentDto;
 import it.bz.tis.alpenstaedte.dto.UserDto;
 import java.util.Date;
+import java.util.List;
 
 privileged aspect CommentDto_Roo_JavaBean {
     
@@ -47,6 +48,14 @@ privileged aspect CommentDto_Roo_JavaBean {
     
     public void CommentDto.setUuid(String uuid) {
         this.uuid = uuid;
+    }
+    
+    public List<String> CommentDto.getLiker() {
+        return this.liker;
+    }
+    
+    public void CommentDto.setLiker(List<String> liker) {
+        this.liker = liker;
     }
     
 }
