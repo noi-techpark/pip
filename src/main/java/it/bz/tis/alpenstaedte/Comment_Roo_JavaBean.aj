@@ -7,7 +7,7 @@ import it.bz.tis.alpenstaedte.Comment;
 import it.bz.tis.alpenstaedte.Idea;
 import it.bz.tis.alpenstaedte.PipUser;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 privileged aspect Comment_Roo_JavaBean {
     
@@ -59,11 +59,11 @@ privileged aspect Comment_Roo_JavaBean {
         this.banned = banned;
     }
     
-    public List<PipUser> Comment.getLiker() {
+    public Set<PipUser> Comment.getLiker() {
         return this.liker;
     }
     
-    public void Comment.setLiker(List<PipUser> liker) {
+    public void Comment.setLiker(Set<PipUser> liker) {
         this.liker = liker;
     }
     

@@ -126,9 +126,10 @@ alps.config(['$routeProvider',function($routeProvider) {
 
 alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$routeParams) {
 	var self = $scope;
-	if($cookies.redirect && $cookies.redirect.length>0){
-		$location.path($cookies.redirect);
-		$cookies.redirect='';
+	var redirect = $cookies.get("redirect");
+	if(redirect && redirect.length>0){
+		$location.path(redirect);
+		$cookies.remove("redirect");
 	}
 	if ($routeParams.topic){
 		self.list=false;
@@ -795,7 +796,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 				self.currentProfilePic = event.target.result;
 			}
 			reader.readAsDataURL(self.profilepic[0]);
-		}else if(self.user.uuid)
+		}else if(self.user && self.user.uuid)
 			self.currentProfilePic = 'user/profile-pic?user='+ self.user.uuid;
 		else
 			self.currentProfilePic = 'user/profile-pic';

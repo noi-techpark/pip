@@ -1,7 +1,7 @@
 package it.bz.tis.alpenstaedte;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -34,7 +34,7 @@ public class Comment {
     private boolean banned = false;
     
     @ManyToMany
-    private List<PipUser> liker = new ArrayList<PipUser>();
+    private Set<PipUser> liker = new HashSet<PipUser>();
 
     @Column(unique = true)
     private String uuid = UUID.randomUUID().toString();
