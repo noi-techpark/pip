@@ -125,7 +125,7 @@
 					<strong>{{comment.author.name}} {{comment.author.surname}}</strong>
 					<small>{{comment.created_on|date:'dd. MMM yyyy HH:mm'}}</small>
 				</h5>
-				<a ng-click="toggleLike(comment)" class="close"> <span ng-class="comment.liker.indexOf(myUser.uuid)>=0?'glyphicon-thumbs-down':'glyphicon-thumbs-up'"class="glyphicon"></span> <span ng-show="comment.liker.length>0" style="vertical-align: top;">{{comment.liker.length}}</span></a>
+				<a ng-click="toggleLike(comment)" ng-class="comment.liker.indexOf(myUser.uuid)>=0?'voted':''" class="close"> <span class="glyphicon glyphicon-thumbs-up"></span> <span ng-show="comment.liker.length>0" style="vertical-align: top;">{{comment.liker.length}}</span></a>
 				<a ng-show="isAdmin" title="Delete comment" class="glyphicon glyphicon-remove close"  confirmed-click="deleteComment(comment.uuid,$index)" ng-confirm-click="Are you sure you want to delete this comment?" ></a>
 				<a ng-show="isAdmin && !comment.banned" class="close" title="Block comment" ng-click="blockComment(comment)"><span class="glyphicon glyphicon-ban-circle"></span></a>
 				<a ng-show="isAdmin && comment.banned" title="Unblock comment" type="button" class="close" ng-click="unblockComment(comment)"><span class="glyphicon glyphicon-leaf"></span></a>
