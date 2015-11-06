@@ -180,7 +180,7 @@ public class UserController {
 			PipUser principalUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
 			if (userid != null){
 				user = PipUser.findPipUsersByUuidEquals(userid).getSingleResult();
-				if (! PipRole.ADMIN.getName().equals(principalUser.getRole()))
+				if ( !PipRole.ADMIN.getName().equals(principalUser.getRole()) && !principalUser.equals(user))
 					return new ResponseEntity<ResponseObject>(HttpStatus.FORBIDDEN);
 			}
 			else
