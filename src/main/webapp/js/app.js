@@ -77,6 +77,7 @@ alps.run(function($rootScope,$http) {
 	self.encode = function(string){
 		return encodeURIComponent(string);
 	};
+	self.fingerprint = 0;
 });
 alps.config(['$routeProvider',function($routeProvider) {
 	$routeProvider.
@@ -139,8 +140,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 		self.list=true;
 		self.menu='all';
 	}
-	//self.me = "http://projectideas.tis.bz.it/alpenstaedte"
-	self.me = "http://localhost:8080/alpenstaedte";
+	self.me = "/";
 	self.isHidden = function(object){
 		 return(self.topicFilter?object.name.toLowerCase().indexOf(self.topicFilter.toLowerCase()) < 0:false);
 	}
@@ -558,7 +558,7 @@ alps.controller('TopicCtrl', function ($scope,$http) {
 		});
 	}
 });
-alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams) {
+alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams,$rootScope) {
 	var self = $scope;
 	self.getUserByTopics = function(){
 		$http.get("user/user-by-topics").success(function(response,status,headers,config){
@@ -659,6 +659,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams)
 			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
 		}).success(function(data, status, headers, config){
 			self.getUser();
+			$rootScope.fingerprint = new Date().getTime();
 		});
 	}
 	self.getProfile = function(){

@@ -28,7 +28,7 @@
 			<div ng-repeat="user in userByTopics|filter:containsTopic|filter:knowsLang|orderBy:'surname'|filter:textFilter" class="pull-left profile simple-animation">
 				<a ng-click="openModal('#contact-modal',user)" href="javascript:void(0)">
 							<div class="profile-pic img-circle">
-								<img ng-src="{{'user/profile-pic?user='+user.uuid}}" width="150px" />
+								<img ng-src="{{'user/profile-pic?user='+user.uuid+'&fp='+fingerprint}}" width="150px" />
 							</div>
 							<p>
 								<span class="label label-default">{{user.name}} {{user.surname}}</span>

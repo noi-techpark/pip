@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
@@ -82,7 +82,6 @@ public class RootController {
     	ProjectStatus status = ProjectStatus.findProjectStatusesByNameEquals("idea").getSingleResult();
     	PipUser currentUser = PipUser.findPipUsersByEmailEquals(principal.getName()).getSingleResult();
     	Idea idea = new Idea(dto.getProjectName(),dto.getProjectDesc(),topics,status);
-    	Set<Funding> fundings = new HashSet<Funding>();
     	for (FundingDto fundingDto:dto.getFundings()){
 			Funding funding = new Funding();
 			funding.setIdea(idea);
