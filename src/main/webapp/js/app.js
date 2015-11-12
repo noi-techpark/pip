@@ -140,7 +140,6 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 		self.list=true;
 		self.menu='all';
 	}
-	self.me = "/";
 	self.isHidden = function(object){
 		 return(self.topicFilter?object.name.toLowerCase().indexOf(self.topicFilter.toLowerCase()) < 0:false);
 	}
@@ -193,7 +192,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 	}
 	self.uploadFiles = function(uuid){
 		Upload.upload({
-			url:self.me+'/upload',
+			url:'/upload',
 			file:self.files,
 			fields:{uuid:uuid}
 		}).progress(function(evt){
@@ -237,7 +236,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		d3.json(self.me+"/"+graph, function(error, flare) {
+		d3.json("/"+graph, function(error, flare) {
 			if (error) throw error;
 
 			root = flare;
@@ -285,7 +284,7 @@ alps.controller('RootCtrl', function ($scope,$http,Upload,$location,$cookies,$ro
 			.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 			
 			var link = nodeEnter.append("a")
-			.attr("xlink:href",function(d,i) {if (d.uuid)return self.me+"/#/idea/" + d.uuid; else return "javascript:void(0)";}).attr("class", "badge");
+			.attr("xlink:href",function(d,i) {if (d.uuid)return "/#/idea/" + d.uuid; else return "javascript:void(0)";}).attr("class", "badge");
 
 			link.append("text")
 			.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -427,7 +426,7 @@ alps.controller('IdeaListCtrl', function ($scope,$http,Upload,$routeParams,$time
 
 	self.syncFiles = function(uuid){
 		Upload.upload({
-			url:self.me+'/upload',
+			url:'/upload',
 			file:self.files,
 			fields:{uuid:uuid,alreadySavedFiles:self.idea.fileNames},
 			data:{alreadysavedfiles:self.idea.filenames},
@@ -651,7 +650,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams,
 				userid:self.user.uuid
 		};
 		Upload.upload({	
-			url:self.me + '/user/upload-profile-pic',
+			url:'/user/upload-profile-pic',
 			file:self.profilepic,
 			sendFieldsAs:'blob-json',
 			fields:fields
@@ -771,7 +770,7 @@ alps.controller('UserCtrl', function ($scope,$http,$timeout,Upload,$routeParams,
 	}
 	self.uploadHelp = function(){
 		Upload.upload({	
-			url:self.me + '/help/upload',
+			url:'/help/upload',
 			file:self.files,
 		}).progress(function(evt){
 			  //console.log('progress: ' + parseInt(100.0 * evt.loaded / evt.total) + '% file :'+ evt.config.file.name);
